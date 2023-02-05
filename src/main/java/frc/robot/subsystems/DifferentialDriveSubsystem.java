@@ -74,6 +74,10 @@ public class DifferentialDriveSubsystem extends SubsystemBase {
    * @param turn how much to turn, -1 to 1 (negative values mean left)
    */
   public void arcadeDrive(double speed, double turn){
+
+    // Telemetry
+    SmartDashboard.putNumber("Speed", speed);
+    SmartDashboard.putNumber("Turn", speed);
     
     double left = speed + turn;
     double right = speed - turn;
