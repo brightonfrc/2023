@@ -4,6 +4,13 @@
       "/FMSInfo": "FMSInfo"
     }
   },
+  "NetworkTables": {
+    "transitory": {
+      "Shuffleboard": {
+        "open": true
+      }
+    }
+  },
   "Plot": {
     "Plot <0>": {
       "window": {
