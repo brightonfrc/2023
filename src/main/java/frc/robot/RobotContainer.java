@@ -4,13 +4,15 @@
 
 package frc.robot;
 
-import frc.robot.Constants.OperatorConstants;
-import frc.robot.commands.Autos;
-import frc.robot.commands.ExampleCommand;
-import frc.robot.subsystems.ExampleSubsystem;
-import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.Constants.Ports;
+import frc.robot.subsystems.DifferentialDriveSubsystem;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -20,11 +22,10 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
  */
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
-  private final ExampleSubsystem m_exampleSubsystem = new ExampleSubsystem();
+  private final DifferentialDriveSubsystem m_drivetrain = new DifferentialDriveSubsystem();
 
-  // Replace with CommandPS4Controller or CommandJoystick if needed
-  private final CommandXboxController m_driverController =
-      new CommandXboxController(OperatorConstants.kDriverControllerPort);
+  // Replace with CommandPS4Controller or CommandXboxController if needed
+  private final CommandJoystick m_driverController = new CommandJoystick(Ports.kControllerPort);
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -42,22 +43,39 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
-    // Schedule `ExampleCommand` when `exampleCondition` changes to `true`
-    new Trigger(m_exampleSubsystem::exampleCondition)
-        .onTrue(new ExampleCommand(m_exampleSubsystem));
+    Joystick j = m_driverController.getHID();
+    Trigger setReverseTrigger = new JoystickButton(j, 8);
+    Trigger unsetReverseTrigger = new JoystickButton(j, 7);
+    
+    setReverseTrigger.onTrue(Commands.run(() -> {
+      SmartDashboard.putBoolean("reverse", true);
+      m_drivetrain.setIsReversed(true);
+    }));
+    
+    unsetReverseTrigger.onTrue(Commands.run(() -> {
+      SmartDashboard.putBoolean("reverse", false);
+      m_drivetrain.setIsReversed(false);
+    }));
 
-    // Schedule `exampleMethodCommand` when the Xbox controller's B button is pressed,
-    // cancelling on release.
-    m_driverController.b().whileTrue(m_exampleSubsystem.exampleMethodCommand());
+    // If the drivetrain is not running other commands, run arcade drive
+    m_drivetrain.setDefaultCommand(Commands.run(() -> {
+      double speed = -m_driverController.getY() * 0.3;
+      double turn = m_driverController.getX() * 0.3;
+      SmartDashboard.putNumber("Speed", speed);
+      SmartDashboard.putNumber("Turn", turn);
+      m_drivetrain.arcadeDrive(speed, turn);
+      
+    }, m_drivetrain));
+
   }
 
-  /**
-   * Use this to pass the autonomous command to the main {@link Robot} class.
-   *
-   * @return the command to run in autonomous
-   */
-  public Command getAutonomousCommand() {
-    // An example command will be run in autonomous
-    return Autos.exampleAuto(m_exampleSubsystem);
-  }
+  // /**
+  //  * Use this to pass the autonomous command to the main {@link Robot} class.
+  //  *
+  //  * @return the command to run in autonomous
+  //  */
+  // public Command getAutonomousCommand() {
+  //   // An example command will be run in autonomous
+  //   // return Autos.exampleAuto(null);
+  // }
 }
