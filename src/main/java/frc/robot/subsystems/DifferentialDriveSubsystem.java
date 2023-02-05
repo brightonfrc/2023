@@ -79,7 +79,7 @@ public class DifferentialDriveSubsystem extends SubsystemBase {
     double right = speed - turn;
 
     SmartDashboard.putNumber("Left", left);
-    SmartDashboard.putNumber("Rigth", right);
+    SmartDashboard.putNumber("Right", right);
     setPower(left, right);
   }
 }
