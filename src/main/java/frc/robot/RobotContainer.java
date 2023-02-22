@@ -59,8 +59,8 @@ public class RobotContainer {
 
     // If the drivetrain is not running other commands, run arcade drive
     m_drivetrain.setDefaultCommand(Commands.run(() -> {
-      double speed = -m_driverController.getY() * 0.3;
-      double turn = m_driverController.getX() * 0.3;
+      double speed = -m_driverController.getY();
+      double turn = m_driverController.getX();
       SmartDashboard.putNumber("Speed", speed);
       SmartDashboard.putNumber("Turn", turn);
       m_drivetrain.arcadeDrive(speed, turn);

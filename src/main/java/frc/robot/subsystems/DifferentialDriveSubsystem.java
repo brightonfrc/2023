@@ -28,8 +28,8 @@ public class DifferentialDriveSubsystem extends SubsystemBase {
     
     this.isReversed = RobotSettings.k_DrivetrainStartInverted;
 
-    m_motorL1.setInverted(false);
-    m_motorR1.setInverted(true);
+    m_motorL1.setInverted(true);
+    m_motorR1.setInverted(false);
     
     
     m_motorL2.setInverted(InvertType.FollowMaster);
@@ -59,6 +59,9 @@ public class DifferentialDriveSubsystem extends SubsystemBase {
     }
     m_motorL1.set(ControlMode.PercentOutput, leftPower);
     m_motorR1.set(ControlMode.PercentOutput, rightPower);
+    
+    SmartDashboard.putNumber("Left", leftPower);
+    SmartDashboard.putNumber("Right", rightPower);
   }
   
   /**
@@ -67,12 +70,9 @@ public class DifferentialDriveSubsystem extends SubsystemBase {
    * @param turn how much to turn, -1 to 1 (negative values mean left)
    */
   public void arcadeDrive(double speed, double turn){
-    
-    double left = speed + turn;
-    double right = speed - turn;
+    double left = speed - turn;
+    double right = speed + turn;
 
-    SmartDashboard.putNumber("Left", left);
-    SmartDashboard.putNumber("Right", right);
     setPower(left, right);
   }
 }
