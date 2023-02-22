@@ -3,6 +3,7 @@ package frc.robot.subsystems;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.InvertType;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -11,18 +12,18 @@ import frc.robot.Constants.Ports;
 import frc.robot.Constants.RobotSettings;
 
 public class DifferentialDriveSubsystem extends SubsystemBase {
-  public VictorSPX m_motorL1;
+  public TalonSRX m_motorL1;
   public VictorSPX m_motorL2;
-  public VictorSPX m_motorR1;
+  public TalonSRX m_motorR1;
   public VictorSPX m_motorR2;
   
   private boolean isReversed;
 
   /** Creates a new DifferrentialDriveSubsystem. */
   public DifferentialDriveSubsystem() {
-    m_motorL1 = new VictorSPX(Ports.k_DrivetrainMotorControllerPortL1);
+    m_motorL1 = new TalonSRX(Ports.k_DrivetrainMotorControllerPortL1);
     m_motorL2 = new VictorSPX(Ports.k_DrivetrainMotorControllerPortL2);
-    m_motorR1 = new VictorSPX(Ports.k_DrivetrainMotorControllerPortR1);
+    m_motorR1 = new TalonSRX(Ports.k_DrivetrainMotorControllerPortR1);
     m_motorR2 = new VictorSPX(Ports.k_DrivetrainMotorControllerPortR2);
     
     this.isReversed = RobotSettings.k_DrivetrainStartInverted;

@@ -6,12 +6,14 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.Ports;
+import frc.robot.commands.Autos;
 import frc.robot.subsystems.DifferentialDriveSubsystem;
 
 /**
@@ -69,13 +71,13 @@ public class RobotContainer {
 
   }
 
-  // /**
-  //  * Use this to pass the autonomous command to the main {@link Robot} class.
-  //  *
-  //  * @return the command to run in autonomous
-  //  */
-  // public Command getAutonomousCommand() {
-  //   // An example command will be run in autonomous
-  //   // return Autos.exampleAuto(null);
-  // }
+  /**
+   * Use this to pass the autonomous command to the main {@link Robot} class.
+   *
+   * @return the command to run in autonomous
+   */
+  public CommandBase getAutonomousCommand() {
+    // An example command will be run in autonomous
+    return Autos.exampleAuto(null);
+  }
 }
