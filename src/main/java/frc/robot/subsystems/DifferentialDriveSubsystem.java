@@ -45,14 +45,6 @@ public class DifferentialDriveSubsystem extends SubsystemBase {
     m_motorR1.setNeutralMode(NeutralMode.Brake);
     m_motorR2.setNeutralMode(NeutralMode.Brake);
   }
-  
-  /**
-   * Changes whether the drivetrain is reversed or not
-   * @param isReversed
-   */
-  public void setIsReversed(boolean isReversed){
-    this.isReversed = isReversed;
-  }
 
   /**
    * Sets the powers of the two sides of the motors, from -1 to 1
@@ -80,7 +72,7 @@ public class DifferentialDriveSubsystem extends SubsystemBase {
     double right = speed - turn;
 
     SmartDashboard.putNumber("Left", left);
-    SmartDashboard.putNumber("Rigth", right);
+    SmartDashboard.putNumber("Right", right);
     setPower(left, right);
   }
 }

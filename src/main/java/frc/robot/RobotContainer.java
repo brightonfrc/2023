@@ -46,17 +46,15 @@ public class RobotContainer {
    */
   private void configureBindings() {
     Joystick j = m_driverController.getHID();
-    Trigger setReverseTrigger = new JoystickButton(j, 8);
-    Trigger unsetReverseTrigger = new JoystickButton(j, 7);
+    Trigger action1Trigger = new JoystickButton(j, 8);
+    Trigger action2Trigger = new JoystickButton(j, 7);
     
-    setReverseTrigger.onTrue(Commands.run(() -> {
-      SmartDashboard.putBoolean("reverse", true);
-      m_drivetrain.setIsReversed(true);
+    action1Trigger.onTrue(Commands.runOnce(() -> {
+      System.out.println("Action 1");
     }));
     
-    unsetReverseTrigger.onTrue(Commands.run(() -> {
-      SmartDashboard.putBoolean("reverse", false);
-      m_drivetrain.setIsReversed(false);
+    action2Trigger.onTrue(Commands.runOnce(() -> {
+      System.out.println("Action 2");
     }));
 
     // If the drivetrain is not running other commands, run arcade drive
