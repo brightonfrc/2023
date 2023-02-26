@@ -5,7 +5,9 @@
 package frc.robot;
 
 import org.photonvision.PhotonCamera;
+import org.photonvision.targeting.PhotonTrackedTarget;
 
+import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.networktables.BooleanSubscriber;
 import edu.wpi.first.networktables.IntegerSubscriber;
 import edu.wpi.first.networktables.NetworkTable;
@@ -97,8 +99,16 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during autonomous. */
   @Override
   public void autonomousPeriodic() {
-    SmartDashboard.putNumber("AprilTag ID", m_aprilTagNavigator.getAprilTagID());
-    SmartDashboard.putString("AprilTag Transform", m_aprilTagNavigator.getAprilTagCameraToTarget().toString());
+    PhotonTrackedTarget aprilTag =  m_aprilTagNavigator.getAprilTag();
+    if(aprilTag != null) {
+      SmartDashboard.putNumber("AprilTag ID", aprilTag.getFiducialId());
+      SmartDashboard.putNumber("AprilTag Yaw (+> -<)", aprilTag.getYaw());
+      SmartDashboard.putNumber("AprilTag Pitch (+^ -v)", aprilTag.getPitch());
+    } else {
+      SmartDashboard.putNumber("AprilTag ID", 0);
+      SmartDashboard.putNumber("AprilTag Yaw (+> -<)", 0);
+      SmartDashboard.putNumber("AprilTag Pitch (+^ -v)", 0);
+    }
   }
 
   @Override
