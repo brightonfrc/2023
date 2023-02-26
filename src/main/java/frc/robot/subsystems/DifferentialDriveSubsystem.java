@@ -41,7 +41,6 @@ public class DifferentialDriveSubsystem extends SubsystemBase {
 
   /** Creates a new DifferrentialDriveSubsystem. */
   public DifferentialDriveSubsystem(BooleanSubscriber isRedAllianceSubscriber) {
-  public DifferentialDriveSubsystem() {
     m_motorL1 = new TalonSRX(Ports.k_DrivetrainMotorControllerPortL1);
     m_motorL2 = new VictorSPX(Ports.k_DrivetrainMotorControllerPortL2);
     m_motorR1 = new TalonSRX(Ports.k_DrivetrainMotorControllerPortR1);
