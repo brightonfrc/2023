@@ -1,7 +1,5 @@
 package frc.robot.subsystems;
 
-import java.util.List;
-
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.InvertType;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
@@ -10,13 +8,9 @@ import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.math.system.plant.DCMotor;
-import edu.wpi.first.math.trajectory.Trajectory;
-import edu.wpi.first.math.trajectory.TrajectoryConfig;
-import edu.wpi.first.math.trajectory.TrajectoryGenerator;
-import edu.wpi.first.math.util.Units;
+import edu.wpi.first.networktables.BooleanSubscriber;
 import edu.wpi.first.wpilibj.AnalogGyro;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.RobotController;
@@ -26,8 +20,10 @@ import edu.wpi.first.wpilibj.simulation.EncoderSim;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.Measurements;
 import frc.robot.Constants.Ports;
 import frc.robot.Constants.RobotSettings;
+import frc.robot.Constants.Strategy;
 
 public class DifferentialDriveSubsystem extends SubsystemBase {
   public VictorSPX m_motorL1;
@@ -40,13 +36,16 @@ public class DifferentialDriveSubsystem extends SubsystemBase {
   /* Saved for simulation */
   private double leftVoltage;
   private double rightVoltage;
+  private BooleanSubscriber isRedAllianceSubscriber;
 
   /** Creates a new DifferrentialDriveSubsystem. */
-  public DifferentialDriveSubsystem() {
+  public DifferentialDriveSubsystem(BooleanSubscriber isRedAllianceSubscriber) {
     m_motorL1 = new VictorSPX(Ports.k_DrivetrainMotorControllerPortL1);
     m_motorL2 = new VictorSPX(Ports.k_DrivetrainMotorControllerPortL2);
     m_motorR1 = new VictorSPX(Ports.k_DrivetrainMotorControllerPortR1);
     m_motorR2 = new VictorSPX(Ports.k_DrivetrainMotorControllerPortR2);
+
+    this.isRedAllianceSubscriber = isRedAllianceSubscriber;
     
     this.isReversed = RobotSettings.k_DrivetrainStartInverted;
 
@@ -136,12 +135,12 @@ public class DifferentialDriveSubsystem extends SubsystemBase {
 
   // Create the simulation model of our drivetrain.
   private DifferentialDrivetrainSim m_driveSim = new DifferentialDrivetrainSim( // TODO: Update details
-    DCMotor.getNEO(2),       // 2 NEO motors on each side of the drivetrain.
-    7.29,                    // 7.29:1 gearing reduction.
-    7.5,                     // MOI of 7.5 kg m^2 (from CAD model).
-    60.0,                    // The mass of the robot is 60 kg.
-    Units.inchesToMeters(3), // The robot uses 3" radius wheels.
-    0.7112,                  // The track width is 0.7112 meters.
+    DCMotor.getCIM(Measurements.Drivetrain.kMotorsPerCIMGearbox),       // 2 CIM motors on each side of the drivetrain.
+    Measurements.Drivetrain.kGearRatio,                    // 7.29:1 gearing reduction.
+    Measurements.kMomentOfInertia,                     // MOI of 7.5 kg m^2 (from CAD model).
+    Measurements.kMass,                    // The mass of the robot is 60 kg.
+    Measurements.Drivetrain.kWheelRadius, // The robot uses 3" radius wheels.
+    Measurements.Drivetrain.kTrackWidth,                  // The track width is 0.7112 meters.
 
     // The standard deviations for measurement noise:
     // x and y:          0.001 m
@@ -156,7 +155,9 @@ public class DifferentialDriveSubsystem extends SubsystemBase {
   private DifferentialDriveOdometry m_odometry = new DifferentialDriveOdometry(
     m_gyro.getRotation2d(),
     m_leftEncoder.getDistance(), m_rightEncoder.getDistance(),
-    new Pose2d(5.0, 13.5, new Rotation2d()));
+    new Pose2d(0.0, 0.0, new Rotation2d()));
+
+  
 
   private Pose2d m_pose;
   private Field2d m_field = new Field2d();
@@ -179,16 +180,31 @@ public class DifferentialDriveSubsystem extends SubsystemBase {
     // m_field.getObject("traj").setTrajectory(m_trajectory);
 
     // TODO: Update
-    m_leftEncoder.setDistancePerPulse(100);
-    m_rightEncoder.setDistancePerPulse(100);
+    m_leftEncoder.setDistancePerPulse(2 * Math.PI * Measurements.Drivetrain.kWheelRadius / Measurements.Drivetrain.kEncoderResolution);
+    m_rightEncoder.setDistancePerPulse(2 * Math.PI * Measurements.Drivetrain.kWheelRadius / Measurements.Drivetrain.kEncoderResolution);
 
     SmartDashboard.putData("Field", m_field);
   }
 
+  public void startingPosition() {
+    // Set odometry pose to starting pose - TODO move simulation-specific code to separate subsystem, and make odometry public
+    if(isRedAllianceSubscriber.get()) { // Red alliance
+      m_odometry.resetPosition(m_gyro.getRotation2d(),
+      m_leftEncoder.getDistance(),
+      m_rightEncoder.getDistance(), 
+      Strategy.kStartRed);
+    } else { // Blue alliance
+      m_odometry.resetPosition(m_gyro.getRotation2d(),
+      m_leftEncoder.getDistance(),
+      m_rightEncoder.getDistance(), 
+      Strategy.kStartBlue);
+    }
+  }
+
   public void simulationPeriodic() {
 
-    SmartDashboard.putNumber("LeftV", this.leftVoltage * RobotController.getInputVoltage());
-    SmartDashboard.putNumber("RightV", this.rightVoltage * RobotController.getInputVoltage());
+    SmartDashboard.putNumber("LeftVIn (m/s)", this.leftVoltage * RobotController.getInputVoltage());
+    SmartDashboard.putNumber("RightVIn (m/s)", this.rightVoltage * RobotController.getInputVoltage());
 
     // Set the inputs to the system. Note that we need to convert
     // the [-1, 1] PWM signal to voltage by multiplying it by the
@@ -208,18 +224,19 @@ public class DifferentialDriveSubsystem extends SubsystemBase {
     m_rightEncoderSim.setRate(m_driveSim.getRightVelocityMetersPerSecond());
 
     m_odometry.update(m_gyro.getRotation2d(),
-    m_driveSim.getLeftPositionMeters(),
-    m_driveSim.getRightPositionMeters());
+    m_leftEncoder.getDistance(),
+    m_rightEncoder.getDistance());
     m_field.setRobotPose(m_odometry.getPoseMeters());
 
-
-    // TODO: Fix so encoders get proper values
-    SmartDashboard.putNumber("LeftPos (m)", m_driveSim.getLeftPositionMeters());
-    SmartDashboard.putNumber("LeftVel (m/s)", m_driveSim.getLeftVelocityMetersPerSecond());
-    SmartDashboard.putNumber("RightPos (m)", m_driveSim.getRightPositionMeters());
-    SmartDashboard.putNumber("RightVel (m/s", m_driveSim.getRightVelocityMetersPerSecond());
+    SmartDashboard.putNumber("LeftPos (m)", m_leftEncoder.getDistance());
+    SmartDashboard.putNumber("LeftVOut (m/s)", m_leftEncoder.getRate());
+    SmartDashboard.putNumber("RightPos (m)", m_rightEncoder.getDistance());
+    SmartDashboard.putNumber("RightVOut (m/s)", m_rightEncoder.getRate());
 
     m_gyroSim.setAngle(-m_driveSim.getHeading().getDegrees());
+
+    m_field.setRobotPose(m_odometry.getPoseMeters());
+    SmartDashboard.putString("Pose", m_odometry.getPoseMeters().toString());
   }
 
   @Override
@@ -232,12 +249,11 @@ public class DifferentialDriveSubsystem extends SubsystemBase {
     m_leftEncoder.getDistance(),
     m_rightEncoder.getDistance());
 
-    // This will get the simulated sensor readings that we set 
-    // while in simulation, but will use
-    // real values on the robot itself.
-    m_odometry.update(m_gyro.getRotation2d(),
-    m_leftEncoder.getDistance(),
-    m_rightEncoder.getDistance());
-    m_field.setRobotPose(m_odometry.getPoseMeters());
+    // // This will get the simulated sensor readings that we set 
+    // // while in simulation, but will use
+    // // real values on the robot itself.
+    // m_odometry.update(m_gyro.getRotation2d(),
+    // m_leftEncoder.getDistance(),
+    // m_rightEncoder.getDistance());
   }
 }
