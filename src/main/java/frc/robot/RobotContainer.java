@@ -4,9 +4,6 @@
 
 package frc.robot;
 
-import edu.wpi.first.networktables.BooleanSubscriber;
-import edu.wpi.first.networktables.NetworkTable;
-import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
@@ -26,14 +23,8 @@ import frc.robot.subsystems.DifferentialDriveSubsystem;
  * subsystems, commands, and trigger mappings) should be declared here.
  */
 public class RobotContainer {
-  // NetworkTables subscribers (read)/publishers (write)
-  NetworkTableInstance inst = NetworkTableInstance.getDefault();
-  NetworkTable fmsInfo = inst.getTable("FMSInfo");
-  BooleanSubscriber isRedAllianceSubscriber = fmsInfo.getBooleanTopic("IsRedAlliance").subscribe(false);
-
-
   // The robot's subsystems and commands are defined here...
-  protected final DifferentialDriveSubsystem m_drivetrain = new DifferentialDriveSubsystem(isRedAllianceSubscriber);
+  protected final DifferentialDriveSubsystem m_drivetrain = new DifferentialDriveSubsystem();
 
   // Replace with CommandPS4Controller or CommandXboxController if needed
   private final CommandJoystick m_driverController = new CommandJoystick(Ports.kControllerPort);
@@ -42,6 +33,23 @@ public class RobotContainer {
   public RobotContainer() {
     // Configure the trigger bindings
     configureBindings();
+
+    // // Create the trajectory to follow in autonomous. It is best to initialize
+    // // trajectories here to avoid wasting time in autonomous.
+    // Trajectory m_trajectory =
+    //     TrajectoryGenerator.generateTrajectory(
+    //         new Pose2d(0, 0, Rotation2d.fromDegrees(0)),
+    //         List.of(new Translation2d(1, 1), new Translation2d(2, -1)),
+    //         m_pose,
+    //         new TrajectoryConfig(Units.feetToMeters(3.0), Units.feetToMeters(3.0)));
+
+    // // Create and push Field2d to SmartDashboard.
+    // Field2d m_field = new Field2d();
+    // SmartDashboard.putData(m_field);
+
+    // // Push the trajectory to Field2d.
+    // m_field.getObject("traj").setTrajectory(m_trajectory);
+
   }
 
   /**
@@ -72,7 +80,7 @@ public class RobotContainer {
       double turn = m_driverController.getX();
       SmartDashboard.putNumber("Speed", speed);
       SmartDashboard.putNumber("Turn", turn);
-      m_drivetrain.arcadeDrive(speed, turn);
+      m_drivetrain.drive(speed, turn);
       
     }, m_drivetrain));
 

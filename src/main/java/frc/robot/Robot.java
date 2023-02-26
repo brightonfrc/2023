@@ -4,6 +4,10 @@
 
 package frc.robot;
 
+import edu.wpi.first.networktables.BooleanSubscriber;
+import edu.wpi.first.networktables.IntegerSubscriber;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -19,6 +23,11 @@ public class Robot extends TimedRobot {
 
   private RobotContainer m_robotContainer;
 
+  // NetworkTables subscribers (read)/publishers (write)
+  NetworkTableInstance inst = NetworkTableInstance.getDefault();
+  
+  ConfigurationPreset configurationPreset;
+
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
@@ -28,6 +37,18 @@ public class Robot extends TimedRobot {
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
+
+    NetworkTable fmsInfo = inst.getTable("FMSInfo");
+    BooleanSubscriber configurationPresetIsRedSubscriber = fmsInfo.getBooleanTopic("IsRedAlliance").subscribe(false);
+    IntegerSubscriber configurationPresetNumberSubscriber = fmsInfo.getIntegerTopic("StationNumber").subscribe(1);
+    
+    boolean configurationPresetIsRed = configurationPresetIsRedSubscriber.get();
+    long configurationPresetNumber = configurationPresetNumberSubscriber.get();
+
+    configurationPreset = new ConfigurationPreset(configurationPresetIsRed, configurationPresetNumber);
+
+    // Move robot odometry to correct position specified on driver station
+    m_robotContainer.m_drivetrain.setStartingPosition(configurationPreset);
   }
 
   /**
@@ -56,8 +77,6 @@ public class Robot extends TimedRobot {
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
   public void autonomousInit() {
-    // Move robot odometry to correct position specified on driver station
-    m_robotContainer.m_drivetrain.startingPosition();
 
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
@@ -73,10 +92,6 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() {
-    // Move robot odometry to correct position specified on driver station
-    m_robotContainer.m_drivetrain.startingPosition();
-
-
     // This makes sure that the autonomous stops running when
     // teleop starts running. If you want the autonomous to
     // continue until interrupted by another command, remove
@@ -106,5 +121,7 @@ public class Robot extends TimedRobot {
 
   /** This function is called periodically whilst in simulation. */
   @Override
-  public void simulationPeriodic() {}
+  public void simulationPeriodic() {
+    Simulation.updateSimulation();
+  }
 }

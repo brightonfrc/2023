@@ -33,7 +33,6 @@ public final class Constants {
   }
 
   public static class Measurements {
-    // TODO: Update with robot - All in SI units unless otherwise stated
     public static class Drivetrain {
       public static final double kWheelRadius = 0.075; // m
       public static final int kEncoderResolution = 2048;
@@ -44,7 +43,7 @@ public final class Constants {
     }
 
     public static final double kMomentOfInertia = 5.0; // kg m^2
-    public static final double kMass = 5.0; // kg - TODO
+    public static final double kMass = 5.0;
   }
 
   public static class Strategy {
