@@ -4,13 +4,17 @@
 
 package frc.robot;
 
+import org.photonvision.PhotonCamera;
+
 import edu.wpi.first.networktables.BooleanSubscriber;
 import edu.wpi.first.networktables.IntegerSubscriber;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.cv.AprilTagNavigator;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -22,6 +26,8 @@ public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
 
   private RobotContainer m_robotContainer;
+
+  private AprilTagNavigator m_aprilTagNavigator;
 
   // NetworkTables subscribers (read)/publishers (write)
   NetworkTableInstance inst = NetworkTableInstance.getDefault();
@@ -84,11 +90,16 @@ public class Robot extends TimedRobot {
     if (m_autonomousCommand != null) {
       m_autonomousCommand.schedule();
     }
+
+    m_aprilTagNavigator = new AprilTagNavigator(new PhotonCamera(inst, "camera"));
   }
 
   /** This function is called periodically during autonomous. */
   @Override
-  public void autonomousPeriodic() {}
+  public void autonomousPeriodic() {
+    SmartDashboard.putNumber("AprilTag ID", m_aprilTagNavigator.getAprilTagID());
+    SmartDashboard.putString("AprilTag Transform", m_aprilTagNavigator.getAprilTagCameraToTarget().toString());
+  }
 
   @Override
   public void teleopInit() {
