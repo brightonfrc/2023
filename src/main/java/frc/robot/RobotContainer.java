@@ -4,7 +4,14 @@
 
 package frc.robot;
 
+import edu.wpi.first.math.VecBuilder;
+import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.math.util.Units;
+import edu.wpi.first.networktables.BooleanSubscriber;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.simulation.DifferentialDrivetrainSim;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -23,8 +30,14 @@ import frc.robot.subsystems.DifferentialDriveSubsystem;
  * subsystems, commands, and trigger mappings) should be declared here.
  */
 public class RobotContainer {
+  // NetworkTables subscribers (read)/publishers (write)
+  NetworkTableInstance inst = NetworkTableInstance.getDefault();
+  NetworkTable fmsInfo = inst.getTable("FMSInfo");
+  BooleanSubscriber isRedAllianceSubscriber = fmsInfo.getBooleanTopic("IsRedAlliance").subscribe(false);
+
+
   // The robot's subsystems and commands are defined here...
-  private final DifferentialDriveSubsystem m_drivetrain = new DifferentialDriveSubsystem();
+  protected final DifferentialDriveSubsystem m_drivetrain = new DifferentialDriveSubsystem(isRedAllianceSubscriber);
 
   // Replace with CommandPS4Controller or CommandXboxController if needed
   private final CommandJoystick m_driverController = new CommandJoystick(Ports.kControllerPort);
