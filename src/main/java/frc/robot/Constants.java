@@ -26,10 +26,10 @@ public final class Constants {
     public static final int kControllerPort = 0;
 
     // Motor controllers
-    public static final int k_DrivetrainMotorControllerPortL1 = 2;
-    public static final int k_DrivetrainMotorControllerPortL2 = 3;
-    public static final int k_DrivetrainMotorControllerPortR1 = 8;
-    public static final int k_DrivetrainMotorControllerPortR2 = 9;
+    public static final int k_DrivetrainMotorControllerPortL1 = 20;
+    public static final int k_DrivetrainMotorControllerPortL2 = 2;
+    public static final int k_DrivetrainMotorControllerPortR1 = 21;
+    public static final int k_DrivetrainMotorControllerPortR2 = 10;
   }
 
   public static class Measurements {

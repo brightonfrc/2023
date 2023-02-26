@@ -3,6 +3,7 @@ package frc.robot.subsystems;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.InvertType;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 
 import edu.wpi.first.math.VecBuilder;
@@ -26,9 +27,9 @@ import frc.robot.Constants.RobotSettings;
 import frc.robot.Constants.Strategy;
 
 public class DifferentialDriveSubsystem extends SubsystemBase {
-  public VictorSPX m_motorL1;
+  public TalonSRX m_motorL1;
   public VictorSPX m_motorL2;
-  public VictorSPX m_motorR1;
+  public TalonSRX m_motorR1;
   public VictorSPX m_motorR2;
   
   private boolean isReversed;
@@ -40,17 +41,18 @@ public class DifferentialDriveSubsystem extends SubsystemBase {
 
   /** Creates a new DifferrentialDriveSubsystem. */
   public DifferentialDriveSubsystem(BooleanSubscriber isRedAllianceSubscriber) {
-    m_motorL1 = new VictorSPX(Ports.k_DrivetrainMotorControllerPortL1);
+  public DifferentialDriveSubsystem() {
+    m_motorL1 = new TalonSRX(Ports.k_DrivetrainMotorControllerPortL1);
     m_motorL2 = new VictorSPX(Ports.k_DrivetrainMotorControllerPortL2);
-    m_motorR1 = new VictorSPX(Ports.k_DrivetrainMotorControllerPortR1);
+    m_motorR1 = new TalonSRX(Ports.k_DrivetrainMotorControllerPortR1);
     m_motorR2 = new VictorSPX(Ports.k_DrivetrainMotorControllerPortR2);
 
     this.isRedAllianceSubscriber = isRedAllianceSubscriber;
     
     this.isReversed = RobotSettings.k_DrivetrainStartInverted;
 
-    m_motorL1.setInverted(false);
-    m_motorR1.setInverted(true);
+    m_motorL1.setInverted(true);
+    m_motorR1.setInverted(false);
     
     
     m_motorL2.setInverted(InvertType.FollowMaster);
@@ -67,14 +69,6 @@ public class DifferentialDriveSubsystem extends SubsystemBase {
     m_motorR2.setNeutralMode(NeutralMode.Brake);
 
     this.initOdometry();
-  }
-  
-  /**
-   * Changes whether the drivetrain is reversed or not
-   * @param isReversed
-   */
-  public void setIsReversed(boolean isReversed){
-    this.isReversed = isReversed;
   }
 
   /**
@@ -93,6 +87,9 @@ public class DifferentialDriveSubsystem extends SubsystemBase {
 
     this.leftVoltage = leftPower;
     this.rightVoltage = rightPower;
+    
+    SmartDashboard.putNumber("Left", leftPower);
+    SmartDashboard.putNumber("Right", rightPower);
   }
   
   /**
@@ -100,8 +97,7 @@ public class DifferentialDriveSubsystem extends SubsystemBase {
    * @param speed forward speed, -1 to 1 (where negative values move backwards)
    * @param turn how much to turn, -1 to 1 (negative values mean left)
    */
-  public void arcadeDrive(double speed, double turn){
-    
+  public void arcadeDrive(double speed, double turn){  
     if(Math.abs(turn) < 0.1) {
       turn = 0;
     }
@@ -109,8 +105,9 @@ public class DifferentialDriveSubsystem extends SubsystemBase {
     double left = speed + turn;
     double right = speed - turn;
 
-    SmartDashboard.putNumber("Left", left);
-    SmartDashboard.putNumber("Right", right);
+    // Telemetry for debugging
+    SmartDashboard.putNumber("Drivetrain.left_power", left);
+    SmartDashboard.putNumber("Drivetrain.right_power", right);
     setPower(left, right);
   }
 
