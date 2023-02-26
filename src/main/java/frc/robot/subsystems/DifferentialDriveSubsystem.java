@@ -70,9 +70,13 @@ public class DifferentialDriveSubsystem extends SubsystemBase {
    * @param turn how much to turn, -1 to 1 (negative values mean left)
    */
   public void arcadeDrive(double speed, double turn){
-    double left = speed - turn;
-    double right = speed + turn;
 
+    double left = speed + turn;
+    double right = speed - turn;
+
+    // Telemetry for debugging
+    SmartDashboard.putNumber("Drivetrain.left_power", left);
+    SmartDashboard.putNumber("Drivetrain.right_power", right);
     setPower(left, right);
   }
 }
