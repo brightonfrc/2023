@@ -32,6 +32,18 @@ public final class Constants {
     public static final int k_DrivetrainMotorControllerPortR2 = 10;
   }
 
+  public static class MotionParameters {
+    public static class Autobalance {
+      public static final double k_p = 1;
+      public static final double k_i = 1;
+      public static final double k_d = 1;
+      
+      public static final double k_maxVelocity = 1;
+      public static final double k_maxAcceleration = 1;
+    }
+  }
+    
+
   public static class Measurements {
     public static class Drivetrain {
       public static final double kWheelRadius = 0.075; // m

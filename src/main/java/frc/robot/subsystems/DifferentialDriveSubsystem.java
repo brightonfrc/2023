@@ -7,12 +7,11 @@ import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.math.system.plant.DCMotor;
-import edu.wpi.first.wpilibj.AnalogGyro;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
-import edu.wpi.first.wpilibj.simulation.AnalogGyroSim;
+import edu.wpi.first.wpilibj.simulation.ADIS16470_IMUSim;
 import edu.wpi.first.wpilibj.simulation.DifferentialDrivetrainSim;
 import edu.wpi.first.wpilibj.simulation.EncoderSim;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -39,13 +38,12 @@ public class DifferentialDriveSubsystem extends SubsystemBase {
   private EncoderSim m_leftEncoderSim = new EncoderSim(m_leftEncoder);
   private EncoderSim m_rightEncoderSim = new EncoderSim(m_rightEncoder);
 
-  // Create our gyro object like we would on a real robot.
-  private AnalogGyro m_gyro = new AnalogGyro(1);
+  private Gyro m_gyro;
 
   // Create the simulated gyro object, used for setting the gyro
   // angle. Like EncoderSim, this does not need to be commented out
   // when deploying code to the roboRIO.
-  private AnalogGyroSim m_gyroSim = new AnalogGyroSim(m_gyro);
+  private ADIS16470_IMUSim m_gyroSim;
 
   // Create the simulation model of our drivetrain.
   private DifferentialDrivetrainSim m_driveSim = new DifferentialDrivetrainSim(
@@ -67,7 +65,7 @@ public class DifferentialDriveSubsystem extends SubsystemBase {
   private DifferentialDriveOdometry m_odometry = null;
 
   /** Creates a new DifferrentialDriveSubsystem. */
-  public DifferentialDriveSubsystem() {
+  public DifferentialDriveSubsystem(Gyro gyro) {
     var m_motorL1 = new WPI_TalonSRX(Ports.k_DrivetrainMotorControllerPortL1);
     var m_motorL2 = new WPI_VictorSPX(Ports.k_DrivetrainMotorControllerPortL2);
     var m_motorR1 = new WPI_TalonSRX(Ports.k_DrivetrainMotorControllerPortR1);
@@ -79,6 +77,9 @@ public class DifferentialDriveSubsystem extends SubsystemBase {
 
     m_left.setInverted(true);
     m_right.setInverted(false);
+    
+    m_gyro = gyro;
+    m_gyroSim = new ADIS16470_IMUSim(gyro.gyro);
 
     this.initOdometry();
   }
@@ -138,7 +139,7 @@ public class DifferentialDriveSubsystem extends SubsystemBase {
     m_odometry.update(m_gyro.getRotation2d(),
     m_leftEncoder.getDistance(),
     m_rightEncoder.getDistance());
-    m_gyroSim.setAngle(-m_driveSim.getHeading().getDegrees());
+    m_gyroSim.setGyroAngleZ(-m_driveSim.getHeading().getDegrees());
 
     SmartDashboard.putNumber("Simulation.Drivetrain.LeftPos (m)", m_leftEncoder.getDistance());
     SmartDashboard.putNumber("Simulation.Drivetrain.LeftSpeed (m/s)", m_leftEncoder.getRate());
@@ -155,6 +156,6 @@ public class DifferentialDriveSubsystem extends SubsystemBase {
     m_leftEncoder.getDistance(),
     m_rightEncoder.getDistance());
 
-    SmartDashboard.putString("Drivetrain.Pose", m_odometry.getPoseMeters().toString());
+    SmartDashboard.putString("Drivetrain.Pose", m_pose.toString());
   }
 }

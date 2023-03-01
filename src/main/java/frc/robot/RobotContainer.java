@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import edu.wpi.first.wpilibj.ADIS16470_IMU;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
@@ -13,8 +14,10 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.Ports;
+import frc.robot.commands.AutoBalance;
 import frc.robot.commands.Autos;
 import frc.robot.subsystems.DifferentialDriveSubsystem;
+import frc.robot.subsystems.Gyro;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -23,8 +26,10 @@ import frc.robot.subsystems.DifferentialDriveSubsystem;
  * subsystems, commands, and trigger mappings) should be declared here.
  */
 public class RobotContainer {
+  protected final Gyro m_gyro = new Gyro(new ADIS16470_IMU());
+
   // The robot's subsystems and commands are defined here...
-  protected final DifferentialDriveSubsystem m_drivetrain = new DifferentialDriveSubsystem();
+  protected final DifferentialDriveSubsystem m_drivetrain = new DifferentialDriveSubsystem(m_gyro);
 
   // Replace with CommandPS4Controller or CommandXboxController if needed
   private final CommandJoystick m_driverController = new CommandJoystick(Ports.kControllerPort);
@@ -64,15 +69,9 @@ public class RobotContainer {
   private void configureBindings() {
     Joystick j = m_driverController.getHID();
     Trigger action1Trigger = new JoystickButton(j, 8);
-    Trigger action2Trigger = new JoystickButton(j, 7);
     
-    action1Trigger.onTrue(Commands.runOnce(() -> {
-      System.out.println("Action 1");
-    }));
+    action1Trigger.onTrue(new AutoBalance(m_gyro, m_drivetrain));
     
-    action2Trigger.onTrue(Commands.runOnce(() -> {
-      System.out.println("Action 2");
-    }));
 
     // If the drivetrain is not running other commands, run arcade drive
     m_drivetrain.setDefaultCommand(Commands.run(() -> {
