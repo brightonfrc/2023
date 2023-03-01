@@ -4,6 +4,10 @@
 
 package frc.robot;
 
+import java.io.IOException;
+import java.util.Optional;
+
+import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
@@ -93,7 +97,12 @@ public class Robot extends TimedRobot {
       m_autonomousCommand.schedule();
     }
 
-    m_aprilTagNavigator = new AprilTagNavigator(new PhotonCamera(inst, "camera"));
+    try {
+      m_aprilTagNavigator = new AprilTagNavigator(new PhotonCamera(inst, "camera"));
+    } catch (IOException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
   }
 
   /** This function is called periodically during autonomous. */
@@ -104,6 +113,12 @@ public class Robot extends TimedRobot {
       SmartDashboard.putNumber("AprilTag ID", aprilTag.getFiducialId());
       SmartDashboard.putNumber("AprilTag Yaw (+> -<)", aprilTag.getYaw());
       SmartDashboard.putNumber("AprilTag Pitch (+^ -v)", aprilTag.getPitch());
+
+      Optional<EstimatedRobotPose> pose = m_aprilTagNavigator.getRobotPose();
+      if(!pose.isEmpty()) {
+        SmartDashboard.putString("Last Robot Pose", pose.get().toString());
+      }
+      SmartDashboard.putString("Robot Pose", pose.toString());
     } else {
       SmartDashboard.putNumber("AprilTag ID", 0);
       SmartDashboard.putNumber("AprilTag Yaw (+> -<)", 0);
