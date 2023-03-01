@@ -4,13 +4,23 @@
 
 package frc.robot;
 
+import java.io.IOException;
+import java.util.Optional;
+
+import org.photonvision.EstimatedRobotPose;
+import org.photonvision.PhotonCamera;
+import org.photonvision.targeting.PhotonTrackedTarget;
+
+import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.networktables.BooleanSubscriber;
 import edu.wpi.first.networktables.IntegerSubscriber;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.cv.AprilTagNavigator;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -22,6 +32,8 @@ public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
 
   private RobotContainer m_robotContainer;
+
+  private AprilTagNavigator m_aprilTagNavigator;
 
   // NetworkTables subscribers (read)/publishers (write)
   NetworkTableInstance inst = NetworkTableInstance.getDefault();
@@ -84,11 +96,35 @@ public class Robot extends TimedRobot {
     if (m_autonomousCommand != null) {
       m_autonomousCommand.schedule();
     }
+
+    try {
+      m_aprilTagNavigator = new AprilTagNavigator(new PhotonCamera(inst, "camera"));
+    } catch (IOException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
   }
 
   /** This function is called periodically during autonomous. */
   @Override
-  public void autonomousPeriodic() {}
+  public void autonomousPeriodic() {
+    PhotonTrackedTarget aprilTag =  m_aprilTagNavigator.getAprilTag();
+    if(aprilTag != null) {
+      SmartDashboard.putNumber("AprilTag ID", aprilTag.getFiducialId());
+      SmartDashboard.putNumber("AprilTag Yaw (+> -<)", aprilTag.getYaw());
+      SmartDashboard.putNumber("AprilTag Pitch (+^ -v)", aprilTag.getPitch());
+
+      Optional<EstimatedRobotPose> pose = m_aprilTagNavigator.getRobotPose();
+      if(!pose.isEmpty()) {
+        SmartDashboard.putString("Last Robot Pose", pose.get().toString());
+      }
+      SmartDashboard.putString("Robot Pose", pose.toString());
+    } else {
+      SmartDashboard.putNumber("AprilTag ID", 0);
+      SmartDashboard.putNumber("AprilTag Yaw (+> -<)", 0);
+      SmartDashboard.putNumber("AprilTag Pitch (+^ -v)", 0);
+    }
+  }
 
   @Override
   public void teleopInit() {
