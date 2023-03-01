@@ -14,7 +14,7 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.Ports;
 import frc.robot.commands.Autos;
-import frc.robot.subsystems.DifferentialDriveSubsystem;
+import frc.robot.subsystems.DifferentialDriveWrapper;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -24,7 +24,7 @@ import frc.robot.subsystems.DifferentialDriveSubsystem;
  */
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
-  protected final DifferentialDriveSubsystem m_drivetrain = new DifferentialDriveSubsystem();
+  protected final DifferentialDriveWrapper m_drivetrain = new DifferentialDriveWrapper();
 
   // Replace with CommandPS4Controller or CommandXboxController if needed
   private final CommandJoystick m_driverController = new CommandJoystick(Ports.kControllerPort);
@@ -82,9 +82,7 @@ public class RobotContainer {
       SmartDashboard.putNumber("Speed", speed);
       SmartDashboard.putNumber("Turn", turn);
       m_drivetrain.drive(speed, turn);
-      
     }, m_drivetrain));
-
   }
 
   /**
@@ -94,6 +92,6 @@ public class RobotContainer {
    */
   public CommandBase getAutonomousCommand() {
     // An example command will be run in autonomous
-    return Autos.exampleAuto();
+    return Autos.pathWeaverAuto(m_drivetrain);
   }
 }
