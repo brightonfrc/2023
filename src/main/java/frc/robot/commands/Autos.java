@@ -5,12 +5,12 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.subsystems.DifferentialDriveWrapper;
 
 public final class Autos {
-  /** Example static factory for an autonomous command. */
-  public static CommandBase exampleAuto() {
-    // return Commands.sequence();
-    return null;
+  /** Runs Path Planner Path Following */
+  public static CommandBase pathPlannerAuto(DifferentialDriveWrapper drive) {
+    return new AutoPathPlanner(drive);
   }
   
   private Autos() {
