@@ -8,9 +8,9 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.DifferentialDriveWrapper;
 
 public final class Autos {
-  /** Runs pathweaver */
-  public static CommandBase pathWeaverAuto(DifferentialDriveWrapper drive) {
-    return new AutoPathWeaver(drive);
+  /** Runs Path Planner Path Following */
+  public static CommandBase pathPlannerAuto(DifferentialDriveWrapper drive) {
+    return new AutoPathPlanner(drive);
   }
   
   private Autos() {

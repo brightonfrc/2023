@@ -7,10 +7,10 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.DifferentialDriveWrapper;
 
-public class AutoPathWeaver extends CommandBase {
+public class AutoPathPlanner extends CommandBase {
 
-  /** Creates a new AutoPathWeaver. */
-  public AutoPathWeaver(DifferentialDriveWrapper drive) {
+  /** Creates a new AutoPathPlanner. */
+  public AutoPathPlanner(DifferentialDriveWrapper drive) {
     addRequirements(drive);
   }
 

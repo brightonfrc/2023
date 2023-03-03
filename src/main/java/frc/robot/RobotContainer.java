@@ -92,6 +92,6 @@ public class RobotContainer {
    */
   public CommandBase getAutonomousCommand() {
     // An example command will be run in autonomous
-    return Autos.pathWeaverAuto(m_drivetrain);
+    return Autos.pathPlannerAuto(m_drivetrain);
   }
 }
