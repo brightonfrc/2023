@@ -58,9 +58,6 @@ public class Robot extends TimedRobot {
     long configurationPresetNumber = configurationPresetNumberSubscriber.get();
 
     configurationPreset = new ConfigurationPreset(configurationPresetIsRed, configurationPresetNumber);
-
-    // Move robot odometry to correct position specified on driver station
-    m_robotContainer.m_drivetrain.setStartingPosition(configurationPreset);
   }
 
   /**
