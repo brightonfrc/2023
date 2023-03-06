@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.Ports;
 import frc.robot.commands.AutoBalance;
 import frc.robot.commands.Autos;
+import frc.robot.dataStorageClasses.AutonomousModeSelection;
 import frc.robot.subsystems.DifferentialDriveWrapper;
 import frc.robot.subsystems.Gyro;
 
@@ -89,8 +90,13 @@ public class RobotContainer {
    *
    * @return the command to run in autonomous
    */
-  public CommandBase getAutonomousCommand() {
-    // An example command will be run in autonomous
-    return Autos.pathPlannerAuto(m_drivetrain);
+  public CommandBase getAutonomousCommand(AutonomousModeSelection commandSelection) {
+    switch (commandSelection) {
+      case ScoreAndBalance:
+        return Autos.pathPlannerAuto(m_drivetrain);
+      // NOTE: BalanceOnly is the default case
+      default:
+        return Autos.pathPlannerAuto(m_drivetrain);
+    }
   }
 }

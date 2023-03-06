@@ -11,15 +11,15 @@ import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
-import edu.wpi.first.networktables.BooleanSubscriber;
-import edu.wpi.first.networktables.IntegerSubscriber;
-import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.cv.AprilTagNavigator;
+import frc.robot.dataStorageClasses.AutonomousModeSelection;
+import frc.robot.dataStorageClasses.TeamColourSelection;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -37,8 +37,8 @@ public class Robot extends TimedRobot {
   // NetworkTables subscribers (read)/publishers (write)
   NetworkTableInstance inst = NetworkTableInstance.getDefault();
   
-  ConfigurationPreset configurationPreset;
-
+  private SendableChooser<AutonomousModeSelection> m_autonomousChooser;
+  private SendableChooser<TeamColourSelection> m_teamColourChooser;
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
@@ -49,14 +49,16 @@ public class Robot extends TimedRobot {
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
 
-    NetworkTable fmsInfo = inst.getTable("FMSInfo");
-    BooleanSubscriber configurationPresetIsRedSubscriber = fmsInfo.getBooleanTopic("IsRedAlliance").subscribe(false);
-    IntegerSubscriber configurationPresetNumberSubscriber = fmsInfo.getIntegerTopic("StationNumber").subscribe(1);
+    // Allow the user to select the desired autonomous from smartdasboard
+    m_autonomousChooser = new SendableChooser<AutonomousModeSelection>();
+    m_autonomousChooser.addOption("Score and balance", AutonomousModeSelection.ScoreAndBalance);
+    m_autonomousChooser.setDefaultOption("Balance only", AutonomousModeSelection.BalanceOnly);
+    SmartDashboard.putData("Auto choices", m_autonomousChooser);
     
-    boolean configurationPresetIsRed = configurationPresetIsRedSubscriber.get();
-    long configurationPresetNumber = configurationPresetNumberSubscriber.get();
-
-    configurationPreset = new ConfigurationPreset(configurationPresetIsRed, configurationPresetNumber);
+    m_teamColourChooser = new SendableChooser<TeamColourSelection>();
+    m_teamColourChooser.addOption("Blue", TeamColourSelection.Blue);
+    m_teamColourChooser.setDefaultOption("Red", TeamColourSelection.Red);
+    SmartDashboard.putData("Team colour", m_teamColourChooser);
   }
 
   /**
@@ -86,7 +88,8 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
 
-    m_autonomousCommand = m_robotContainer.getAutonomousCommand();
+    // Find the auto command that was selected to be run
+    m_autonomousCommand = m_robotContainer.getAutonomousCommand(m_autonomousChooser.getSelected());
 
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {
