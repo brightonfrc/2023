@@ -19,10 +19,10 @@ public class DifferentialDriveWrapper extends SubsystemBase {
 
   /** Creates a new DifferrentialDriveSubsystem. */
   public DifferentialDriveWrapper() {
-    var m_motorL1 = new WPI_TalonSRX(Ports.k_DrivetrainMotorControllerPortL1);
-    var m_motorL2 = new WPI_VictorSPX(Ports.k_DrivetrainMotorControllerPortL2);
-    var m_motorR1 = new WPI_TalonSRX(Ports.k_DrivetrainMotorControllerPortR1);
-    var m_motorR2 = new WPI_VictorSPX(Ports.k_DrivetrainMotorControllerPortR2);
+    var m_motorL1 = new WPI_TalonSRX(Ports.k_drivetrainMotorControllerPortL1);
+    var m_motorL2 = new WPI_VictorSPX(Ports.k_drivetrainMotorControllerPortL2);
+    var m_motorR1 = new WPI_TalonSRX(Ports.k_drivetrainMotorControllerPortR1);
+    var m_motorR2 = new WPI_VictorSPX(Ports.k_drivetrainMotorControllerPortR2);
     
     m_left = new MotorControllerGroup(m_motorL1, m_motorL2);
     m_right = new MotorControllerGroup(m_motorR1, m_motorR2);
