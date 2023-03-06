@@ -16,9 +16,12 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.Ports;
 import frc.robot.commands.AutoBalance;
 import frc.robot.commands.Autos;
-import frc.robot.dataStorageClasses.AutonomousModeSelection;
+import frc.robot.dataStorageClasses.AutonomousSelection;
+import frc.robot.dataStorageClasses.TeleopSelection;
+import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.DifferentialDriveWrapper;
 import frc.robot.subsystems.Gyro;
+import frc.robot.subsystems.testSubsystems.SparkMaxTester;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -27,19 +30,18 @@ import frc.robot.subsystems.Gyro;
  * subsystems, commands, and trigger mappings) should be declared here.
  */
 public class RobotContainer {
-  protected final Gyro m_gyro = new Gyro(new ADIS16470_IMU());
+  private final Gyro m_gyro = new Gyro(new ADIS16470_IMU());
 
   // The robot's subsystems and commands are defined here...
-  protected final DifferentialDriveWrapper m_drivetrain = new DifferentialDriveWrapper();
+  private final DifferentialDriveWrapper m_drivetrain = new DifferentialDriveWrapper();
+  private final Arm m_arm = new Arm();
+  private SparkMaxTester m_sparkMaxTester;
 
   // Replace with CommandPS4Controller or CommandXboxController if needed
   private final CommandJoystick m_driverController = new CommandJoystick(Ports.kControllerPort);
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
-    // Configure the trigger bindings
-    configureBindings();
-
     // // Create the trajectory to follow in autonomous. It is best to initialize
     // // trajectories here to avoid wasting time in autonomous.
     // Trajectory m_trajectory =
@@ -68,13 +70,27 @@ public class RobotContainer {
    * PS4} controllers or {@link edu.wpi.first.wpilibj2.command.button.CommandJoystick Flight
    * joysticks}.
    */
-  private void configureBindings() {
+  public void setupTeleop(TeleopSelection teleop) {
+    // Note: We are also creating the required subsystems for non-game modes
+    switch (teleop) {
+      case TestSparkMax:
+      // No bindings, everything done from the smart dashboard
+      // Just start the sparkmax test command
+      m_sparkMaxTester = new SparkMaxTester();
+      
+      // NOTE: Game is the default
+      default:
+        gameTeleopBidings();
+    }
+  }
+  
+  /** Sets up bindings to be used in a game */
+  public void gameTeleopBidings(){
     Joystick j = m_driverController.getHID();
     Trigger action1Trigger = new JoystickButton(j, 8);
     
     action1Trigger.onTrue(new AutoBalance(m_gyro, m_drivetrain));
     
-
     // If the drivetrain is not running other commands, run arcade drive
     m_drivetrain.setDefaultCommand(Commands.run(() -> {
       double speed = -m_driverController.getY();
@@ -90,7 +106,7 @@ public class RobotContainer {
    *
    * @return the command to run in autonomous
    */
-  public CommandBase getAutonomousCommand(AutonomousModeSelection commandSelection) {
+  public CommandBase getAutonomousCommand(AutonomousSelection commandSelection) {
     switch (commandSelection) {
       case ScoreAndBalance:
         return Autos.pathPlannerAuto(m_drivetrain);

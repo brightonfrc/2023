@@ -18,7 +18,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.cv.AprilTagNavigator;
-import frc.robot.dataStorageClasses.AutonomousModeSelection;
+import frc.robot.dataStorageClasses.AutonomousSelection;
+import frc.robot.dataStorageClasses.TeleopSelection;
 import frc.robot.dataStorageClasses.TeamColourSelection;
 
 /**
@@ -37,8 +38,9 @@ public class Robot extends TimedRobot {
   // NetworkTables subscribers (read)/publishers (write)
   NetworkTableInstance inst = NetworkTableInstance.getDefault();
   
-  private SendableChooser<AutonomousModeSelection> m_autonomousChooser;
+  private SendableChooser<AutonomousSelection> m_autonomousChooser;
   private SendableChooser<TeamColourSelection> m_teamColourChooser;
+  private SendableChooser<TeleopSelection> m_teleopChooser;
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
@@ -50,15 +52,20 @@ public class Robot extends TimedRobot {
     m_robotContainer = new RobotContainer();
 
     // Allow the user to select the desired autonomous from smartdasboard
-    m_autonomousChooser = new SendableChooser<AutonomousModeSelection>();
-    m_autonomousChooser.addOption("Score and balance", AutonomousModeSelection.ScoreAndBalance);
-    m_autonomousChooser.setDefaultOption("Balance only", AutonomousModeSelection.BalanceOnly);
+    m_autonomousChooser = new SendableChooser<AutonomousSelection>();
+    m_autonomousChooser.setDefaultOption("Score and balance", AutonomousSelection.ScoreAndBalance);
+    m_autonomousChooser.addOption("Balance only", AutonomousSelection.BalanceOnly);
     SmartDashboard.putData("Auto choices", m_autonomousChooser);
     
     m_teamColourChooser = new SendableChooser<TeamColourSelection>();
-    m_teamColourChooser.addOption("Blue", TeamColourSelection.Blue);
     m_teamColourChooser.setDefaultOption("Red", TeamColourSelection.Red);
+    m_teamColourChooser.addOption("Blue", TeamColourSelection.Blue);
     SmartDashboard.putData("Team colour", m_teamColourChooser);
+
+    m_teleopChooser = new SendableChooser<TeleopSelection>();
+    m_teleopChooser.setDefaultOption("Game", TeleopSelection.Game);
+    m_teleopChooser.addOption("Test SparkMax", TeleopSelection.TestSparkMax);
+    SmartDashboard.putData("Choose teleop", m_teleopChooser);
   }
 
   /**
@@ -134,6 +141,9 @@ public class Robot extends TimedRobot {
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
+    
+    // Configure all the bindings and default commands
+    m_robotContainer.setupTeleop(m_teleopChooser.getSelected());
   }
 
   /** This function is called periodically during operator control. */

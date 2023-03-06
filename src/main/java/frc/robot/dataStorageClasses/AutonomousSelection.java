@@ -1,6 +1,6 @@
 package frc.robot.dataStorageClasses;
 
-public enum AutonomousModeSelection {
+public enum AutonomousSelection {
     BalanceOnly,
     ScoreAndBalance
 }
