@@ -30,7 +30,7 @@ import frc.robot.subsystems.testSubsystems.SparkMaxTester;
  * subsystems, commands, and trigger mappings) should be declared here.
  */
 public class RobotContainer {
-  private final Gyro m_gyro = new Gyro(new ADIS16470_IMU());
+  private final Gyro m_gyro = new Gyro();
 
   // The robot's subsystems and commands are defined here...
   private final DifferentialDriveWrapper m_drivetrain = new DifferentialDriveWrapper();

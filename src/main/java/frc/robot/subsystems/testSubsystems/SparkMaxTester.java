@@ -4,43 +4,46 @@
 
 package frc.robot.subsystems.testSubsystems;
 
+import java.util.HashMap;
+
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMax.ControlType;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.dataStorageClasses.SparkMaxTesterModes;
 
 public class SparkMaxTester extends SubsystemBase {
-  private int m_motorId = -1;
-  private CANSparkMax m_motor;
+  private SendableChooser<CANSparkMax> m_motors = new SendableChooser<>();
+  private SendableChooser<SparkMaxTesterModes> m_modes = new SendableChooser<>();
   /** Creates a new SparkMaxTester. */
   public SparkMaxTester() {
     // Show the default motor id
-    SmartDashboard.putNumber("Motor id", -1);
+    SmartDashboard.putNumber("Test.value", 0);
+    m_motors.setDefaultOption("30", new CANSparkMax(30, MotorType.kBrushless));
+    m_motors.addOption("31", new CANSparkMax(31, MotorType.kBrushless));
+    
+    m_modes.setDefaultOption("Percent", SparkMaxTesterModes.Percent);
+    m_modes.addOption("SmartMotion", SparkMaxTesterModes.SmartMotion);
+
+    SmartDashboard.putNumber("Test.motor id", m_motors.getSelected().getDeviceId());
   }
 
   @Override
   public void periodic() {
-    // Change the motor id if the motor has been changed
-    int new_id = (int) SmartDashboard.getNumber("Motor id", -1);
-    
-    // If switching to a new motor
-    if (new_id != m_motorId) {
-      m_motorId = new_id;
-      // Stop and destroy the old motor if possible
-      if (m_motor != null) {
-        m_motor.set(0);
-        m_motor.close();
-      }
-      // Create a new motor if possible, or make it null
-      if (m_motorId < 0) m_motor = null;
-      else m_motor = new CANSparkMax(m_motorId, MotorType.kBrushless);
+    var motor = m_motors.getSelected();
+    var pid = motor.getPIDController();
+    double value = SmartDashboard.getNumber("Test.value", 0);
+    switch (m_modes.getSelected()) {
+      case SmartMotion:
+        pid.setReference(value, ControlType.kSmartMotion);
+        return;
+        // NOTE: the default is percent
+      default:
+        motor.set(value);
+        return;
     }
-
-    // Do not do anything if a motor is not selected
-    if (m_motor == null) return;
-    
-    // Print useful data
-    SmartDashboard.putNumber("Speed", m_motor.get());
   }
 }
