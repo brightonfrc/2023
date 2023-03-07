@@ -17,9 +17,7 @@ public class Gyro {
      * Create a new wrapper for a ADIS16470_IMU gyro
      * @param gyro
      */
-  public Gyro(ADIS16470_IMU gyro) {
-        this.gyro = gyro;
-  }
+  public Gyro() {}
 
   public Rotation2d getAngle(IMUAxis axis) {
       // Set the axis

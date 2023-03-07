@@ -4,6 +4,9 @@
 
 package frc.robot;
 
+import com.pathplanner.lib.PathConstraints;
+import com.pathplanner.lib.PathPlanner;
+
 import edu.wpi.first.wpilibj.ADIS16470_IMU;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -26,10 +29,10 @@ import frc.robot.subsystems.Gyro;
  * subsystems, commands, and trigger mappings) should be declared here.
  */
 public class RobotContainer {
-  protected final Gyro m_gyro = new Gyro(new ADIS16470_IMU());
+  protected final Gyro m_gyro = new Gyro();
 
   // The robot's subsystems and commands are defined here...
-  protected final DifferentialDriveWrapper m_drivetrain = new DifferentialDriveWrapper();
+  protected final DifferentialDriveWrapper m_drivetrain = new DifferentialDriveWrapper(m_gyro);
 
   // Replace with CommandPS4Controller or CommandXboxController if needed
   private final CommandJoystick m_driverController = new CommandJoystick(Ports.k_controllerPort);
@@ -91,6 +94,6 @@ public class RobotContainer {
    */
   public CommandBase getAutonomousCommand() {
     // An example command will be run in autonomous
-    return Autos.pathPlannerAuto(m_drivetrain);
+    return m_drivetrain.followTrajectoryCommand(PathPlanner.loadPath("Test", new PathConstraints(4, 3)), true);
   }
 }

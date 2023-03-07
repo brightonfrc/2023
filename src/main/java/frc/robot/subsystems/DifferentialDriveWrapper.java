@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -38,12 +39,14 @@ public class DifferentialDriveWrapper extends SubsystemBase {
   public DifferentialDriveOdometry m_odometry;
   public Pose2d m_pose;
 
-  /** Creates a new DifferrentialDriveSubsystem. */
-  public DifferentialDriveWrapper() {
+  /** Creates a new DifferentialDriveSubsystem. */
+  public DifferentialDriveWrapper(Gyro m_gyro) {
     m_motorL1 = new WPI_TalonSRX(Ports.k_DrivetrainMotorControllerPortL1);
     var m_motorL2 = new WPI_VictorSPX(Ports.k_DrivetrainMotorControllerPortL2);
     m_motorR1 = new WPI_TalonSRX(Ports.k_DrivetrainMotorControllerPortR1);
     var m_motorR2 = new WPI_VictorSPX(Ports.k_DrivetrainMotorControllerPortR2);
+
+    this.m_gyro = m_gyro;
 
     m_left = new MotorControllerGroup(m_motorL1, m_motorL2);
     m_right = new MotorControllerGroup(m_motorR1, m_motorR2);
@@ -88,7 +91,7 @@ public class DifferentialDriveWrapper extends SubsystemBase {
 
   // Assuming this method is part of a drivetrain subsystem that provides the
   // necessary methods
-  public Command followTrajectoryCommand(PathPlannerTrajectory traj, boolean isFirstPath) {
+  public CommandBase followTrajectoryCommand(PathPlannerTrajectory traj, boolean isFirstPath) {
     return new SequentialCommandGroup(
         new InstantCommand(() -> {
           // Reset odometry for the first path you run during auto

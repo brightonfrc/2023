@@ -53,7 +53,7 @@ public final class Constants {
       public static final double k_v = 1;
       public static final double k_a = 1;
 
-      public static final double k_encoderDistancePerPulse = 1; // TODO
+      public static final double k_encoderDistancePerPulse = 0.01; // TODO
     }
   }
     
