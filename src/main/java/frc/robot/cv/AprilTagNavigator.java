@@ -28,7 +28,7 @@ public class AprilTagNavigator {
 
         // Initialise pose estimator
         AprilTagFieldLayout aprilTagFieldLayout = AprilTagFieldLayout.loadFromResource(AprilTagFields.k2023ChargedUp.m_resourceFile);
-        poseEstimator = new PhotonPoseEstimator(aprilTagFieldLayout, PoseStrategy.LOWEST_AMBIGUITY, camera, Constants.Measurements.kRobotToCam);
+        poseEstimator = new PhotonPoseEstimator(aprilTagFieldLayout, PoseStrategy.LOWEST_AMBIGUITY, camera, Constants.Measurements.k_robotToCam);
         // TODO: Add reference pose
     }
 

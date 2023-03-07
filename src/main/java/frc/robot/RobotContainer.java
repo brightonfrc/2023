@@ -32,7 +32,7 @@ public class RobotContainer {
   protected final DifferentialDriveWrapper m_drivetrain = new DifferentialDriveWrapper();
 
   // Replace with CommandPS4Controller or CommandXboxController if needed
-  private final CommandJoystick m_driverController = new CommandJoystick(Ports.kControllerPort);
+  private final CommandJoystick m_driverController = new CommandJoystick(Ports.k_controllerPort);
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
