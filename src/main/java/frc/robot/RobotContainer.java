@@ -26,7 +26,7 @@ import frc.robot.subsystems.Gyro;
  * subsystems, commands, and trigger mappings) should be declared here.
  */
 public class RobotContainer {
-  protected final Gyro m_gyro = new Gyro(new ADIS16470_IMU());
+  protected final Gyro m_gyro = new Gyro();
 
   // The robot's subsystems and commands are defined here...
   protected final DifferentialDriveWrapper m_drivetrain = new DifferentialDriveWrapper();
@@ -76,6 +76,9 @@ public class RobotContainer {
 
     // If the drivetrain is not running other commands, run arcade drive
     m_drivetrain.setDefaultCommand(Commands.run(() -> {
+      // double speed = SmartDashboard.getNumber("Speed", 0);
+      // double turn = SmartDashboard.getNumber("Turn", 0);
+
       double speed = -m_driverController.getY();
       double turn = m_driverController.getX();
       SmartDashboard.putNumber("Speed", speed);
