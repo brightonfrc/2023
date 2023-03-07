@@ -31,8 +31,8 @@ public class DifferentialDriveWrapper extends SubsystemBase {
   public DifferentialDrive m_drive;
   public Gyro m_gyro;
 
-  SensorCollection m_leftSensors;
-  SensorCollection m_rightSensors; 
+  // SensorCollection m_leftSensors;
+  // SensorCollection m_rightSensors; 
 
   public DifferentialDriveKinematics m_kinematics;
   public DifferentialDriveOdometry m_odometry;
@@ -125,7 +125,7 @@ public class DifferentialDriveWrapper extends SubsystemBase {
     return m_pose;
   }
   private DifferentialDriveWheelSpeeds getWheelSpeeds() {
-    // TODO: Get encoder values from SensorCollections; https://usermanual.wiki/Pdf/Talon20SRX20Victor20SPX2020Software20Reference20Manual.1959439090.pdf (p128) / https://www.chiefdelphi.com/t/talon-ctre-encoder-values/164553 / https://www.chiefdelphi.com/t/using-encoder-with-talon-srx/145483
+    // Gets encoder values from SensorCollections; https://usermanual.wiki/Pdf/Talon20SRX20Victor20SPX2020Software20Reference20Manual.1959439090.pdf (p128) / https://www.chiefdelphi.com/t/talon-ctre-encoder-values/164553 / https://www.chiefdelphi.com/t/using-encoder-with-talon-srx/145483
     double leftSpeed = m_motorL1.getSelectedSensorVelocity()*10*Constants.MotionParameters.Drivetrain.k_encoderDistancePerPulse;
     double rightSpeed = m_motorR1.getSelectedSensorVelocity()*10*Constants.MotionParameters.Drivetrain.k_encoderDistancePerPulse;
     return new DifferentialDriveWheelSpeeds(leftSpeed, rightSpeed);
