@@ -106,7 +106,6 @@ public class Robot extends TimedRobot {
     try {
       m_aprilTagNavigator = new AprilTagNavigator(new PhotonCamera(inst, "camera"));
     } catch (IOException e) {
-      // TODO Auto-generated catch block
       e.printStackTrace();
     }
   }
