@@ -133,12 +133,16 @@ public class DifferentialDriveWrapper extends SubsystemBase {
   }
 
   private void outputVolts(double vLeft, double vRight) { // TODO: Check params
+    SmartDashboard.putNumber("WheelVoltageLeft", vLeft); // TODO: Remove
+    SmartDashboard.putNumber("WheelVoltageRight", vRight); // TODO: Remove
     m_left.setVoltage(vLeft);
     m_right.setVoltage(vRight);
   }
 
   @Override
   public void periodic() {
+    SmartDashboard.putString("WheelSpeeds", this.getWheelSpeeds().toString()); // TODO: Remove
+
     // Get the rotation of the robot from the gyro.
     Rotation2d gyroAngle = m_gyro.getAngle(IMUAxis.kZ); // TODO: Check axis
 

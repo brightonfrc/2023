@@ -93,32 +93,32 @@ public class Robot extends TimedRobot {
       m_autonomousCommand.schedule();
     }
 
-    try {
-      m_aprilTagNavigator = new AprilTagNavigator(new PhotonCamera(inst, "camera"));
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
+    // try {
+    //   m_aprilTagNavigator = new AprilTagNavigator(new PhotonCamera(inst, "camera"));
+    // } catch (IOException e) {
+    //   e.printStackTrace();
+    // }
   }
 
   /** This function is called periodically during autonomous. */
   @Override
   public void autonomousPeriodic() {
-    PhotonTrackedTarget aprilTag =  m_aprilTagNavigator.getAprilTag();
-    if(aprilTag != null) {
-      SmartDashboard.putNumber("AprilTag ID", aprilTag.getFiducialId());
-      SmartDashboard.putNumber("AprilTag Yaw (+> -<)", aprilTag.getYaw());
-      SmartDashboard.putNumber("AprilTag Pitch (+^ -v)", aprilTag.getPitch());
+    // PhotonTrackedTarget aprilTag =  m_aprilTagNavigator.getAprilTag();
+    // if(aprilTag != null) {
+    //   SmartDashboard.putNumber("AprilTag ID", aprilTag.getFiducialId());
+    //   SmartDashboard.putNumber("AprilTag Yaw (+> -<)", aprilTag.getYaw());
+    //   SmartDashboard.putNumber("AprilTag Pitch (+^ -v)", aprilTag.getPitch());
 
-      Optional<EstimatedRobotPose> pose = m_aprilTagNavigator.getRobotPose();
-      if(!pose.isEmpty()) {
-        SmartDashboard.putString("Last Robot Pose", pose.get().toString());
-      }
-      SmartDashboard.putString("Robot Pose", pose.toString());
-    } else {
-      SmartDashboard.putNumber("AprilTag ID", 0);
-      SmartDashboard.putNumber("AprilTag Yaw (+> -<)", 0);
-      SmartDashboard.putNumber("AprilTag Pitch (+^ -v)", 0);
-    }
+    //   Optional<EstimatedRobotPose> pose = m_aprilTagNavigator.getRobotPose();
+    //   if(!pose.isEmpty()) {
+    //     SmartDashboard.putString("Last Robot Pose", pose.get().toString());
+    //   }
+    //   SmartDashboard.putString("Robot Pose", pose.toString());
+    // } else {
+    //   SmartDashboard.putNumber("AprilTag ID", 0);
+    //   SmartDashboard.putNumber("AprilTag Yaw (+> -<)", 0);
+    //   SmartDashboard.putNumber("AprilTag Pitch (+^ -v)", 0);
+    // }
   }
 
   @Override

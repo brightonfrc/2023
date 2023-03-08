@@ -92,6 +92,6 @@ public class RobotContainer {
    */
   public CommandBase getAutonomousCommand() {
     // An example command will be run in autonomous
-    return m_drivetrain.followTrajectoryCommand(PathPlanner.loadPath("Test", new PathConstraints(4, 3)), true);
+    return m_drivetrain.followTrajectoryCommand(PathPlanner.loadPath("Turn", new PathConstraints(4, 3)), true);
   }
 }
