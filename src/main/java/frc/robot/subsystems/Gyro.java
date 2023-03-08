@@ -18,8 +18,8 @@ public class Gyro extends SubsystemBase {
      * Create a new wrapper for a ADIS16470_IMU gyro
      * @param gyro
      */
-  public Gyro() {
-  }
+
+  public Gyro() {}
 
   public Rotation2d getAngle(IMUAxis axis) {
       // Set the axis
