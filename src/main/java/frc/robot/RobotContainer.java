@@ -33,8 +33,8 @@ public class RobotContainer {
   private final Gyro m_gyro = new Gyro();
 
   // The robot's subsystems and commands are defined here...
-  private final DifferentialDriveWrapper m_drivetrain = new DifferentialDriveWrapper();
-  private final Arm m_arm = new Arm();
+  private DifferentialDriveWrapper m_drivetrain;
+  private Arm m_arm;
   private SparkMaxTester m_sparkMaxTester;
 
   // Replace with CommandPS4Controller or CommandXboxController if needed
@@ -78,8 +78,13 @@ public class RobotContainer {
       // Just start the sparkmax test command
       m_sparkMaxTester = new SparkMaxTester();
       
+      return;
+      
       // NOTE: Game is the default
       default:
+        // Only instantiate the subsystems if we need them
+        this.m_arm = new Arm();
+        this.m_drivetrain = new DifferentialDriveWrapper();
         gameTeleopBidings();
     }
   }
