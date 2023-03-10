@@ -133,6 +133,14 @@ public class DifferentialDriveWrapper extends SubsystemBase {
   }
 
   private void outputVolts(double vLeft, double vRight) { // TODO: Check params
+    // Rescale and clamp around (-5, 5)
+    vLeft /= 20;
+    if(vLeft > 5) vLeft = 5;
+    if(vLeft < -5) vLeft = -5;
+    vRight /= 20;
+    if(vRight > 5) vRight = 5;
+    if(vRight < -5) vRight = -5;
+
     SmartDashboard.putNumber("WheelVoltageLeft", vLeft); // TODO: Remove
     SmartDashboard.putNumber("WheelVoltageRight", vRight); // TODO: Remove
     m_left.setVoltage(vLeft);

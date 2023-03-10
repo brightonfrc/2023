@@ -53,7 +53,7 @@ public final class Constants {
       public static final double k_v = 1;
       public static final double k_a = 1;
 
-      public static final double k_encoderDistancePerPulse = 0.01; // TODO
+      public static final double k_encoderDistancePerPulse = Math.PI*Math.pow(Constants.Measurements.Drivetrain.k_wheelRadius,2) / Constants.Measurements.Drivetrain.k_encoderPulsesPerRotation; // (distance per pulse = (circumference = pi * r^2) / pulses per rotation)
     }
   }
     
@@ -61,7 +61,7 @@ public final class Constants {
   public static class Measurements {
     public static class Drivetrain {
       public static final double k_wheelRadius = 0.075; // m
-      public static final int k_encoderResolution = 2048;
+      public static final int k_encoderPulsesPerRotation = 2048; // TODO
       public static final int k_motorsPerCIMGearbox = 2;
 
       public static final double k_gearRatio = 10.75; // :1
