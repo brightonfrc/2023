@@ -10,6 +10,7 @@ import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
+import frc.robot.dataStorageClasses.ArmPositionCounts;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
@@ -21,7 +22,7 @@ import edu.wpi.first.math.geometry.Translation3d;
  */
 public final class Constants {
   public static class RobotSettings {
-    public static final boolean k_DrivetrainStartInverted = false;
+    public static final boolean k_drivetrainStartInverted = false;
   }
 
   public static class Ports {
@@ -29,10 +30,14 @@ public final class Constants {
     public static final int k_controllerPort = 0;
 
     // Motor controllers
-    public static final int k_DrivetrainMotorControllerPortL1 = 20;
-    public static final int k_DrivetrainMotorControllerPortL2 = 2;
-    public static final int k_DrivetrainMotorControllerPortR1 = 21;
-    public static final int k_DrivetrainMotorControllerPortR2 = 10;
+    // These numbers correspond to PID ids
+    public static final int k_drivetrainMotorControllerPortL1 = 20;
+    public static final int k_drivetrainMotorControllerPortL2 = 2;
+    public static final int k_drivetrainMotorControllerPortR1 = 21;
+    public static final int k_drivetrainMotorControllerPortR2 = 10;
+
+    public static final int k_armChainMotor = 30;
+    public static final int k_armCableMotor = 31;
   }
 
   public static class MotionParameters {
@@ -57,7 +62,14 @@ public final class Constants {
     }
   }
     
-
+  public static class ArmPositions {
+    // chain motor, then cable motor
+    public static final ArmPositionCounts[] k_armMotorPositionCounts = {
+      new ArmPositionCounts(0, 0, "Ground"),
+      new ArmPositionCounts(100, -20, "Mid")
+    };
+  }
+ 
   public static class Measurements {
     public static class Drivetrain {
       public static final double k_wheelRadius = 0.075; // m
