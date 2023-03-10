@@ -4,7 +4,9 @@
 
 package frc.robot;
 
-import edu.wpi.first.wpilibj.ADIS16470_IMU;
+import com.pathplanner.lib.PathConstraints;
+import com.pathplanner.lib.PathPlanner;
+
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
@@ -31,14 +33,13 @@ import frc.robot.subsystems.testSubsystems.SparkMaxTester;
  */
 public class RobotContainer {
   private final Gyro m_gyro = new Gyro();
-
   // The robot's subsystems and commands are defined here...
   private DifferentialDriveWrapper m_drivetrain;
   private Arm m_arm;
   private SparkMaxTester m_sparkMaxTester;
 
   // Replace with CommandPS4Controller or CommandXboxController if needed
-  private final CommandJoystick m_driverController = new CommandJoystick(Ports.kControllerPort);
+  private final CommandJoystick m_driverController = new CommandJoystick(Ports.k_controllerPort);
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -116,11 +117,13 @@ public class RobotContainer {
    */
   public CommandBase getAutonomousCommand(AutonomousSelection commandSelection) {
     switch (commandSelection) {
+        // TODO: Set the actual commands
       case ScoreAndBalance:
-        return Autos.pathPlannerAuto(m_drivetrain);
-      // NOTE: BalanceOnly is the default case
+        return null;
+//         return Autos.pathPlannerAuto(m_drivetrain);
+      // NOTE: DriveOnly is the default case
       default:
-        return Autos.pathPlannerAuto(m_drivetrain);
+        return m_drivetrain.followTrajectoryCommand(PathPlanner.loadPath("Test", new PathConstraints(2, 1.5)), true);
     }
   }
 }
