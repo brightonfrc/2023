@@ -26,6 +26,7 @@ import frc.robot.Constants.Ports;
 
 public class DifferentialDriveWrapper extends SubsystemBase {
   public WPI_TalonSRX m_motorL1, m_motorR1;
+  public WPI_VictorSPX m_motorL2, m_motorR2;
   public MotorControllerGroup m_left, m_right;
   public DifferentialDrive m_drive;
   public Gyro m_gyro;
@@ -38,13 +39,13 @@ public class DifferentialDriveWrapper extends SubsystemBase {
   public Pose2d m_pose;
 
   /** Creates a new DifferentialDriveSubsystem. */
-  public DifferentialDriveWrapper(Gyro m_gyro) {
-    m_motorL1 = new WPI_TalonSRX(Ports.k_DrivetrainMotorControllerPortL1);
-    var m_motorL2 = new WPI_VictorSPX(Ports.k_DrivetrainMotorControllerPortL2);
-    m_motorR1 = new WPI_TalonSRX(Ports.k_DrivetrainMotorControllerPortR1);
-    var m_motorR2 = new WPI_VictorSPX(Ports.k_DrivetrainMotorControllerPortR2);
+  public DifferentialDriveWrapper(Gyro gyro) {
+    m_motorL1 = new WPI_TalonSRX(Ports.k_drivetrainMotorControllerPortL1);
+    m_motorL2 = new WPI_VictorSPX(Ports.k_drivetrainMotorControllerPortL2);
+    m_motorR1 = new WPI_TalonSRX(Ports.k_drivetrainMotorControllerPortR1);
+    m_motorR2 = new WPI_VictorSPX(Ports.k_drivetrainMotorControllerPortR2);
 
-    this.m_gyro = m_gyro;
+    this.m_gyro = gyro;
 
     m_left = new MotorControllerGroup(m_motorL1, m_motorL2);
     m_right = new MotorControllerGroup(m_motorR1, m_motorR2);
@@ -65,7 +66,7 @@ public class DifferentialDriveWrapper extends SubsystemBase {
 
     // Create odometry - manages positon on pitch for autonomous
     m_odometry = new DifferentialDriveOdometry(
-      m_gyro.getAngle(IMUAxis.kZ), // TODO: Check correct axis
+      gyro.getAngle(IMUAxis.kZ), // TODO: Check correct axis
       m_motorL1.getSelectedSensorPosition()*Constants.MotionParameters.Drivetrain.k_encoderDistancePerPulse,
       m_motorR1.getSelectedSensorPosition()*Constants.MotionParameters.Drivetrain.k_encoderDistancePerPulse,
       new Pose2d(5.0, 13.5, new Rotation2d()));

@@ -17,9 +17,8 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.Ports;
 import frc.robot.commands.AutoBalance;
-import frc.robot.commands.Autos;
 import frc.robot.dataStorageClasses.AutonomousSelection;
-import frc.robot.dataStorageClasses.TeleopSelection;
+import frc.robot.dataStorageClasses.ModeSelection;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.DifferentialDriveWrapper;
 import frc.robot.subsystems.Gyro;
@@ -38,29 +37,13 @@ public class RobotContainer {
   private Arm m_arm;
   private SparkMaxTester m_sparkMaxTester;
 
+  private boolean areSubsystemsSetUp = false;
+
   // Replace with CommandPS4Controller or CommandXboxController if needed
   private final CommandJoystick m_driverController = new CommandJoystick(Ports.k_controllerPort);
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
-  public RobotContainer() {
-    // // Create the trajectory to follow in autonomous. It is best to initialize
-    // // trajectories here to avoid wasting time in autonomous.
-    // Trajectory m_trajectory =
-    //     TrajectoryGenerator.generateTrajectory(
-    //         new Pose2d(0, 0, Rotation2d.fromDegrees(0)),
-    //         List.of(new Translation2d(1, 1), new Translation2d(2, -1)),
-    //         m_pose,
-    //         new TrajectoryConfig(Units.feetToMeters(3.0), Units.feetToMeters(3.0)));
-
-    // // Create and push Field2d to SmartDashboard.
-    // Field2d m_field = new Field2d();
-    // SmartDashboard.putData(m_field);
-
-    // // Push the trajectory to Field2d.
-    // m_field.getObject("traj").setTrajectory(m_trajectory);
-
-    
-  }
+  public RobotContainer() {}
 
   /**
    * Use this method to define your trigger->command mappings. Triggers can be created via the
@@ -71,7 +54,10 @@ public class RobotContainer {
    * PS4} controllers or {@link edu.wpi.first.wpilibj2.command.button.CommandJoystick Flight
    * joysticks}.
    */
-  public void setupTeleop(TeleopSelection teleop) {
+  public void setupSubsystems(ModeSelection teleop) {
+    // Do not reinitialise the subsystems
+    if (areSubsystemsSetUp) return;
+    areSubsystemsSetUp = true;
     // Note: We are also creating the required subsystems for non-game modes
     switch (teleop) {
       case TestSparkMax:
@@ -85,13 +71,12 @@ public class RobotContainer {
       default:
         // Only instantiate the subsystems if we need them
         this.m_arm = new Arm();
-        this.m_drivetrain = new DifferentialDriveWrapper();
-        gameTeleopBidings();
+        this.m_drivetrain = new DifferentialDriveWrapper(m_gyro);
     }
   }
   
   /** Sets up bindings to be used in a game */
-  public void gameTeleopBidings(){
+  public void gameTeleopBindings(){
     Joystick j = m_driverController.getHID();
     Trigger action1Trigger = new JoystickButton(j, 8);
     
@@ -111,17 +96,12 @@ public class RobotContainer {
   }
 
   /**
-   * Use this to pass the autonomous command to the main {@link Robot} class.
+   * Use this to start autonomous commands on the subsystems
    *
    * @return the command to run in autonomous
    */
   public CommandBase getAutonomousCommand(AutonomousSelection commandSelection) {
     switch (commandSelection) {
-        // TODO: Set the actual commands
-      case ScoreAndBalance:
-        return null;
-//         return Autos.pathPlannerAuto(m_drivetrain);
-      // NOTE: DriveOnly is the default case
       default:
         return m_drivetrain.followTrajectoryCommand(PathPlanner.loadPath("Test", new PathConstraints(2, 1.5)), true);
     }
