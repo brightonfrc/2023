@@ -13,6 +13,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
+import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.ADIS16470_IMU.IMUAxis;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
@@ -79,6 +80,8 @@ public class DifferentialDriveWrapper extends SubsystemBase {
    * @param turn  how much the robot turns
    */
   public void drive(double speed, double turn) {
+    // Set the deadband for manual driving
+    m_drive.setDeadband(DifferentialDrive.kDefaultDeadband);
     m_drive.curvatureDrive(speed, turn, true);
     SmartDashboard.putNumber("Drivetrain.RightPower", m_right.get());
     SmartDashboard.putNumber("Drivetrain.LightPower", m_left.get());
@@ -144,8 +147,15 @@ public class DifferentialDriveWrapper extends SubsystemBase {
 
     SmartDashboard.putNumber("WheelVoltageLeft", vLeft); // TODO: Remove
     SmartDashboard.putNumber("WheelVoltageRight", vRight); // TODO: Remove
-    m_left.setVoltage(vLeft);
-    m_right.setVoltage(vRight);
+    // Reset the deadband to 0 for autonomous driving
+    m_drive.setDeadband(0);
+    
+    // Use this and not setVoltage to feed the watchdog in the Differential drive
+    // This converts voltages to powers
+    double leftPower = vLeft / RobotController.getBatteryVoltage();
+    double rightPower = vRight / RobotController.getBatteryVoltage();
+
+    m_drive.tankDrive(leftPower, rightPower, false);
   }
 
   @Override
