@@ -61,7 +61,7 @@ public final class Constants {
       public static final double k_v = 1;
       public static final double k_a = 1;
 
-      public static final double k_encoderDistancePerPulse = Math.PI*Math.pow(Constants.Measurements.Drivetrain.k_wheelRadius,2) / Constants.Measurements.Drivetrain.k_encoderPulsesPerRotation; // (distance per pulse = (circumference = pi * r^2) / pulses per rotation)
+      public static final double k_distancePerEncoderPulse = Math.PI * Constants.Measurements.Drivetrain.k_wheelDiameter / Constants.Measurements.Drivetrain.k_encoderPulsesPerRotation; // (distance per pulse = (circumference = pi * r^2) / pulses per rotation)
     }
   }
     
@@ -75,7 +75,7 @@ public final class Constants {
  
   public static class Measurements {
     public static class Drivetrain {
-      public static final double k_wheelRadius = Units.inchesToMeters(3); // m
+      public static final double k_wheelDiameter = Units.inchesToMeters(6); // m
       public static final int k_encoderPulsesPerRotation = 2048;
 
       public static final double k_trackWidth = Units.inchesToMeters(21); // m
