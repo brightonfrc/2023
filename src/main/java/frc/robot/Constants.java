@@ -10,6 +10,7 @@ import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.math.util.Units;
 import frc.robot.dataStorageClasses.ArmPositionCounts;
 
 /**
@@ -31,10 +32,11 @@ public final class Constants {
 
     // Motor controllers
     // These numbers correspond to PID ids
-    public static final int k_drivetrainMotorControllerPortL1 = 20;
-    public static final int k_drivetrainMotorControllerPortL2 = 2;
-    public static final int k_drivetrainMotorControllerPortR1 = 21;
-    public static final int k_drivetrainMotorControllerPortR2 = 10;
+    // Talons are on ids in 20s, sparkMaxes are on ids in 30s
+    public static final int k_drivetrainMotorControllerPortL1 = 21;
+    public static final int k_drivetrainMotorControllerPortL2 = 10;
+    public static final int k_drivetrainMotorControllerPortR1 = 20;
+    public static final int k_drivetrainMotorControllerPortR2 = 2;
 
     public static final int k_armChainMotor = 30;
     public static final int k_armCableMotor = 31;
@@ -42,18 +44,19 @@ public final class Constants {
 
   public static class MotionParameters {
     public static class Autobalance {
-      public static final double k_p = 1;
-      public static final double k_i = 1;
-      public static final double k_d = 1;
+      public static final double k_p = 0;
+      public static final double k_i = 0;
+      public static final double k_d = 0;
       
       public static final double k_maxVelocity = 1;
       public static final double k_maxAcceleration = 1;
     }
     public static class Drivetrain {
-      public static final double k_p = 1;
-      public static final double k_i = 1;
-      public static final double k_d = 1;
+      public static final double k_p = 0;
+      public static final double k_i = 0;
+      public static final double k_d = 0;
       
+      // Determine these using sysid: https://docs.wpilib.org/en/stable/docs/software/pathplanning/system-identification/configuring-project.html 
       public static final double k_s = 1;
       public static final double k_v = 1;
       public static final double k_a = 1;
@@ -72,16 +75,11 @@ public final class Constants {
  
   public static class Measurements {
     public static class Drivetrain {
-      public static final double k_wheelRadius = 0.075; // m
-      public static final int k_encoderPulsesPerRotation = 2048; // TODO
-      public static final int k_motorsPerCIMGearbox = 2;
+      public static final double k_wheelRadius = Units.inchesToMeters(3); // m
+      public static final int k_encoderPulsesPerRotation = 2048;
 
-      public static final double k_gearRatio = 10.75; // :1
-      public static final double k_trackWidth = 0.55; // m
+      public static final double k_trackWidth = Units.inchesToMeters(21); // m
     }
-
-    public static final double k_momentOfInertia = 5.0; // kg m^2
-    public static final double k_mass = 5.0;
 
     public static final Transform3d k_robotToCam = new Transform3d(new Translation3d(0.5, 0.0, 0.5), new Rotation3d(0,0,0));  // TODO - e.g. - Cam mounted facing forward, half a meter forward of center, half a meter up from center.
   }

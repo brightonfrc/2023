@@ -13,9 +13,11 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
+import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.ADIS16470_IMU.IMUAxis;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -26,9 +28,12 @@ import frc.robot.Constants.Ports;
 
 public class DifferentialDriveWrapper extends SubsystemBase {
   public WPI_TalonSRX m_motorL1, m_motorR1;
+  public WPI_VictorSPX m_motorL2, m_motorR2;
   public MotorControllerGroup m_left, m_right;
   public DifferentialDrive m_drive;
   public Gyro m_gyro;
+
+  public Field2d m_field;
 
   // SensorCollection m_leftSensors;
   // SensorCollection m_rightSensors; 
@@ -38,13 +43,15 @@ public class DifferentialDriveWrapper extends SubsystemBase {
   public Pose2d m_pose;
 
   /** Creates a new DifferentialDriveSubsystem. */
-  public DifferentialDriveWrapper(Gyro m_gyro) {
-    m_motorL1 = new WPI_TalonSRX(Ports.k_DrivetrainMotorControllerPortL1);
-    var m_motorL2 = new WPI_VictorSPX(Ports.k_DrivetrainMotorControllerPortL2);
-    m_motorR1 = new WPI_TalonSRX(Ports.k_DrivetrainMotorControllerPortR1);
-    var m_motorR2 = new WPI_VictorSPX(Ports.k_DrivetrainMotorControllerPortR2);
+  public DifferentialDriveWrapper(Gyro gyro) {
+    m_motorL1 = new WPI_TalonSRX(Ports.k_drivetrainMotorControllerPortL1);
+    m_motorL2 = new WPI_VictorSPX(Ports.k_drivetrainMotorControllerPortL2);
+    m_motorR1 = new WPI_TalonSRX(Ports.k_drivetrainMotorControllerPortR1);
+    m_motorR2 = new WPI_VictorSPX(Ports.k_drivetrainMotorControllerPortR2);
 
-    this.m_gyro = m_gyro;
+    m_field = new Field2d();
+
+    this.m_gyro = gyro;
 
     m_left = new MotorControllerGroup(m_motorL1, m_motorL2);
     m_right = new MotorControllerGroup(m_motorR1, m_motorR2);
@@ -52,8 +59,8 @@ public class DifferentialDriveWrapper extends SubsystemBase {
 
     // Only one side needs to be reversed, since the motors on the two sides are
     // facing opposite directions.
-    m_left.setInverted(true);
-    m_right.setInverted(false);
+    m_left.setInverted(false);
+    m_right.setInverted(true);
 
     // m_leftSensors = m_motorL1.getSensorCollection();
     // m_rightSensors = m_motorR1.getSensorCollection();
@@ -65,7 +72,7 @@ public class DifferentialDriveWrapper extends SubsystemBase {
 
     // Create odometry - manages positon on pitch for autonomous
     m_odometry = new DifferentialDriveOdometry(
-      m_gyro.getAngle(IMUAxis.kZ), // TODO: Check correct axis
+      gyro.getAngle(IMUAxis.kZ), // TODO: Check correct axis
       m_motorL1.getSelectedSensorPosition()*Constants.MotionParameters.Drivetrain.k_encoderDistancePerPulse,
       m_motorR1.getSelectedSensorPosition()*Constants.MotionParameters.Drivetrain.k_encoderDistancePerPulse,
       new Pose2d(5.0, 13.5, new Rotation2d()));
@@ -78,6 +85,8 @@ public class DifferentialDriveWrapper extends SubsystemBase {
    * @param turn  how much the robot turns
    */
   public void drive(double speed, double turn) {
+    // Set the deadband for manual driving
+    m_drive.setDeadband(DifferentialDrive.kDefaultDeadband);
     m_drive.curvatureDrive(speed, turn, true);
     SmartDashboard.putNumber("Drivetrain.RightPower", m_right.get());
     SmartDashboard.putNumber("Drivetrain.LightPower", m_left.get());
@@ -117,9 +126,12 @@ public class DifferentialDriveWrapper extends SubsystemBase {
   private void resetOdometry(Pose2d initialPose) {
     Rotation2d gyroAngle = m_gyro.getAngle(IMUAxis.kZ); // TODO: Check axis
 
+    // Reset enoder counts
+    m_motorL1.setSelectedSensorPosition(0);
+    m_motorR1.setSelectedSensorPosition(0);
+
     m_odometry.resetPosition(gyroAngle,
-      m_motorL1.getSelectedSensorPosition()*Constants.MotionParameters.Drivetrain.k_encoderDistancePerPulse,
-      m_motorR1.getSelectedSensorPosition()*Constants.MotionParameters.Drivetrain.k_encoderDistancePerPulse,
+      0, 0,
       initialPose); // TODO: Check first 3 params
   }
   private Pose2d getPose() {
@@ -132,19 +144,24 @@ public class DifferentialDriveWrapper extends SubsystemBase {
     return new DifferentialDriveWheelSpeeds(leftSpeed, rightSpeed);
   }
 
-  private void outputVolts(double vLeft, double vRight) { // TODO: Check params
-    // Rescale and clamp around (-5, 5)
-    vLeft /= 20;
-    if(vLeft > 5) vLeft = 5;
-    if(vLeft < -5) vLeft = -5;
-    vRight /= 20;
-    if(vRight > 5) vRight = 5;
-    if(vRight < -5) vRight = -5;
+  private void outputVolts(double vLeft, double vRight) { 
+    SmartDashboard.putNumber("drive.vLeft", vLeft);
+    SmartDashboard.putNumber("drive.vRight", vRight);
+    SmartDashboard.putNumber("drive.posLeft", -m_motorL1.getSelectedSensorPosition());
+    SmartDashboard.putNumber("drive.posRight", m_motorR1.getSelectedSensorPosition());
+    // Reset the deadband to 0 for autonomous driving
+    m_drive.setDeadband(0);
+    
+    // Use this and not setVoltage to feed the watchdog in the Differential drive
+    // This converts voltages to powers
+    double leftPower = vLeft / RobotController.getBatteryVoltage();
+    double rightPower = vRight / RobotController.getBatteryVoltage();
 
-    SmartDashboard.putNumber("WheelVoltageLeft", vLeft); // TODO: Remove
-    SmartDashboard.putNumber("WheelVoltageRight", vRight); // TODO: Remove
-    m_left.setVoltage(vLeft);
-    m_right.setVoltage(vRight);
+    // Update field view
+    m_field.setRobotPose(m_odometry.getPoseMeters());
+    SmartDashboard.putData("Field", m_field);
+
+    m_drive.tankDrive(leftPower, rightPower, false);
   }
 
   @Override

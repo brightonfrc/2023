@@ -1,6 +1,6 @@
 package frc.robot.dataStorageClasses;
 
-public enum TeleopSelection {
+public enum ModeSelection {
     Game,
     TestSparkMax
 }
