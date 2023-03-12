@@ -103,7 +103,7 @@ public class RobotContainer {
   public CommandBase getAutonomousCommand(AutonomousSelection commandSelection) {
     switch (commandSelection) {
       default:
-        return m_drivetrain.followTrajectoryCommand(PathPlanner.loadPath("Turn", new PathConstraints(1, 0.25)), true);
+        return m_drivetrain.followTrajectoryCommand(PathPlanner.loadPath("Test", new PathConstraints(1, 0.25), true), true);
     }
   }
 }
