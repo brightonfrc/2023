@@ -54,12 +54,12 @@ public class RobotContainer {
    * PS4} controllers or {@link edu.wpi.first.wpilibj2.command.button.CommandJoystick Flight
    * joysticks}.
    */
-  public void setupSubsystems(ModeSelection teleop) {
+  public void setupSubsystems(ModeSelection mode) {
     // Do not reinitialise the subsystems
     if (areSubsystemsSetUp) return;
     areSubsystemsSetUp = true;
     // Note: We are also creating the required subsystems for non-game modes
-    switch (teleop) {
+    switch (mode) {
       case TestSparkMax:
       // No bindings, everything done from the smart dashboard
       // Just start the sparkmax test command
@@ -70,7 +70,7 @@ public class RobotContainer {
       // NOTE: Game is the default
       default:
         // Only instantiate the subsystems if we need them
-        this.m_arm = new Arm();
+        // this.m_arm = new Arm();
         this.m_drivetrain = new DifferentialDriveWrapper(m_gyro);
     }
   }
@@ -96,14 +96,14 @@ public class RobotContainer {
   }
 
   /**
-   * Use this to start autonomous commands on the subsystems
+   * Use this to get autonomous commands for the subsystems
    *
    * @return the command to run in autonomous
    */
   public CommandBase getAutonomousCommand(AutonomousSelection commandSelection) {
     switch (commandSelection) {
       default:
-        return m_drivetrain.followTrajectoryCommand(PathPlanner.loadPath("Test", new PathConstraints(2, 1.5)), true);
+        return m_drivetrain.followTrajectoryCommand(PathPlanner.loadPath("Turn", new PathConstraints(1, 0.25)), true);
     }
   }
 }
