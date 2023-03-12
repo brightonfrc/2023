@@ -90,6 +90,9 @@ public class Robot extends TimedRobot {
     // Set up the subsystems before using them
     m_robotContainer.setupSubsystems(m_modeChooser.getSelected());
 
+    // To avoid bugs like motorsafety
+    m_robotContainer.setAutoDefaultCommands();
+
     // Find the auto command that was selected to be run
     m_autonomousCommand = m_robotContainer.getAutonomousCommand(m_autonomousChooser.getSelected());
 
@@ -128,6 +131,9 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() {
+    // Set up the subsystems before using them
+    m_robotContainer.setupSubsystems(m_modeChooser.getSelected());
+
     // This makes sure that the autonomous stops running when
     // teleop starts running. If you want the autonomous to
     // continue until interrupted by another command, remove
