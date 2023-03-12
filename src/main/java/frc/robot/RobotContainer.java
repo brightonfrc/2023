@@ -11,7 +11,6 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
@@ -96,13 +95,6 @@ public class RobotContainer {
     }, m_drivetrain));
   }
 
-  /** Sets up default commands for drivetrain in autonomous to avoid MotorSafety bug */
-  public void setAutoDefaultCommands(){
-    m_drivetrain.setDefaultCommand(Commands.run(() -> {
-      m_drivetrain.m_drive.tankDrive(0, 0);
-    }, m_drivetrain));
-  }
-
   /**
    * Use this to get autonomous commands for the subsystems
    *
@@ -111,7 +103,7 @@ public class RobotContainer {
   public CommandBase getAutonomousCommand(AutonomousSelection commandSelection) {
     switch (commandSelection) {
       default:
-        return m_drivetrain.followTrajectoryCommand(PathPlanner.loadPath("Test", new PathConstraints(1, 0.25), true), true);
+        return m_drivetrain.followTrajectoryCommand(PathPlanner.loadPath("Turn", new PathConstraints(1, 0.25)), true);
     }
   }
 }
