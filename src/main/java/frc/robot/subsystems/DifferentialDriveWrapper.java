@@ -144,11 +144,11 @@ public class DifferentialDriveWrapper extends SubsystemBase {
     return new DifferentialDriveWheelSpeeds(leftSpeed, rightSpeed);
   }
 
-  private void outputVolts(double vLeft, double vRight) { // TODO: Check params
-    SmartDashboard.putNumber("WheelVoltageLeft", vLeft); // TODO: Remove
-    SmartDashboard.putNumber("WheelVoltageRight", vRight); // TODO: Remove
-    SmartDashboard.putNumber("EncoderPosLeft", -m_motorL1.getSelectedSensorPosition()); // TODO: Remove
-    SmartDashboard.putNumber("EncoderPosRight", m_motorR1.getSelectedSensorPosition()); // TODO: Remove
+  private void outputVolts(double vLeft, double vRight) { 
+    SmartDashboard.putNumber("drive.vLeft", vLeft);
+    SmartDashboard.putNumber("drive.vRight", vRight);
+    SmartDashboard.putNumber("drive.posLeft", -m_motorL1.getSelectedSensorPosition());
+    SmartDashboard.putNumber("drive.posRight", m_motorR1.getSelectedSensorPosition());
     // Reset the deadband to 0 for autonomous driving
     m_drive.setDeadband(0);
     

@@ -32,6 +32,7 @@ public final class Constants {
 
     // Motor controllers
     // These numbers correspond to PID ids
+    // Talons are on ids in 20s, sparkMaxes are on ids in 30s
     public static final int k_drivetrainMotorControllerPortL1 = 21;
     public static final int k_drivetrainMotorControllerPortL2 = 10;
     public static final int k_drivetrainMotorControllerPortR1 = 20;
@@ -43,18 +44,19 @@ public final class Constants {
 
   public static class MotionParameters {
     public static class Autobalance {
-      public static final double k_p = 1;
-      public static final double k_i = 1;
-      public static final double k_d = 1;
+      public static final double k_p = 0;
+      public static final double k_i = 0;
+      public static final double k_d = 0;
       
       public static final double k_maxVelocity = 1;
       public static final double k_maxAcceleration = 1;
     }
     public static class Drivetrain {
-      public static final double k_p = 1;
-      public static final double k_i = 1;
-      public static final double k_d = 1;
+      public static final double k_p = 0;
+      public static final double k_i = 0;
+      public static final double k_d = 0;
       
+      // Determine these using sysid: https://docs.wpilib.org/en/stable/docs/software/pathplanning/system-identification/configuring-project.html 
       public static final double k_s = 1;
       public static final double k_v = 1;
       public static final double k_a = 1;
