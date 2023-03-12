@@ -14,7 +14,10 @@
   "NTProvider": {
     "types": {
       "/FMSInfo": "FMSInfo",
-      "/SmartDashboard/Field": "Field2d"
+      "/SmartDashboard/Auto choices": "String Chooser",
+      "/SmartDashboard/Choose mode": "String Chooser",
+      "/SmartDashboard/Field": "Field2d",
+      "/SmartDashboard/Team colour": "String Chooser"
     }
   },
   "NetworkTables": {

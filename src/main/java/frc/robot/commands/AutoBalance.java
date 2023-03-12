@@ -41,7 +41,7 @@ public class AutoBalance extends ProfiledPIDCommand {
         });
     // Use addRequirements() here to declare subsystem dependencies.
     // Configure additional PID options by calling `getController` here.
-    addRequirements(drivetrain, gyro);
+    addRequirements(drivetrain);
   }
 
   // Returns true when the command should end.

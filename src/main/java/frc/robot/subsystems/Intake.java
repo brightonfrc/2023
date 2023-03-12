@@ -17,17 +17,17 @@ public class Intake extends SubsystemBase {
 
   /** Creates a new Intake. */
   public Intake() {
-    m_motor1 = new CANSparkMax(Constants.Ports.k_armChainMotor, MotorType.kBrushless);
-    m_motor2 = new CANSparkMax(Constants.Ports.k_armCableMotor, MotorType.kBrushless);
+    m_motor1 = new CANSparkMax(Constants.Ports.k_armChainMotor, MotorType.kBrushed);
+    m_motor2 = new CANSparkMax(Constants.Ports.k_armCableMotor, MotorType.kBrushed);
     
    m_motor1.setInverted(true);
-   SmartDashboard.putNumber("intake.speed", 0);
+   SmartDashboard.putNumber("intakeSpeed", 0);
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    double speed = SmartDashboard.getNumber("intake.speed", 0);
+    double speed = SmartDashboard.getNumber("intakeSpeed", 0);
     m_motor1.set(speed);
     m_motor2.set(speed);
   }

@@ -4,7 +4,9 @@
 
 package frc.robot;
 
-import edu.wpi.first.wpilibj.ADIS16470_IMU;
+import com.pathplanner.lib.PathConstraints;
+import com.pathplanner.lib.PathPlanner;
+
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
@@ -15,9 +17,8 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.Ports;
 import frc.robot.commands.AutoBalance;
-import frc.robot.commands.Autos;
 import frc.robot.dataStorageClasses.AutonomousSelection;
-import frc.robot.dataStorageClasses.TeleopSelection;
+import frc.robot.dataStorageClasses.ModeSelection;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.DifferentialDriveWrapper;
 import frc.robot.subsystems.Gyro;
@@ -32,14 +33,13 @@ import frc.robot.subsystems.testSubsystems.SparkMaxTester;
  */
 public class RobotContainer {
   private final Gyro m_gyro = new Gyro();
-
   // The robot's subsystems and commands are defined here...
   private DifferentialDriveWrapper m_drivetrain;
-  private Arm m_arm;
-  private SparkMaxTester m_sparkMaxTester;
+
+  private boolean areSubsystemsSetUp = false;
 
   // Replace with CommandPS4Controller or CommandXboxController if needed
-  private final CommandJoystick m_driverController = new CommandJoystick(Ports.kControllerPort);
+  private final CommandJoystick m_driverController = new CommandJoystick(Ports.k_controllerPort);
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {}
@@ -53,27 +53,30 @@ public class RobotContainer {
    * PS4} controllers or {@link edu.wpi.first.wpilibj2.command.button.CommandJoystick Flight
    * joysticks}.
    */
-  public void setupTeleop(TeleopSelection teleop) {
+  public void setupSubsystems(ModeSelection mode) {
+    // Do not reinitialise the subsystems
+    if (areSubsystemsSetUp) return;
+    areSubsystemsSetUp = true;
     // Note: We are also creating the required subsystems for non-game modes
-    switch (teleop) {
+    switch (mode) {
       case TestSparkMax:
       // No bindings, everything done from the smart dashboard
       // Just start the sparkmax test command
-      m_sparkMaxTester = new SparkMaxTester();
+      new SparkMaxTester();
       
       return;
       
       // NOTE: Game is the default
       default:
         // Only instantiate the subsystems if we need them
-        this.m_arm = new Arm();
-        this.m_drivetrain = new DifferentialDriveWrapper();
-        gameTeleopBidings();
+        new Arm();
+        // new Intake();
+        this.m_drivetrain = new DifferentialDriveWrapper(m_gyro);
     }
   }
   
   /** Sets up bindings to be used in a game */
-  public void gameTeleopBidings(){
+  public void gameTeleopBindings(){
     Joystick j = m_driverController.getHID();
     Trigger action1Trigger = new JoystickButton(j, 8);
     
@@ -93,17 +96,14 @@ public class RobotContainer {
   }
 
   /**
-   * Use this to pass the autonomous command to the main {@link Robot} class.
+   * Use this to get autonomous commands for the subsystems
    *
    * @return the command to run in autonomous
    */
   public CommandBase getAutonomousCommand(AutonomousSelection commandSelection) {
     switch (commandSelection) {
-      case ScoreAndBalance:
-        return Autos.pathPlannerAuto(m_drivetrain);
-      // NOTE: BalanceOnly is the default case
       default:
-        return Autos.pathPlannerAuto(m_drivetrain);
+        return m_drivetrain.followTrajectoryCommand(PathPlanner.loadPath("DriveForward", new PathConstraints(1, 0.25)), true);
     }
   }
 }

@@ -5,11 +5,8 @@
 package frc.robot;
 
 import java.io.IOException;
-import java.util.Optional;
 
-import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
-import org.photonvision.targeting.PhotonTrackedTarget;
 
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.TimedRobot;
@@ -19,7 +16,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.cv.AprilTagNavigator;
 import frc.robot.dataStorageClasses.AutonomousSelection;
-import frc.robot.dataStorageClasses.TeleopSelection;
+import frc.robot.dataStorageClasses.ModeSelection;
 import frc.robot.dataStorageClasses.TeamColourSelection;
 
 /**
@@ -40,7 +37,7 @@ public class Robot extends TimedRobot {
   
   private SendableChooser<AutonomousSelection> m_autonomousChooser;
   private SendableChooser<TeamColourSelection> m_teamColourChooser;
-  private SendableChooser<TeleopSelection> m_teleopChooser;
+  private SendableChooser<ModeSelection> m_modeChooser;
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
@@ -53,8 +50,8 @@ public class Robot extends TimedRobot {
 
     // Allow the user to select the desired autonomous from smartdasboard
     m_autonomousChooser = new SendableChooser<AutonomousSelection>();
-    m_autonomousChooser.setDefaultOption("Score and balance", AutonomousSelection.ScoreAndBalance);
-    m_autonomousChooser.addOption("Balance only", AutonomousSelection.BalanceOnly);
+    m_autonomousChooser.setDefaultOption("Drive only", AutonomousSelection.DriveOnly);
+    // m_autonomousChooser.addOption("Score and balance", AutonomousSelection.ScoreAndBalance);
     SmartDashboard.putData("Auto choices", m_autonomousChooser);
     
     m_teamColourChooser = new SendableChooser<TeamColourSelection>();
@@ -62,10 +59,10 @@ public class Robot extends TimedRobot {
     m_teamColourChooser.addOption("Blue", TeamColourSelection.Blue);
     SmartDashboard.putData("Team colour", m_teamColourChooser);
 
-    m_teleopChooser = new SendableChooser<TeleopSelection>();
-    m_teleopChooser.setDefaultOption("Game", TeleopSelection.Game);
-    m_teleopChooser.addOption("Test SparkMax", TeleopSelection.TestSparkMax);
-    SmartDashboard.putData("Choose teleop", m_teleopChooser);
+    m_modeChooser = new SendableChooser<ModeSelection>();
+    m_modeChooser.setDefaultOption("Game", ModeSelection.Game);
+    m_modeChooser.addOption("Test SparkMax", ModeSelection.TestSparkMax);
+    SmartDashboard.putData("Choose mode", m_modeChooser);
   }
 
   /**
@@ -94,6 +91,8 @@ public class Robot extends TimedRobot {
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
   public void autonomousInit() {
+    // Set up the subsystems before using them
+    m_robotContainer.setupSubsystems(m_modeChooser.getSelected());
 
     // Find the auto command that was selected to be run
     m_autonomousCommand = m_robotContainer.getAutonomousCommand(m_autonomousChooser.getSelected());
@@ -113,26 +112,29 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during autonomous. */
   @Override
   public void autonomousPeriodic() {
-    PhotonTrackedTarget aprilTag =  m_aprilTagNavigator.getAprilTag();
-    if(aprilTag != null) {
-      SmartDashboard.putNumber("AprilTag ID", aprilTag.getFiducialId());
-      SmartDashboard.putNumber("AprilTag Yaw (+> -<)", aprilTag.getYaw());
-      SmartDashboard.putNumber("AprilTag Pitch (+^ -v)", aprilTag.getPitch());
+    // PhotonTrackedTarget aprilTag =  m_aprilTagNavigator.getAprilTag();
+    // if(aprilTag != null) {
+    //   SmartDashboard.putNumber("AprilTag ID", aprilTag.getFiducialId());
+    //   SmartDashboard.putNumber("AprilTag Yaw (+> -<)", aprilTag.getYaw());
+    //   SmartDashboard.putNumber("AprilTag Pitch (+^ -v)", aprilTag.getPitch());
 
-      Optional<EstimatedRobotPose> pose = m_aprilTagNavigator.getRobotPose();
-      if(!pose.isEmpty()) {
-        SmartDashboard.putString("Last Robot Pose", pose.get().toString());
-      }
-      SmartDashboard.putString("Robot Pose", pose.toString());
-    } else {
-      SmartDashboard.putNumber("AprilTag ID", 0);
-      SmartDashboard.putNumber("AprilTag Yaw (+> -<)", 0);
-      SmartDashboard.putNumber("AprilTag Pitch (+^ -v)", 0);
-    }
+    //   Optional<EstimatedRobotPose> pose = m_aprilTagNavigator.getRobotPose();
+    //   if(!pose.isEmpty()) {
+    //     SmartDashboard.putString("Last Robot Pose", pose.get().toString());
+    //   }
+    //   SmartDashboard.putString("Robot Pose", pose.toString());
+    // } else {
+    //   SmartDashboard.putNumber("AprilTag ID", 0);
+    //   SmartDashboard.putNumber("AprilTag Yaw (+> -<)", 0);
+    //   SmartDashboard.putNumber("AprilTag Pitch (+^ -v)", 0);
+    // }
   }
 
   @Override
   public void teleopInit() {
+    // Set up the subsystems before using them
+    m_robotContainer.setupSubsystems(m_modeChooser.getSelected());
+
     // This makes sure that the autonomous stops running when
     // teleop starts running. If you want the autonomous to
     // continue until interrupted by another command, remove
@@ -142,7 +144,7 @@ public class Robot extends TimedRobot {
     }
     
     // Configure all the bindings and default commands
-    m_robotContainer.setupTeleop(m_teleopChooser.getSelected());
+    m_robotContainer.gameTeleopBindings();
   }
 
   /** This function is called periodically during operator control. */
