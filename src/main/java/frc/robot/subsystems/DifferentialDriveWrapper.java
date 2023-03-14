@@ -73,8 +73,8 @@ public class DifferentialDriveWrapper extends SubsystemBase {
     // Create odometry - manages positon on pitch for autonomous
     m_odometry = new DifferentialDriveOdometry(
       gyro.getAngle(IMUAxis.kZ), // TODO: Check correct axis
-      m_motorL1.getSelectedSensorPosition()*Constants.MotionParameters.Drivetrain.k_encoderDistancePerPulse,
-      m_motorR1.getSelectedSensorPosition()*Constants.MotionParameters.Drivetrain.k_encoderDistancePerPulse,
+      m_motorL1.getSelectedSensorPosition()*Constants.MotionParameters.Drivetrain.k_distancePerEncoderPulse,
+      m_motorR1.getSelectedSensorPosition()*Constants.MotionParameters.Drivetrain.k_distancePerEncoderPulse,
       new Pose2d(5.0, 13.5, new Rotation2d()));
   }
 
@@ -173,7 +173,7 @@ public class DifferentialDriveWrapper extends SubsystemBase {
 
     // Update the pose
     m_pose = m_odometry.update(gyroAngle,
-      m_motorL1.getSelectedSensorPosition()*Constants.MotionParameters.Drivetrain.k_encoderDistancePerPulse,
-      m_motorR1.getSelectedSensorPosition()*Constants.MotionParameters.Drivetrain.k_encoderDistancePerPulse);
+      m_motorL1.getSelectedSensorPosition()*Constants.MotionParameters.Drivetrain.k_distancePerEncoderPulse,
+      m_motorR1.getSelectedSensorPosition()*Constants.MotionParameters.Drivetrain.k_distancePerEncoderPulse);
   }
 }

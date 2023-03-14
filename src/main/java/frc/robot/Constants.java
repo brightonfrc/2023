@@ -57,9 +57,9 @@ public final class Constants {
       public static final double k_d = 0;
       
       // Determine these using sysid: https://docs.wpilib.org/en/stable/docs/software/pathplanning/system-identification/configuring-project.html 
-      public static final double k_s = 1;
-      public static final double k_v = 1;
-      public static final double k_a = 1;
+      public static final double k_s = 0.67036;
+      public static final double k_v = 0.80663;
+      public static final double k_a = 0.084952;
 
       public static final double k_distancePerEncoderPulse = Math.PI * Constants.Measurements.Drivetrain.k_wheelDiameter / Constants.Measurements.Drivetrain.k_encoderPulsesPerRotation; // (distance per pulse = (circumference = pi * r^2) / pulses per rotation)
     }
