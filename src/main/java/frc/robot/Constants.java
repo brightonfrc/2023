@@ -37,6 +37,11 @@ public final class Constants {
     public static final int k_drivetrainMotorControllerPortL2 = 10;
     public static final int k_drivetrainMotorControllerPortR1 = 20;
     public static final int k_drivetrainMotorControllerPortR2 = 2;
+    
+    public static final int k_encoderPortAL = 0;
+    public static final int k_encoderPortBL = 1;
+    public static final int k_encoderPortAR = 2;
+    public static final int k_encoderPortBR = 3;
 
     public static final int k_armChainMotor = 30;
     public static final int k_armCableMotor = 31;
