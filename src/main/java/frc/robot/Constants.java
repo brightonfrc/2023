@@ -33,10 +33,10 @@ public final class Constants {
     // Motor controllers
     // These numbers correspond to PID ids
     // Talons are on ids in 20s, sparkMaxes are on ids in 30s
-    public static final int k_drivetrainMotorControllerPortL1 = 21;
-    public static final int k_drivetrainMotorControllerPortL2 = 10;
-    public static final int k_drivetrainMotorControllerPortR1 = 20;
-    public static final int k_drivetrainMotorControllerPortR2 = 2;
+    public static final int k_drivetrainMotorControllerPortL1 = 1;
+    public static final int k_drivetrainMotorControllerPortR1 = 2;
+    public static final int k_drivetrainMotorControllerPortL2 = 3;
+    public static final int k_drivetrainMotorControllerPortR2 = 4;
     
     public static final int k_encoderPortAL = 0;
     public static final int k_encoderPortBL = 1;

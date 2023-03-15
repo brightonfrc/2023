@@ -27,8 +27,8 @@ import frc.robot.Constants;
 import frc.robot.Constants.Ports;
 
 public class DifferentialDriveWrapper extends SubsystemBase {
-  public WPI_TalonSRX m_motorL1 = new WPI_TalonSRX(Ports.k_drivetrainMotorControllerPortL1);
-  public WPI_TalonSRX m_motorR1 = new WPI_TalonSRX(Ports.k_drivetrainMotorControllerPortR1);
+  public WPI_VictorSPX m_motorL1 = new WPI_VictorSPX(Ports.k_drivetrainMotorControllerPortL1);
+  public WPI_VictorSPX m_motorR1 = new WPI_VictorSPX(Ports.k_drivetrainMotorControllerPortR1);
   public WPI_VictorSPX m_motorL2 = new WPI_VictorSPX(Ports.k_drivetrainMotorControllerPortL2);
   public WPI_VictorSPX m_motorR2 = new WPI_VictorSPX(Ports.k_drivetrainMotorControllerPortR2);;
 
