@@ -97,13 +97,14 @@ public class AutoBalance extends CommandBase {
   // and roll, used to compensate for diagonally mounted rio
   public double getTilt() {
     // TODO: Check
-    double pitch = m_gyro.getAngle(IMUAxis.kX).getDegrees();
-    double roll = m_gyro.getAngle(IMUAxis.kY).getDegrees();
-    if ((pitch + roll) >= 0) {
-        return Math.sqrt(pitch * pitch + roll * roll);
-    } else {
-        return -Math.sqrt(pitch * pitch + roll * roll);
-    }
+    // double pitch = m_gyro.getAngle(IMUAxis.kX).getDegrees();
+    // double roll = m_gyro.getAngle(IMUAxis.kY).getDegrees();
+    // if ((pitch + roll) >= 0) {
+    //     return Math.sqrt(pitch * pitch + roll * roll);
+    // } else {
+    //     return -Math.sqrt(pitch * pitch + roll * roll);
+    // }
+    return m_gyro.getAngle(IMUAxis.kX).getDegrees();
   }
 
   public int secondsToTicks(double time) {
