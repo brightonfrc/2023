@@ -4,13 +4,16 @@
 
 package frc.robot;
 
-import edu.wpi.first.networktables.BooleanSubscriber;
-import edu.wpi.first.networktables.IntegerSubscriber;
-import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.cv.AprilTagNavigator;
+import frc.robot.dataStorageClasses.AutonomousSelection;
+import frc.robot.dataStorageClasses.ModeSelection;
+import frc.robot.dataStorageClasses.TeamColourSelection;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -23,11 +26,14 @@ public class Robot extends TimedRobot {
 
   private RobotContainer m_robotContainer;
 
+  private AprilTagNavigator m_aprilTagNavigator;
+
   // NetworkTables subscribers (read)/publishers (write)
   NetworkTableInstance inst = NetworkTableInstance.getDefault();
   
-  ConfigurationPreset configurationPreset;
-
+  private SendableChooser<AutonomousSelection> m_autonomousChooser;
+  private SendableChooser<TeamColourSelection> m_teamColourChooser;
+  private SendableChooser<ModeSelection> m_modeChooser;
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
@@ -38,17 +44,21 @@ public class Robot extends TimedRobot {
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
 
-    NetworkTable fmsInfo = inst.getTable("FMSInfo");
-    BooleanSubscriber configurationPresetIsRedSubscriber = fmsInfo.getBooleanTopic("IsRedAlliance").subscribe(false);
-    IntegerSubscriber configurationPresetNumberSubscriber = fmsInfo.getIntegerTopic("StationNumber").subscribe(1);
+    // Allow the user to select the desired autonomous from smartdasboard
+    m_autonomousChooser = new SendableChooser<AutonomousSelection>();
+    m_autonomousChooser.setDefaultOption("Drive only", AutonomousSelection.DriveOnly);
+    // m_autonomousChooser.addOption("Score and balance", AutonomousSelection.ScoreAndBalance);
+    SmartDashboard.putData("Auto choices", m_autonomousChooser);
     
-    boolean configurationPresetIsRed = configurationPresetIsRedSubscriber.get();
-    long configurationPresetNumber = configurationPresetNumberSubscriber.get();
+    m_teamColourChooser = new SendableChooser<TeamColourSelection>();
+    m_teamColourChooser.setDefaultOption("Red", TeamColourSelection.Red);
+    m_teamColourChooser.addOption("Blue", TeamColourSelection.Blue);
+    SmartDashboard.putData("Team colour", m_teamColourChooser);
 
-    configurationPreset = new ConfigurationPreset(configurationPresetIsRed, configurationPresetNumber);
-
-    // Move robot odometry to correct position specified on driver station
-    m_robotContainer.m_drivetrain.setStartingPosition(configurationPreset);
+    m_modeChooser = new SendableChooser<ModeSelection>();
+    m_modeChooser.setDefaultOption("Game", ModeSelection.Game);
+    m_modeChooser.addOption("Test SparkMax", ModeSelection.TestSparkMax);
+    SmartDashboard.putData("Choose mode", m_modeChooser);
   }
 
   /**
@@ -77,21 +87,50 @@ public class Robot extends TimedRobot {
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
   public void autonomousInit() {
+    // Set up the subsystems before using them
+    m_robotContainer.setupSubsystems(m_modeChooser.getSelected());
 
-    m_autonomousCommand = m_robotContainer.getAutonomousCommand();
+    // Find the auto command that was selected to be run
+    m_autonomousCommand = m_robotContainer.getAutonomousCommand(m_autonomousChooser.getSelected());
 
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {
       m_autonomousCommand.schedule();
     }
+
+    // try {
+    //   m_aprilTagNavigator = new AprilTagNavigator(new PhotonCamera(inst, "camera"));
+    // } catch (IOException e) {
+    //   e.printStackTrace();
+    // }
   }
 
   /** This function is called periodically during autonomous. */
   @Override
-  public void autonomousPeriodic() {}
+  public void autonomousPeriodic() {
+    // PhotonTrackedTarget aprilTag =  m_aprilTagNavigator.getAprilTag();
+    // if(aprilTag != null) {
+    //   SmartDashboard.putNumber("AprilTag ID", aprilTag.getFiducialId());
+    //   SmartDashboard.putNumber("AprilTag Yaw (+> -<)", aprilTag.getYaw());
+    //   SmartDashboard.putNumber("AprilTag Pitch (+^ -v)", aprilTag.getPitch());
+
+    //   Optional<EstimatedRobotPose> pose = m_aprilTagNavigator.getRobotPose();
+    //   if(!pose.isEmpty()) {
+    //     SmartDashboard.putString("Last Robot Pose", pose.get().toString());
+    //   }
+    //   SmartDashboard.putString("Robot Pose", pose.toString());
+    // } else {
+    //   SmartDashboard.putNumber("AprilTag ID", 0);
+    //   SmartDashboard.putNumber("AprilTag Yaw (+> -<)", 0);
+    //   SmartDashboard.putNumber("AprilTag Pitch (+^ -v)", 0);
+    // }
+  }
 
   @Override
   public void teleopInit() {
+    // Set up the subsystems before using them
+    m_robotContainer.setupSubsystems(m_modeChooser.getSelected());
+
     // This makes sure that the autonomous stops running when
     // teleop starts running. If you want the autonomous to
     // continue until interrupted by another command, remove
@@ -99,6 +138,9 @@ public class Robot extends TimedRobot {
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
+    
+    // Configure all the bindings and default commands
+    m_robotContainer.gameTeleopBindings();
   }
 
   /** This function is called periodically during operator control. */

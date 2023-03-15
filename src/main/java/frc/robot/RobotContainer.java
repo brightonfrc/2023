@@ -4,7 +4,9 @@
 
 package frc.robot;
 
-import edu.wpi.first.wpilibj.ADIS16470_IMU;
+import com.pathplanner.lib.PathConstraints;
+import com.pathplanner.lib.PathPlanner;
+
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.ADIS16470_IMU.IMUAxis;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -16,9 +18,12 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.Ports;
 import frc.robot.commands.AutoBalance;
-import frc.robot.commands.Autos;
-import frc.robot.subsystems.DifferentialDriveSubsystem;
+import frc.robot.dataStorageClasses.AutonomousSelection;
+import frc.robot.dataStorageClasses.ModeSelection;
+import frc.robot.subsystems.Arm;
+import frc.robot.subsystems.DifferentialDriveWrapper;
 import frc.robot.subsystems.Gyro;
+import frc.robot.subsystems.testSubsystems.SparkMaxTester;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -27,36 +32,19 @@ import frc.robot.subsystems.Gyro;
  * subsystems, commands, and trigger mappings) should be declared here.
  */
 public class RobotContainer {
-  protected final Gyro m_gyro = new Gyro(new ADIS16470_IMU());
-
+  private final Gyro m_gyro = new Gyro();
   // The robot's subsystems and commands are defined here...
-  protected final DifferentialDriveSubsystem m_drivetrain = new DifferentialDriveSubsystem(m_gyro);
+  private DifferentialDriveWrapper m_drivetrain;
+  private Arm m_arm;
+  private SparkMaxTester m_sparkMaxTester;
+
+  private boolean areSubsystemsSetUp = false;
 
   // Replace with CommandPS4Controller or CommandXboxController if needed
-  private final CommandJoystick m_driverController = new CommandJoystick(Ports.kControllerPort);
+  private final CommandJoystick m_driverController = new CommandJoystick(Ports.k_controllerPort);
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
-  public RobotContainer() {
-    // Configure the trigger bindings
-    configureBindings();
-
-    // // Create the trajectory to follow in autonomous. It is best to initialize
-    // // trajectories here to avoid wasting time in autonomous.
-    // Trajectory m_trajectory =
-    //     TrajectoryGenerator.generateTrajectory(
-    //         new Pose2d(0, 0, Rotation2d.fromDegrees(0)),
-    //         List.of(new Translation2d(1, 1), new Translation2d(2, -1)),
-    //         m_pose,
-    //         new TrajectoryConfig(Units.feetToMeters(3.0), Units.feetToMeters(3.0)));
-
-    // // Create and push Field2d to SmartDashboard.
-    // Field2d m_field = new Field2d();
-    // SmartDashboard.putData(m_field);
-
-    // // Push the trajectory to Field2d.
-    // m_field.getObject("traj").setTrajectory(m_trajectory);
-
-  }
+  public RobotContainer() {}
 
   /**
    * Use this method to define your trigger->command mappings. Triggers can be created via the
@@ -67,33 +55,57 @@ public class RobotContainer {
    * PS4} controllers or {@link edu.wpi.first.wpilibj2.command.button.CommandJoystick Flight
    * joysticks}.
    */
-  private void configureBindings() {
+  public void setupSubsystems(ModeSelection mode) {
+    // Do not reinitialise the subsystems
+    if (areSubsystemsSetUp) return;
+    areSubsystemsSetUp = true;
+    // Note: We are also creating the required subsystems for non-game modes
+    switch (mode) {
+      case TestSparkMax:
+      // No bindings, everything done from the smart dashboard
+      // Just start the sparkmax test command
+      m_sparkMaxTester = new SparkMaxTester();
+      
+      return;
+      
+      // NOTE: Game is the default
+      default:
+        // Only instantiate the subsystems if we need them
+        // this.m_arm = new Arm();
+        this.m_drivetrain = new DifferentialDriveWrapper(m_gyro);
+    }
+  }
+  
+  /** Sets up bindings to be used in a game */
+  public void gameTeleopBindings(){
     Joystick j = m_driverController.getHID();
     Trigger action1Trigger = new JoystickButton(j, 8);
     
     // action1Trigger.onTrue(new AutoBalance(m_gyro, m_drivetrain));
     
-
     // If the drivetrain is not running other commands, run arcade drive
     m_drivetrain.setDefaultCommand(Commands.run(() -> {
+      // double speed = SmartDashboard.getNumber("Speed", 0);
+      // double turn = SmartDashboard.getNumber("Turn", 0);
+
       double speed = -m_driverController.getY();
       double turn = m_driverController.getX();
       SmartDashboard.putNumber("Speed", speed);
       SmartDashboard.putNumber("Turn", turn);
       m_drivetrain.drive(speed, turn);
-      
     }, m_drivetrain));
-
   }
 
   /**
-   * Use this to pass the autonomous command to the main {@link Robot} class.
+   * Use this to get autonomous commands for the subsystems
    *
    * @return the command to run in autonomous
    */
-  public CommandBase getAutonomousCommand() {
-    // An example command will be run in autonomous
-    return Autos.exampleAuto();
+  public CommandBase getAutonomousCommand(AutonomousSelection commandSelection) {
+    switch (commandSelection) {
+      default:
+        return m_drivetrain.followTrajectoryCommand(PathPlanner.loadPath("DriveForward", new PathConstraints(1, 0.25)), true);
+    }
   }
 
   public void logGyro() {

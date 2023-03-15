@@ -7,10 +7,9 @@ package frc.robot.subsystems;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.ADIS16470_IMU;
 import edu.wpi.first.wpilibj.ADIS16470_IMU.IMUAxis;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 /** A wrapper for the ADIS gyro */
-public class Gyro extends SubsystemBase {
+public class Gyro {
   // Create our gyro object like we would on a real robot.
   public ADIS16470_IMU gyro = new ADIS16470_IMU();
     
@@ -18,9 +17,7 @@ public class Gyro extends SubsystemBase {
      * Create a new wrapper for a ADIS16470_IMU gyro
      * @param gyro
      */
-  public Gyro(ADIS16470_IMU gyro) {
-        this.gyro = gyro;
-  }
+  public Gyro() {}
 
   public Rotation2d getAngle(IMUAxis axis) {
       // Set the axis

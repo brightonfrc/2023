@@ -4,11 +4,16 @@
 
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj.BuiltInAccelerometer;
+import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.ADIS16470_IMU.IMUAxis;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.DifferentialDriveSubsystem;
+import edu.wpi.first.wpilibj2.command.ProfiledPIDCommand;
+import frc.robot.Constants.MotionParameters.Autobalance;
+import frc.robot.subsystems.DifferentialDriveWrapper;
 import frc.robot.subsystems.Gyro;
+
 
 /**
  * A command for driving up the charge station and balancing on top of it. Thanks to https://www.chiefdelphi.com/t/psa-balance-in-auto/ .
@@ -53,8 +58,8 @@ public class AutoBalance extends CommandBase {
    */
   private double debounceTime;
 
-  public AutoBalance(Gyro gyro, DifferentialDriveSubsystem drivetrain) {
-    addRequirements(drivetrain, gyro);
+  public AutoBalance(Gyro gyro, DifferentialDriveWrapper drivetrain) {
+    addRequirements(drivetrain);
 
     m_gyro = gyro;
     state = 0;
