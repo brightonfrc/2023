@@ -6,6 +6,7 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.ADIS16470_IMU;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.ADIS16470_IMU.IMUAxis;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -70,7 +71,7 @@ public class RobotContainer {
     Joystick j = m_driverController.getHID();
     Trigger action1Trigger = new JoystickButton(j, 8);
     
-    action1Trigger.onTrue(new AutoBalance(m_gyro, m_drivetrain));
+    // action1Trigger.onTrue(new AutoBalance(m_gyro, m_drivetrain));
     
 
     // If the drivetrain is not running other commands, run arcade drive
@@ -93,5 +94,12 @@ public class RobotContainer {
   public CommandBase getAutonomousCommand() {
     // An example command will be run in autonomous
     return Autos.exampleAuto();
+  }
+
+  public void logGyro() {
+    // TODO: atm always returns same axis
+    SmartDashboard.putNumber("Gyro/X", m_gyro.getAngle(IMUAxis.kX).getDegrees());
+    // SmartDashboard.putNumber("Gyro/Y", m_gyro.getAngle(IMUAxis.kY).getDegrees());
+    // SmartDashboard.putNumber("Gyro/Z", m_gyro.getAngle(IMUAxis.kZ).getDegrees());
   }
 }
