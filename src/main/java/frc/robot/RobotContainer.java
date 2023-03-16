@@ -17,7 +17,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.Ports;
-import frc.robot.commands.AutoBalance;
+import frc.robot.commands.FollowPath;
 import frc.robot.dataStorageClasses.AutonomousSelection;
 import frc.robot.dataStorageClasses.ModeSelection;
 import frc.robot.subsystems.Arm;
@@ -72,7 +72,7 @@ public class RobotContainer {
       default:
         // Only instantiate the subsystems if we need them
         // this.m_arm = new Arm();
-        this.m_drivetrain = new DifferentialDriveWrapper(m_gyro);
+        this.m_drivetrain = new DifferentialDriveWrapper();
     }
   }
   
@@ -104,7 +104,7 @@ public class RobotContainer {
   public CommandBase getAutonomousCommand(AutonomousSelection commandSelection) {
     switch (commandSelection) {
       default:
-        return m_drivetrain.followTrajectoryCommand(PathPlanner.loadPath("DriveForward", new PathConstraints(1, 0.25)), true);
+        return new FollowPath(m_drivetrain, m_gyro, PathPlanner.loadPath("DriveForward", new PathConstraints(1, 0.25)));
     }
   }
 
