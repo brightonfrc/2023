@@ -135,14 +135,15 @@ public class DifferentialDriveWrapper extends SubsystemBase {
   }
 
   private void outputVolts(double vLeft, double vRight) { 
-    // Update field view
-    m_field.setRobotPose(m_odometry.getPoseMeters());
-    SmartDashboard.putData("Field", m_field);
     SmartDashboard.putNumber("autoDrive.vLeft", vLeft);
     SmartDashboard.putNumber("autoDrive.vRight", vRight);
     SmartDashboard.putNumber("autoDrive.posLeft", m_leftEncoder.getDistance());
     SmartDashboard.putNumber("autoDrive.posRight", m_rightEncoder.getDistance());
-    SmartDashboard.putString("autoDrive.wheelSpeeds", this.getWheelSpeeds().toString());
+    var speeds = this.getWheelSpeeds();
+    SmartDashboard.putNumber("autoDrive.speedLeft", speeds.leftMetersPerSecond);
+    SmartDashboard.putNumber("autoDrive.speedRight", speeds.rightMetersPerSecond);
+    var pose = getPose();
+    SmartDashboard.putString("autoDrive.pose", pose.toString());
 
     m_left.setVoltage(vLeft);
     m_right.setVoltage(vRight);
@@ -152,8 +153,12 @@ public class DifferentialDriveWrapper extends SubsystemBase {
   @Override
   public void periodic() {
     // Update the pose
-      m_odometry.update(getGyroHeading(),
+    m_odometry.update(getGyroHeading(),
       m_leftEncoder.getDistance(), m_rightEncoder.getDistance());
+
+    // Update field view
+    m_field.setRobotPose(m_odometry.getPoseMeters());
+    SmartDashboard.putData("Field", m_field);
   }
   
   private Rotation2d getGyroHeading(){
