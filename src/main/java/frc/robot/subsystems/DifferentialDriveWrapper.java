@@ -58,10 +58,25 @@ public class DifferentialDriveWrapper extends SubsystemBase {
     SmartDashboard.putNumber("drive.LightPower", m_left.get());
   }
 
-  
+  /**
+   * Outputs the voltages specified into the drivetrain
+   * @param vLeft Left voltage, V
+   * @param vRight Right voltage, V
+   */
   public void outputVolts(double vLeft, double vRight) {
     m_left.setVoltage(vLeft);
     m_right.setVoltage(vRight);
+    m_drive.feed();
+  }
+
+  /**
+   * Sets the speeds specified for each side on the drivetrain
+   * @param left Left speed, -1 to 1
+   * @param right Right speed, -1 to 1
+   */
+  public void set(double left, double right) {
+    m_left.set(left);
+    m_right.set(right);
     m_drive.feed();
   }
 

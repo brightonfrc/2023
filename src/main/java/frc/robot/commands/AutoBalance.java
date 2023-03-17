@@ -166,7 +166,7 @@ public class AutoBalance extends CommandBase {
     double speed = autoBalanceRoutine();
     // speed = drivetrainFeedforward.calculate(speed);
     // Update the wheel speeds - TODO: Check is correct
-    m_drivetrain.drive(speed, 0);
+    m_drivetrain.set(speed, speed);
   }
 
   // Called when the command is initially scheduled.
@@ -177,7 +177,7 @@ public class AutoBalance extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    m_drivetrain.drive(0, 0);
+    m_drivetrain.set(0, 0);
   }
 
   // Returns true when the command should end.
