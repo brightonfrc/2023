@@ -8,6 +8,7 @@ import com.pathplanner.lib.PathConstraints;
 import com.pathplanner.lib.PathPlanner;
 
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.ADIS16470_IMU.IMUAxis;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -16,7 +17,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.Ports;
-import frc.robot.commands.AutoBalance;
+import frc.robot.commands.FollowPath;
 import frc.robot.dataStorageClasses.AutonomousSelection;
 import frc.robot.dataStorageClasses.ModeSelection;
 import frc.robot.subsystems.Arm;
@@ -71,7 +72,7 @@ public class RobotContainer {
       default:
         // Only instantiate the subsystems if we need them
         // this.m_arm = new Arm();
-        this.m_drivetrain = new DifferentialDriveWrapper(m_gyro);
+        this.m_drivetrain = new DifferentialDriveWrapper();
     }
   }
   
@@ -80,7 +81,7 @@ public class RobotContainer {
     Joystick j = m_driverController.getHID();
     Trigger action1Trigger = new JoystickButton(j, 8);
     
-    action1Trigger.onTrue(new AutoBalance(m_gyro, m_drivetrain));
+    // action1Trigger.onTrue(new AutoBalance(m_gyro, m_drivetrain));
     
     // If the drivetrain is not running other commands, run arcade drive
     m_drivetrain.setDefaultCommand(Commands.run(() -> {
@@ -103,7 +104,15 @@ public class RobotContainer {
   public CommandBase getAutonomousCommand(AutonomousSelection commandSelection) {
     switch (commandSelection) {
       default:
-        return m_drivetrain.followTrajectoryCommand(PathPlanner.loadPath("DriveForward", new PathConstraints(1, 0.25)), true);
+        var path = PathPlanner.loadPath("DriveForward", new PathConstraints(1, 0.25));
+        return new FollowPath(m_drivetrain, m_gyro, path, path.getInitialPose());
     }
+  }
+
+  public void logGyro() {
+    // TODO: atm always returns same axis
+    SmartDashboard.putNumber("Gyro/X", m_gyro.getAngle(IMUAxis.kX).getDegrees());
+    // SmartDashboard.putNumber("Gyro/Y", m_gyro.getAngle(IMUAxis.kY).getDegrees());
+    // SmartDashboard.putNumber("Gyro/Z", m_gyro.getAngle(IMUAxis.kZ).getDegrees());
   }
 }
