@@ -4,6 +4,8 @@
 
 package frc.robot.commands;
 
+import com.pathplanner.lib.PathConstraints;
+import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.PathPlannerTrajectory;
 import com.pathplanner.lib.commands.PPRamseteCommand;
 
@@ -15,6 +17,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.wpilibj.ADIS16470_IMU.IMUAxis;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
@@ -37,6 +40,8 @@ public class FollowPath extends CommandBase { // TODO: Test
   // Create odometry - manages position on pitch for autonomous
   public DifferentialDriveOdometry m_odometry;
   public Field2d field;
+  public double maxVelocity = 2;
+  public double maxAcceleration = 1;
 
   /**
    * Creates a new command to follow a path from PathPlanner with the drivetrain.
@@ -44,11 +49,14 @@ public class FollowPath extends CommandBase { // TODO: Test
    * @param gyro The Gyroscope to use for odometry
    * @param traj The PathPlannerTrajectory to follow
    */
-  public FollowPath(DifferentialDriveWrapper drivetrain, Gyro gyro, PathPlannerTrajectory traj, Pose2d initialPose) {
+  public FollowPath(DifferentialDriveWrapper drivetrain, Gyro gyro, String pathPlannerTrajectoryName, Alliance alliance) {
     this.m_drivetrain = drivetrain;
     this.m_gyro = gyro;
     this.field = new Field2d();
-    
+    PathPlannerTrajectory traj = PathPlanner.loadPath(pathPlannerTrajectoryName, new PathConstraints(maxVelocity, maxAcceleration));
+    // Do this before finding the initial pose to avoid bugs
+    traj = PathPlannerTrajectory.transformTrajectoryForAlliance(traj, alliance);
+    Pose2d initialPose = traj.getInitialPose();
    
     // Use addRequirements() here to declare subsystem dependencies.
     this.sequentialCommandGroup = new SequentialCommandGroup(

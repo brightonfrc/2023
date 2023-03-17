@@ -9,6 +9,7 @@ import com.pathplanner.lib.PathPlanner;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.ADIS16470_IMU.IMUAxis;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -101,11 +102,11 @@ public class RobotContainer {
    *
    * @return the command to run in autonomous
    */
-  public CommandBase getAutonomousCommand(AutonomousSelection commandSelection) {
+  public CommandBase getAutonomousCommand(AutonomousSelection commandSelection, Alliance alliance) {
     switch (commandSelection) {
       default:
-        var path = PathPlanner.loadPath("DriveForward", new PathConstraints(1, 0.25));
-        return new FollowPath(m_drivetrain, m_gyro, path, path.getInitialPose());
+        // NOTE: the robot resets odometry to beginning of this path
+        return new FollowPath(m_drivetrain, m_gyro, "Test", alliance);
     }
   }
 
