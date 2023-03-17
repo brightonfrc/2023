@@ -89,7 +89,11 @@ public class RobotContainer {
       // double turn = SmartDashboard.getNumber("Turn", 0);
 
       double speed = -m_driverController.getY();
-      double turn = m_driverController.getX();
+      double turn = -m_driverController.getX();
+      
+      // Reverse the turning direction when going backwards, like a car
+      turn *= Math.signum(speed);
+
       SmartDashboard.putNumber("Speed", speed);
       SmartDashboard.putNumber("Turn", turn);
       m_drivetrain.drive(speed, turn);
