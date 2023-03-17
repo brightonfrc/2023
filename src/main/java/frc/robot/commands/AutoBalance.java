@@ -14,11 +14,15 @@ import frc.robot.subsystems.Gyro;
  * A command for driving up the charge station and balancing on top of it. Thanks to https://www.chiefdelphi.com/t/psa-balance-in-auto/ .
  */
 public class AutoBalance extends CommandBase {
-
+  // private SimpleMotorFeedforward drivetrainFeedforward = new SimpleMotorFeedforward(Constants.MotionParameters.Drivetrain.k_s, Constants.MotionParameters.Drivetrain.k_v, Constants.MotionParameters.Drivetrain.k_a);
   /** 
-   * The built-in RoboRIO Accelerometer
+   * The Gyro
    */
   private Gyro m_gyro;
+  /** 
+   * The Drivetrain
+   */
+  private DifferentialDriveWrapper m_drivetrain;
   /** 
    * The current state of the autonomous routine
    * For pure balance
@@ -57,6 +61,8 @@ public class AutoBalance extends CommandBase {
     addRequirements(drivetrain);
 
     m_gyro = gyro;
+    m_drivetrain = drivetrain;
+
     state = 0;
     debounceCount = 0;
 
@@ -154,9 +160,29 @@ public class AutoBalance extends CommandBase {
     return 0;
   }
 
+  // Called every time the scheduler runs while the command is scheduled.
+  @Override
+  public void execute() {
+    double speed = autoBalanceRoutine();
+    // speed = drivetrainFeedforward.calculate(speed);
+    // Update the wheel speeds - TODO: Check is correct
+    m_drivetrain.drive(speed, 0);
+  }
+
+  // Called when the command is initially scheduled.
+  @Override
+  public void initialize() {
+  }
+
+  // Called once the command ends or is interrupted.
+  @Override
+  public void end(boolean interrupted) {
+    m_drivetrain.drive(0, 0);
+  }
+
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return state >= 3;
   }
 }
