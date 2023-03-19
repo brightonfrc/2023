@@ -68,7 +68,7 @@ public final class Constants {
       /**
        * Maximum Angle at which the robot is level, on top of the charge station (degrees)
        */
-      public static final double k_levelDegree = 3.0;
+      public static final double k_levelDegree = 2.0; // In manual, 2.5deg
       /**
        * Time delay from start of state trigger to state entry (seconds)
        */
