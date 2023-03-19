@@ -5,6 +5,7 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.ADIS16470_IMU.IMUAxis;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.DifferentialDriveWrapper;
 import frc.robot.subsystems.Gyro;
@@ -105,7 +106,13 @@ public class AutoBalance extends CommandBase {
     // } else {
     //     return -Math.sqrt(pitch * pitch + roll * roll);
     // }
-    return m_gyro.getAngle(IMUAxis.kX).getDegrees();
+
+    double tilt = m_gyro.getAngle(IMUAxis.kX).getDegrees();
+
+    SmartDashboard.putNumber("AutoBalance/State", state);
+    SmartDashboard.putNumber("AutoBalance/Tilt", tilt);
+
+    return tilt;
   }
 
   public int secondsToTicks(double time) {
