@@ -8,7 +8,9 @@ import com.pathplanner.lib.PathConstraints;
 import com.pathplanner.lib.PathPlanner;
 
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.ADIS16470_IMU.IMUAxis;
+import edu.wpi.first.wpilibj.drive.RobotDriveBase;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -41,7 +43,7 @@ public class RobotContainer {
   private boolean areSubsystemsSetUp = false;
 
   // Replace with CommandPS4Controller or CommandXboxController if needed
-  private final CommandJoystick m_driverController = new CommandJoystick(Ports.k_controllerPort);
+  private final CommandXboxController m_driverController = new CommandXboxController(Ports.k_controllerPort);
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {}
@@ -78,21 +80,17 @@ public class RobotContainer {
   
   /** Sets up bindings to be used in a game */
   public void gameTeleopBindings(){
-    Joystick j = m_driverController.getHID();
-    Trigger action1Trigger = new JoystickButton(j, 8);
-    
     // action1Trigger.onTrue(new AutoBalance(m_gyro, m_drivetrain));
     
     // If the drivetrain is not running other commands, run arcade drive
     m_drivetrain.setDefaultCommand(Commands.run(() -> {
-      // double speed = SmartDashboard.getNumber("Speed", 0);
-      // double turn = SmartDashboard.getNumber("Turn", 0);
-
-      double speed = -m_driverController.getY();
-      double turn = -m_driverController.getX();
+      double speed = -m_driverController.getRightY();
+      double turn = -m_driverController.getRightX();
+      SmartDashboard.putNumber("speed", speed);
       
       // Reverse the turning direction when going backwards, like a car
-      turn *= Math.signum(speed);
+      // Only assume we are going backwards if we are outside the deadband
+      // if (speed < RobotDriveBase.kDefaultDeadband) turn *= -1;
 
       SmartDashboard.putNumber("Speed", speed);
       SmartDashboard.putNumber("Turn", turn);

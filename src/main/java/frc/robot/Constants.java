@@ -46,7 +46,7 @@ public final class Constants {
     public static final int k_armChainMotor = 30;
     public static final int k_armCableMotor = 31;
   }
-
+  
   public static class MotionParameters {
     public static class Autobalance {
       public static final double k_p = 0;
@@ -60,6 +60,8 @@ public final class Constants {
       public static final double k_p = 0;
       public static final double k_i = 0;
       public static final double k_d = 0;
+
+    public static final double k_speedThresholdForTurnInPlace = 0.4;
       
       // Determine these using sysid: https://docs.wpilib.org/en/stable/docs/software/pathplanning/system-identification/configuring-project.html 
       public static final double k_s = 0.67036;
