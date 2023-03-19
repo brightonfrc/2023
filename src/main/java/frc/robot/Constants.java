@@ -48,13 +48,31 @@ public final class Constants {
   }
 
   public static class MotionParameters {
-    public static class Autobalance {
-      public static final double k_p = 0;
-      public static final double k_i = 0;
-      public static final double k_d = 0;
-      
-      public static final double k_maxVelocity = 1;
-      public static final double k_maxAcceleration = 1;
+    public static class AutoBalance {
+      /**
+       * Robot speed when driving up slope of charge station
+       */
+      public static final double k_robotSpeedSlow = 0.2;
+      /**
+       * The speed used to correct the small error when very close to the setpoint
+       */
+      public static final double k_robotSpeedCorrection = 0.1;
+      /**
+       * Robot speed when driving towards charge station
+       */
+      public static final double k_robotSpeedFast = 0.4;
+      /**
+       * Minimum Angle at which the robot is driving up the charge station (degrees)
+       */
+      public static final double k_onChargeStationDegree = 13.0;
+      /**
+       * Maximum Angle at which the robot is level, on top of the charge station (degrees)
+       */
+      public static final double k_levelDegree = 3.0;
+      /**
+       * Time delay from start of state trigger to state entry (seconds)
+       */
+      public static final double k_debounceTime = 0.2;
     }
     public static class Drivetrain {
       public static final double k_p = 0;

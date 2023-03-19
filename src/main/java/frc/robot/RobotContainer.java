@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.Ports;
+import frc.robot.commands.AutoBalance;
 import frc.robot.commands.FollowPath;
 import frc.robot.dataStorageClasses.AutonomousSelection;
 import frc.robot.dataStorageClasses.ModeSelection;
@@ -104,7 +105,8 @@ public class RobotContainer {
   public CommandBase getAutonomousCommand(AutonomousSelection commandSelection) {
     switch (commandSelection) {
       default:
-        return new FollowPath(m_drivetrain, m_gyro, PathPlanner.loadPath("DriveForward", new PathConstraints(1, 0.25)));
+        // return new FollowPath(m_drivetrain, m_gyro, PathPlanner.loadPath("DriveForward", new PathConstraints(1, 0.25)));
+        return new AutoBalance(m_gyro, m_drivetrain);
     }
   }
 
