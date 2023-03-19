@@ -46,7 +46,7 @@ public final class Constants {
     public static final int k_armChainMotor = 30;
     public static final int k_armCableMotor = 31;
 
-    public static int k_intakeMotor; // TODO
+    public static int k_intakeMotor = 20; // TODO
   }
 
   public static class MotionParameters {
