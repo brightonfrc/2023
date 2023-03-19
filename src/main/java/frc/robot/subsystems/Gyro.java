@@ -22,7 +22,7 @@ public class Gyro {
   public Rotation2d getAngle(IMUAxis axis) {
       // Set the axis
       // Note that the gyro does not change the axis if the new axis is the same as the old one, there is no overhead to this
-      System.out.println("Gyro set " + axis + " Status" + gyro.setYawAxis(axis));
+      gyro.setYawAxis(axis);
       // Get the angle
       return new Rotation2d(Math.toRadians(gyro.getAngle()));
   }

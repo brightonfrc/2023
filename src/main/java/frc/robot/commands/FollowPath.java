@@ -28,7 +28,6 @@ import frc.robot.subsystems.Gyro;
  * This sets up the odometry and gyro, but the encoders are included in the drivetrain.
  */
 public class FollowPath extends CommandBase { // TODO: Test
-  
   SequentialCommandGroup sequentialCommandGroup;
   DifferentialDriveWrapper m_drivetrain;
 
