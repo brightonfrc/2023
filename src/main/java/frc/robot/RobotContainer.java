@@ -8,6 +8,9 @@ import com.pathplanner.lib.PathConstraints;
 import com.pathplanner.lib.PathPlanner;
 
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.ADIS16470_IMU.IMUAxis;
+import edu.wpi.first.wpilibj.drive.RobotDriveBase;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -16,7 +19,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.Ports;
-import frc.robot.commands.AutoBalance;
+import frc.robot.commands.FollowPath;
 import frc.robot.dataStorageClasses.AutonomousSelection;
 import frc.robot.dataStorageClasses.ModeSelection;
 import frc.robot.subsystems.Arm;
@@ -35,11 +38,12 @@ public class RobotContainer {
   private final Gyro m_gyro = new Gyro();
   // The robot's subsystems and commands are defined here...
   private DifferentialDriveWrapper m_drivetrain;
+  private Arm m_arm;
 
   private boolean areSubsystemsSetUp = false;
 
   // Replace with CommandPS4Controller or CommandXboxController if needed
-  private final CommandJoystick m_driverController = new CommandJoystick(Ports.k_controllerPort);
+  private final CommandXboxController m_driverController = new CommandXboxController(Ports.k_controllerPort);
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {}
@@ -69,26 +73,25 @@ public class RobotContainer {
       // NOTE: Game is the default
       default:
         // Only instantiate the subsystems if we need them
-        new Arm();
-        // new Intake();
-        this.m_drivetrain = new DifferentialDriveWrapper(m_gyro);
+        this.m_arm = new Arm();
+        this.m_drivetrain = new DifferentialDriveWrapper();
     }
   }
   
   /** Sets up bindings to be used in a game */
   public void gameTeleopBindings(){
-    Joystick j = m_driverController.getHID();
-    Trigger action1Trigger = new JoystickButton(j, 8);
-    
-    action1Trigger.onTrue(new AutoBalance(m_gyro, m_drivetrain));
+    // action1Trigger.onTrue(new AutoBalance(m_gyro, m_drivetrain));
     
     // If the drivetrain is not running other commands, run arcade drive
     m_drivetrain.setDefaultCommand(Commands.run(() -> {
-      // double speed = SmartDashboard.getNumber("Speed", 0);
-      // double turn = SmartDashboard.getNumber("Turn", 0);
+      double speed = -m_driverController.getRightY();
+      double turn = -m_driverController.getRightX();
+      SmartDashboard.putNumber("speed", speed);
+      
+      // Reverse the turning direction when going backwards, like a car
+      // Only assume we are going backwards if we are outside the deadband
+      // if (speed < RobotDriveBase.kDefaultDeadband) turn *= -1;
 
-      double speed = -m_driverController.getY();
-      double turn = m_driverController.getX();
       SmartDashboard.putNumber("Speed", speed);
       SmartDashboard.putNumber("Turn", turn);
       m_drivetrain.drive(speed, turn);
@@ -103,7 +106,14 @@ public class RobotContainer {
   public CommandBase getAutonomousCommand(AutonomousSelection commandSelection) {
     switch (commandSelection) {
       default:
-        return m_drivetrain.followTrajectoryCommand(PathPlanner.loadPath("DriveForward", new PathConstraints(1, 0.25)), true);
+        return new FollowPath(m_drivetrain, m_gyro, PathPlanner.loadPath("DriveForward", new PathConstraints(1, 0.25)));
     }
+  }
+
+  public void logGyro() {
+    // TODO: atm always returns same axis
+    SmartDashboard.putNumber("Gyro/X", m_gyro.getAngle(IMUAxis.kX).getDegrees());
+    // SmartDashboard.putNumber("Gyro/Y", m_gyro.getAngle(IMUAxis.kY).getDegrees());
+    // SmartDashboard.putNumber("Gyro/Z", m_gyro.getAngle(IMUAxis.kZ).getDegrees());
   }
 }

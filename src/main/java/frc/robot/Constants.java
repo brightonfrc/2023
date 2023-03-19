@@ -33,15 +33,20 @@ public final class Constants {
     // Motor controllers
     // These numbers correspond to PID ids
     // Talons are on ids in 20s, sparkMaxes are on ids in 30s
-    public static final int k_drivetrainMotorControllerPortL1 = 21;
-    public static final int k_drivetrainMotorControllerPortL2 = 10;
-    public static final int k_drivetrainMotorControllerPortR1 = 20;
-    public static final int k_drivetrainMotorControllerPortR2 = 2;
+    public static final int k_drivetrainMotorControllerPortL1 = 1;
+    public static final int k_drivetrainMotorControllerPortR1 = 2;
+    public static final int k_drivetrainMotorControllerPortL2 = 3;
+    public static final int k_drivetrainMotorControllerPortR2 = 4;
+    
+    public static final int k_encoderPortAL = 0;
+    public static final int k_encoderPortBL = 1;
+    public static final int k_encoderPortAR = 2;
+    public static final int k_encoderPortBR = 3;
 
     public static final int k_armChainMotor = 30;
     public static final int k_armCableMotor = 31;
   }
-
+  
   public static class MotionParameters {
     public static class Autobalance {
       public static final double k_p = 0;
@@ -55,13 +60,15 @@ public final class Constants {
       public static final double k_p = 0;
       public static final double k_i = 0;
       public static final double k_d = 0;
+
+    public static final double k_speedThresholdForTurnInPlace = 0.4;
       
       // Determine these using sysid: https://docs.wpilib.org/en/stable/docs/software/pathplanning/system-identification/configuring-project.html 
-      public static final double k_s = 1;
-      public static final double k_v = 1;
-      public static final double k_a = 1;
+      public static final double k_s = 0.67036;
+      public static final double k_v = 0.80663;
+      public static final double k_a = 0.084952;
 
-      public static final double k_encoderDistancePerPulse = Math.PI*Math.pow(Constants.Measurements.Drivetrain.k_wheelRadius,2) / Constants.Measurements.Drivetrain.k_encoderPulsesPerRotation; // (distance per pulse = (circumference = pi * r^2) / pulses per rotation)
+      public static final double k_distancePerEncoderPulse = Math.PI * Constants.Measurements.Drivetrain.k_wheelDiameter / Constants.Measurements.Drivetrain.k_encoderPulsesPerRotation; // (distance per pulse = (circumference = pi * r^2) / pulses per rotation)
     }
   }
     
@@ -75,7 +82,7 @@ public final class Constants {
  
   public static class Measurements {
     public static class Drivetrain {
-      public static final double k_wheelRadius = Units.inchesToMeters(3); // m
+      public static final double k_wheelDiameter = Units.inchesToMeters(6); // m
       public static final int k_encoderPulsesPerRotation = 2048;
 
       public static final double k_trackWidth = Units.inchesToMeters(21); // m
