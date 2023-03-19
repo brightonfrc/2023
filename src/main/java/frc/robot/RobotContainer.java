@@ -23,6 +23,7 @@ import frc.robot.dataStorageClasses.ModeSelection;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.DifferentialDriveWrapper;
 import frc.robot.subsystems.Gyro;
+import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.testSubsystems.SparkMaxTester;
 
 /**
@@ -35,6 +36,7 @@ public class RobotContainer {
   private final Gyro m_gyro = new Gyro();
   // The robot's subsystems and commands are defined here...
   private DifferentialDriveWrapper m_drivetrain;
+  private Intake m_intake;
   private Arm m_arm;
   private SparkMaxTester m_sparkMaxTester;
 
@@ -72,6 +74,7 @@ public class RobotContainer {
       default:
         // Only instantiate the subsystems if we need them
         // this.m_arm = new Arm();
+        this.m_intake = new Intake();
         this.m_drivetrain = new DifferentialDriveWrapper();
     }
   }

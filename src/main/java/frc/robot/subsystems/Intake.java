@@ -5,9 +5,10 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.Ports;
 
 public class Intake extends SubsystemBase {
-    private TalonSRX m_motor;
+    private TalonSRX m_motor = new TalonSRX(Ports.k_intakeMotor);
 
     @Override
     public void periodic() {
