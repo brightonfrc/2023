@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.Ports;
 import frc.robot.commands.FollowPath;
 import frc.robot.commands.IntakeGrab;
+import frc.robot.commands.IntakeRelease;
 import frc.robot.dataStorageClasses.AutonomousSelection;
 import frc.robot.dataStorageClasses.ModeSelection;
 import frc.robot.subsystems.Arm;
@@ -83,9 +84,13 @@ public class RobotContainer {
   /** Sets up bindings to be used in a game */
   public void gameTeleopBindings(){
     Joystick j = m_driverController.getHID();
-    Trigger action1Trigger = new JoystickButton(j, 8);
+
+    // Triggers for intake
+    Trigger grabTrigger = new JoystickButton(j, 8);
+    Trigger releaseTrigger = new JoystickButton(j, 9);
     
-    action1Trigger.onTrue(new IntakeGrab(m_intake));
+    grabTrigger.onTrue(new IntakeGrab(m_intake));
+    releaseTrigger.onTrue(new IntakeRelease(m_intake));
     
     // If the drivetrain is not running other commands, run arcade drive
     m_drivetrain.setDefaultCommand(Commands.run(() -> {
