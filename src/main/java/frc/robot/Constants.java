@@ -11,7 +11,9 @@ import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.XboxController;
 import frc.robot.dataStorageClasses.ArmPositionCounts;
+import frc.robot.dataStorageClasses.TurntablePositionCounts;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
@@ -43,8 +45,8 @@ public final class Constants {
     public static final int k_encoderPortAR = 2;
     public static final int k_encoderPortBR = 3;
 
-    public static final int k_armChainMotor = 30;
-    public static final int k_armCableMotor = 31;
+    public static final int k_armChainMotor = 31;
+    public static final int k_armCableMotor = 30;
 
     public static int k_intakeMotor = 20; // TODO
     public static final int k_turntableMotor = 21;// TODO
@@ -112,19 +114,10 @@ public final class Constants {
     public static final Pose2d k_startBlue = new Pose2d(new Translation2d(5.0, 0.0), new Rotation2d());
   }
 
-  /** Buttons ID
-   * B	      1
-   * A	      2
-   * X	      3
-   * Y	      4
-   * L Bumper	5
-   * R Bumper	6
-   * -	      7
-   * +	      8
-   * L Back	  9
-   * R Back	  10
-   */
   public static class Controls {
-    
+    public static final int k_grabTrigger = XboxController.Button.kLeftBumper.value;
+    public static final int k_releaseTrigger = XboxController.Button.kRightBumper.value;
+    public static int k_armGroundTrigger = XboxController.Button.kA.value;
+    public static int k_armMidTrigger = XboxController.Button.kA.value;
   }
 }
