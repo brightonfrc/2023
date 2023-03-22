@@ -58,6 +58,7 @@ public class Robot extends TimedRobot {
     m_modeChooser = new SendableChooser<ModeSelection>();
     m_modeChooser.setDefaultOption("Game", ModeSelection.Game);
     m_modeChooser.addOption("Test SparkMax", ModeSelection.TestSparkMax);
+    m_modeChooser.addOption("Test Turntable", ModeSelection.TestTurntable);
     SmartDashboard.putData("Choose mode", m_modeChooser);
   }
 
