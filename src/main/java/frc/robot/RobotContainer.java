@@ -7,18 +7,14 @@ package frc.robot;
 import com.pathplanner.lib.PathConstraints;
 import com.pathplanner.lib.PathPlanner;
 
-import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.ADIS16470_IMU.IMUAxis;
-import edu.wpi.first.wpilibj.drive.RobotDriveBase;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.Ports;
+import frc.robot.subsystems.Turntable;
 import frc.robot.commands.FollowPath;
 import frc.robot.commands.IntakeGrab;
 import frc.robot.commands.IntakeRelease;
@@ -29,6 +25,7 @@ import frc.robot.subsystems.DifferentialDriveWrapper;
 import frc.robot.subsystems.Gyro;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.testSubsystems.SparkMaxTester;
+import frc.robot.subsystems.testSubsystems.TurntableTester;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -40,8 +37,12 @@ public class RobotContainer {
   private final Gyro m_gyro = new Gyro();
   // The robot's subsystems and commands are defined here...
   private DifferentialDriveWrapper m_drivetrain;
-  private Intake m_intake;
+  private Turntable m_turntable;
   private Arm m_arm;
+  private Intake m_intake;
+  
+  private SparkMaxTester m_sparkMaxTester;
+  private TurntableTester m_turntableTester;
 
   private boolean areSubsystemsSetUp = false;
 
@@ -67,11 +68,16 @@ public class RobotContainer {
     // Note: We are also creating the required subsystems for non-game modes
     switch (mode) {
       case TestSparkMax:
-      // No bindings, everything done from the smart dashboard
-      // Just start the sparkmax test command
-      new SparkMaxTester();
-      
-      return;
+        // No bindings, everything done from the smart dashboard
+        // Just start the sparkmax test command
+        m_sparkMaxTester = new SparkMaxTester();
+        return;
+      case TestTurntable:
+        // No bindings, everything done from the smart dashboard
+        // Just start the turntable test command
+        m_turntable = new Turntable();
+        m_turntableTester = new TurntableTester(m_turntable);
+        return;
       
       // NOTE: Game is the default
       default:

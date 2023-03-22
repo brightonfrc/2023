@@ -47,9 +47,19 @@ public final class Constants {
     public static final int k_armCableMotor = 31;
 
     public static int k_intakeMotor = 20; // TODO
+    public static final int k_turntableMotor = 21;// TODO
   }
   
   public static class MotionParameters {
+    public static class Turntable {
+      public static final double k_p = 0.15;
+      public static final double k_i = 0;
+      public static final double k_d = 1.0;
+      public static final double k_f = 0;
+
+      public static final int k_timeoutMs = 30;
+    }
+
     public static class Autobalance {
       public static final double k_p = 0;
       public static final double k_i = 0;
@@ -63,7 +73,7 @@ public final class Constants {
       public static final double k_i = 0;
       public static final double k_d = 0;
 
-    public static final double k_speedThresholdForTurnInPlace = 0.4;
+      public static final double k_speedThresholdForTurnInPlace = 0.4;
       
       // Determine these using sysid: https://docs.wpilib.org/en/stable/docs/software/pathplanning/system-identification/configuring-project.html 
       public static final double k_s = 0.67036;
@@ -88,6 +98,10 @@ public final class Constants {
       public static final int k_encoderPulsesPerRotation = 2048;
 
       public static final double k_trackWidth = Units.inchesToMeters(21); // m
+    }
+
+    public static class Turntable {
+      public static final int k_encoderPulsesPerRotation = 4096;
     }
 
     public static final Transform3d k_robotToCam = new Transform3d(new Translation3d(0.5, 0.0, 0.5), new Rotation3d(0,0,0));  // TODO - e.g. - Cam mounted facing forward, half a meter forward of center, half a meter up from center.
