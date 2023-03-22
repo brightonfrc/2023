@@ -42,7 +42,6 @@ public class RobotContainer {
   private DifferentialDriveWrapper m_drivetrain;
   private Intake m_intake;
   private Arm m_arm;
-  private SparkMaxTester m_sparkMaxTester;
 
   private boolean areSubsystemsSetUp = false;
 
@@ -70,14 +69,14 @@ public class RobotContainer {
       case TestSparkMax:
       // No bindings, everything done from the smart dashboard
       // Just start the sparkmax test command
-      m_sparkMaxTester = new SparkMaxTester();
+      new SparkMaxTester();
       
       return;
       
       // NOTE: Game is the default
       default:
         // Only instantiate the subsystems if we need them
-        // this.m_arm = new Arm();
+        this.m_arm = new Arm();
         this.m_intake = new Intake();
         this.m_drivetrain = new DifferentialDriveWrapper();
     }
