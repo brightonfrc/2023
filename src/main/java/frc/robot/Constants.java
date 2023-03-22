@@ -59,7 +59,7 @@ public final class Constants {
       public static final int k_timeoutMs = 30;
     }
 
-    public static class Autobalance { // TODO: Remove this if necessary in Autobalance branch
+    public static class Autobalance {
       public static final double k_p = 0;
       public static final double k_i = 0;
       public static final double k_d = 0;
