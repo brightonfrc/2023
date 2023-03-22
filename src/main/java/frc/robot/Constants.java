@@ -95,4 +95,20 @@ public final class Constants {
     public static final Pose2d k_startRed = new Pose2d(new Translation2d(0.0, 0.0), new Rotation2d());
     public static final Pose2d k_startBlue = new Pose2d(new Translation2d(5.0, 0.0), new Rotation2d());
   }
+
+  /** Buttons ID
+   * B	      1
+   * A	      2
+   * X	      3
+   * Y	      4
+   * L Bumper	5
+   * R Bumper	6
+   * -	      7
+   * +	      8
+   * L Back	  9
+   * R Back	  10
+   */
+  public static class Controls {
+    
+  }
 }
