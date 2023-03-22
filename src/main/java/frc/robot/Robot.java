@@ -144,8 +144,6 @@ public class Robot extends TimedRobot {
       m_autonomousCommand.cancel();
     }
     
-    // Configure all the bindings and default commands
-    m_robotContainer.gameTeleopBindings();
   }
 
   /** This function is called periodically during operator control. */

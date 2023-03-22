@@ -7,14 +7,19 @@ package frc.robot;
 import com.pathplanner.lib.PathConstraints;
 import com.pathplanner.lib.PathPlanner;
 
+import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.ADIS16470_IMU.IMUAxis;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.Ports;
 import frc.robot.subsystems.Turntable;
+import frc.robot.commands.TurntableSetPosition;
+import frc.robot.commands.ArmSetLevel;
 import frc.robot.commands.FollowPath;
 import frc.robot.commands.IntakeGrab;
 import frc.robot.commands.IntakeRelease;
@@ -85,19 +90,27 @@ public class RobotContainer {
         this.m_arm = new Arm();
         this.m_intake = new Intake();
         this.m_drivetrain = new DifferentialDriveWrapper();
+
+        
+        // Configure all the bindings and default commands
+        gameTeleopBindings();
     }
   }
   
   /** Sets up bindings to be used in a game */
   public void gameTeleopBindings(){
-    Joystick j = m_driverController.getHID();
+    XboxController j = m_driverController.getHID();
 
     // Triggers for intake
-    Trigger grabTrigger = new JoystickButton(j, 8);
-    Trigger releaseTrigger = new JoystickButton(j, 9);
+    Trigger grabTrigger = new JoystickButton(j, Constants.Controls.k_grabTrigger);
+    Trigger releaseTrigger = new JoystickButton(j, Constants.Controls.k_releaseTrigger);
+    Trigger armGroundTrigger = new JoystickButton(j, Constants.Controls.k_armGroundTrigger);
+    Trigger armMidTrigger = new JoystickButton(j, Constants.Controls.k_armMidTrigger);
     
     grabTrigger.onTrue(new IntakeGrab(m_intake));
     releaseTrigger.onTrue(new IntakeRelease(m_intake));
+    armGroundTrigger.onTrue(new ArmSetLevel(m_arm, 0));
+    armMidTrigger.onTrue(new ArmSetLevel(m_arm, 1));
     
     // If the drivetrain is not running other commands, run arcade drive
     m_drivetrain.setDefaultCommand(Commands.run(() -> {
