@@ -16,11 +16,14 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.Ports;
 import frc.robot.subsystems.Turntable;
 import frc.robot.commands.FollowPath;
+import frc.robot.commands.IntakeGrab;
+import frc.robot.commands.IntakeRelease;
 import frc.robot.dataStorageClasses.AutonomousSelection;
 import frc.robot.dataStorageClasses.ModeSelection;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.DifferentialDriveWrapper;
 import frc.robot.subsystems.Gyro;
+import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.testSubsystems.SparkMaxTester;
 import frc.robot.subsystems.testSubsystems.TurntableTester;
 
@@ -36,6 +39,8 @@ public class RobotContainer {
   private DifferentialDriveWrapper m_drivetrain;
   private Turntable m_turntable;
   private Arm m_arm;
+  private Intake m_intake;
+  
   private SparkMaxTester m_sparkMaxTester;
   private TurntableTester m_turntableTester;
 
@@ -77,14 +82,22 @@ public class RobotContainer {
       // NOTE: Game is the default
       default:
         // Only instantiate the subsystems if we need them
-        // this.m_arm = new Arm();
+        this.m_arm = new Arm();
+        this.m_intake = new Intake();
         this.m_drivetrain = new DifferentialDriveWrapper();
     }
   }
   
   /** Sets up bindings to be used in a game */
   public void gameTeleopBindings(){
-    // action1Trigger.onTrue(new AutoBalance(m_gyro, m_drivetrain));
+    Joystick j = m_driverController.getHID();
+
+    // Triggers for intake
+    Trigger grabTrigger = new JoystickButton(j, 8);
+    Trigger releaseTrigger = new JoystickButton(j, 9);
+    
+    grabTrigger.onTrue(new IntakeGrab(m_intake));
+    releaseTrigger.onTrue(new IntakeRelease(m_intake));
     
     // If the drivetrain is not running other commands, run arcade drive
     m_drivetrain.setDefaultCommand(Commands.run(() -> {

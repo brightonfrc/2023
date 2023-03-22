@@ -4,6 +4,10 @@
 
 package frc.robot;
 
+import java.io.IOException;
+
+import org.photonvision.PhotonCamera;
+
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -99,11 +103,11 @@ public class Robot extends TimedRobot {
       m_autonomousCommand.schedule();
     }
 
-    // try {
-    //   m_aprilTagNavigator = new AprilTagNavigator(new PhotonCamera(inst, "camera"));
-    // } catch (IOException e) {
-    //   e.printStackTrace();
-    // }
+    try {
+      m_aprilTagNavigator = new AprilTagNavigator(new PhotonCamera(inst, "camera"));
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
   }
 
   /** This function is called periodically during autonomous. */
