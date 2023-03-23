@@ -60,14 +60,7 @@ public class ArmSetLevel extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return isMotorPIDFinished(m_arm.cableMotor, m_cableMotorDesiredPosition) && isMotorPIDFinished(m_arm.chainMotor, m_chainMotorDesiredPosition);
-  }
-  
-  private boolean isMotorPIDFinished(CANSparkMax motor, double desiredPosition) {
-    var encoder = motor.getEncoder();
-    double position = encoder.getPosition();
-    double velocity = encoder.getVelocity();
-    
-    return Math.abs(position) < positionTolerance && Math.abs(velocity) < velocityTolerance;
+    // Keep the position
+    return false;
   }
 }

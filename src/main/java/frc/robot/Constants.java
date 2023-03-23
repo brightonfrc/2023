@@ -89,8 +89,10 @@ public final class Constants {
   public static class ArmPositions {
     // chain motor, then cable motor
     public static final ArmPositionCounts[] k_armMotorPositionCounts = {
-      new ArmPositionCounts(0, 0, "Ground"),
-      new ArmPositionCounts(100, -20, "Mid")
+      new ArmPositionCounts(0, 0, "Stowed"),
+      new ArmPositionCounts(0, -180, "Ground"),
+      new ArmPositionCounts(-26, -250, "Mid"),
+      new ArmPositionCounts(-33, -180, "Top")
     };
   }
  
@@ -112,12 +114,5 @@ public final class Constants {
   public static class Strategy {
     public static final Pose2d k_startRed = new Pose2d(new Translation2d(0.0, 0.0), new Rotation2d());
     public static final Pose2d k_startBlue = new Pose2d(new Translation2d(5.0, 0.0), new Rotation2d());
-  }
-
-  public static class Controls {
-    public static final int k_grabTrigger = XboxController.Button.kLeftBumper.value;
-    public static final int k_releaseTrigger = XboxController.Button.kRightBumper.value;
-    public static int k_armGroundTrigger = XboxController.Button.kA.value;
-    public static int k_armMidTrigger = XboxController.Button.kA.value;
   }
 }

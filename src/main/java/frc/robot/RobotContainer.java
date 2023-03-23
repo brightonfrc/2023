@@ -73,7 +73,7 @@ public class RobotContainer {
     // Note: We are also creating the required subsystems for non-game modes
     switch (mode) {
       case TestSparkMax:
-        // No bindings, everything done from the smart dashboard
+        // No bindings, everything done from the smart dashboard or from inside subsystems
         // Just start the sparkmax test command
         m_sparkMaxTester = new SparkMaxTester();
         return;
@@ -102,15 +102,15 @@ public class RobotContainer {
     XboxController j = m_driverController.getHID();
 
     // Triggers for intake
-    Trigger grabTrigger = new JoystickButton(j, Constants.Controls.k_grabTrigger);
-    Trigger releaseTrigger = new JoystickButton(j, Constants.Controls.k_releaseTrigger);
-    Trigger armGroundTrigger = new JoystickButton(j, Constants.Controls.k_armGroundTrigger);
-    Trigger armMidTrigger = new JoystickButton(j, Constants.Controls.k_armMidTrigger);
+    Trigger grabTrigger = m_driverController.leftBumper();
+    Trigger releaseTrigger = m_driverController.rightBumper();
+    Trigger armGroundTrigger = m_driverController.a();
+    Trigger armMidTrigger = m_driverController.b();
     
     grabTrigger.onTrue(new IntakeGrab(m_intake));
     releaseTrigger.onTrue(new IntakeRelease(m_intake));
-    armGroundTrigger.onTrue(new ArmSetLevel(m_arm, 0));
-    armMidTrigger.onTrue(new ArmSetLevel(m_arm, 1));
+    armGroundTrigger.onTrue(new ArmSetLevel(m_arm, 1));
+    armMidTrigger.onTrue(new ArmSetLevel(m_arm, 2));
     
     // If the drivetrain is not running other commands, run arcade drive
     m_drivetrain.setDefaultCommand(Commands.run(() -> {
