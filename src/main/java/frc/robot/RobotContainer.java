@@ -122,6 +122,8 @@ public class RobotContainer {
     m_drivetrain.setDefaultCommand(Commands.run(() -> {
       double speed = -m_driverController.getRightY();
       double turn = -m_driverController.getRightX();
+
+      turn *= Constants.RobotSettings.k_turnSensitivity;
       
       // Reverse the turning direction when going backwards, like a car
       // Only assume we are going backwards if we are outside the deadband
