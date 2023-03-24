@@ -22,6 +22,7 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.Ports;
 import frc.robot.commands.AutoBalance;
+import frc.robot.commands.AutoBalanceV2;
 import frc.robot.commands.ArmManualLevel;
 import frc.robot.commands.ArmSetLevel;
 import frc.robot.commands.FollowPath;
@@ -130,17 +131,18 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public CommandBase getAutonomousCommand(AutonomousSelection commandSelection, Alliance alliance) {
+    
+    var autobalanceCommand = new AutoBalanceV2(m_gyro, m_drivetrain);
+
     switch (commandSelection) {
-      case AutoBalanceOnlyForwards:
-        return new AutoBalance(m_gyro, m_drivetrain, false);
-      case AutoBalanceOnlyReverse:
-        return new AutoBalance(m_gyro, m_drivetrain, true);
+      case AutoBalanceOnly:
+        return autobalanceCommand;
       case ClosestPathAndAutoBalance:
-        return new SequentialCommandGroup(new FollowPath(m_drivetrain, m_gyro, "1Closest", alliance), new AutoBalance(m_gyro, m_drivetrain, false));
+        return new SequentialCommandGroup(new FollowPath(m_drivetrain, m_gyro, "1Closest", alliance), autobalanceCommand);
       case MiddlePathAndAutoBalance:
-        return new SequentialCommandGroup(new FollowPath(m_drivetrain, m_gyro, "1Middle", alliance), new AutoBalance(m_gyro, m_drivetrain, false));
+        return new SequentialCommandGroup(new FollowPath(m_drivetrain, m_gyro, "1Middle", alliance), autobalanceCommand);
       case FurthestPathAndAutoBalance:
-        return new SequentialCommandGroup(new FollowPath(m_drivetrain, m_gyro, "1Furthest", alliance), new AutoBalance(m_gyro, m_drivetrain, false));
+        return new SequentialCommandGroup(new FollowPath(m_drivetrain, m_gyro, "1Furthest", alliance), autobalanceCommand);
       default:
         return new InstantCommand(() -> {
           System.out.println("This autonomous strategy was not configured.");
