@@ -15,7 +15,6 @@ import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.XboxController;
 import frc.robot.dataStorageClasses.ArmPositionCounts;
-import frc.robot.dataStorageClasses.TurntablePositionCounts;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
@@ -112,15 +111,6 @@ public final class Constants {
       public static final double k_debounceTime = 0.2;
     }
     
-    public static class Turntable {
-      public static final double k_p = 0.15;
-      public static final double k_i = 0;
-      public static final double k_d = 1.0;
-      public static final double k_f = 0;
-
-      public static final int k_timeoutMs = 30;
-    }
-    
     public static class Drivetrain {
       public static final double k_p = 4.3831;
       public static final double k_i = 0;
@@ -135,12 +125,6 @@ public final class Constants {
 
       public static final double k_distancePerEncoderPulse = Math.PI * Constants.Measurements.Drivetrain.k_wheelDiameter / Constants.Measurements.Drivetrain.k_encoderPulsesPerRotation; // (distance per pulse = (circumference = pi * r^2) / pulses per rotation)
     }
-  }
-  public static class TurntablePositions {
-    // chain motor, then cable motor
-    public static final TurntablePositionCounts[] k_turntableMotorPositionCounts = {
-      new TurntablePositionCounts(0, "Center"),
-    };
   }
     
   public static class ArmPositions {
