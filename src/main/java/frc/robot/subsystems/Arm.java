@@ -25,12 +25,12 @@ public class Arm extends SubsystemBase {
     chainMotor = new CANSparkMax(Constants.Ports.k_armChainMotor, MotorType.kBrushless);
     cableMotor = new CANSparkMax(Constants.Ports.k_armCableMotor, MotorType.kBrushless);
 
-    chainMotor.getEncoder().setPosition(0);
-    cableMotor.getEncoder().setPosition(0);
+    // chainMotor.getEncoder().setPosition(0);
+    // cableMotor.getEncoder().setPosition(0);
 
     // NOTE: Use the rev tuner to set PID values
-    // cableMotorPID = cableMotor.getPIDController();
-    // chainMotorPID = chainMotor.getPIDController();
+    cableMotorPID = cableMotor.getPIDController();
+    chainMotorPID = chainMotor.getPIDController();
   }
   
   @Override
@@ -39,7 +39,15 @@ public class Arm extends SubsystemBase {
     chainMotorPID.setReference(chainMotorDesiredPosition, CANSparkMax.ControlType.kSmartMotion);
     cableMotorPID.setReference(cableMotorDesiredPosition, CANSparkMax.ControlType.kSmartMotion);
 
+    SmartDashboard.putNumber("Arm/Chain Desired Pos", chainMotorDesiredPosition);
+    SmartDashboard.putNumber("Arm/Cable Desired Pos", cableMotorDesiredPosition);
+
     SmartDashboard.putNumber("Arm/Chain Pos", chainMotor.getEncoder().getPosition());
     SmartDashboard.putNumber("Arm/Cable Pos", cableMotor.getEncoder().getPosition());
+  }
+
+  public void resetEncoders() {
+    cableMotor.getEncoder().setPosition(0);
+    chainMotor.getEncoder().setPosition(0);
   }
 }

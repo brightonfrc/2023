@@ -35,21 +35,24 @@ public class ArmManualLevel extends CommandBase {
     double positionChange = m_positionChangeRate * (currentTime - m_lastUpdateTime) / 1000;
 
     XboxController controller = new XboxController(Constants.Ports.k_controllerPort);
-    positionChange *= controller.getLeftY(); // TODO for now
+    positionChange *= controller.getLeftY();
 
     m_lastUpdateTime = currentTime;
 
     if(controller.getRightStickButton()) {
       // Back right button
-      SmartDashboard.putNumber("Arm Manual/Speed", positionChange);
+      positionChange *= m_cableMotorChangeRateMultiplier;
       SmartDashboard.putString("Arm Manual/Motor", "Cable");
-      m_arm.cableMotorDesiredPosition -= positionChange * m_cableMotorChangeRateMultiplier;
-      SmartDashboard.putNumber("Arm Manual/Desired pos", m_arm.cableMotorDesiredPosition);
+      m_arm.cableMotorDesiredPosition -= positionChange;
     } else {
-      SmartDashboard.putNumber("Arm Manual/Speed", positionChange);
       SmartDashboard.putString("Arm Manual/Motor", "Chain");
       m_arm.chainMotorDesiredPosition += positionChange;
-      SmartDashboard.putNumber("Arm Manual/Desired pos", m_arm.chainMotorDesiredPosition);
+    }
+    SmartDashboard.putNumber("Arm Manual/Speed", positionChange);
+    
+    // If minus and left back buttons are pressed, reset the encoders
+    if (controller.getBackButton() && controller.getLeftStickButton()) {
+      m_arm.resetEncoders();
     }
   }
 

@@ -126,7 +126,8 @@ public class RobotContainer {
 
     // If the turntable is not running other commands, use left joystick input
     m_turntable.setDefaultCommand(Commands.run(() -> {
-      double power = m_driverController.getLeftX();
+      // Get left-right trigger axis
+      double power = m_driverController.getRightTriggerAxis() - m_driverController.getLeftTriggerAxis();
       power *= Constants.RobotSettings.k_turntableMaxPower;
       m_turntable.setPower(power);
     }, m_turntable));
