@@ -22,8 +22,6 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.Ports;
 import frc.robot.commands.AutoBalance;
-import frc.robot.subsystems.Turntable;
-import frc.robot.commands.TurntableSetPosition;
 import frc.robot.commands.ArmManualLevel;
 import frc.robot.commands.ArmSetLevel;
 import frc.robot.commands.FollowPath;
@@ -36,7 +34,6 @@ import frc.robot.subsystems.DifferentialDriveWrapper;
 import frc.robot.subsystems.Gyro;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.testSubsystems.SparkMaxTester;
-import frc.robot.subsystems.testSubsystems.TalonSRXTester;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -48,12 +45,10 @@ public class RobotContainer {
   private final Gyro m_gyro = new Gyro();
   // The robot's subsystems and commands are defined here...
   private DifferentialDriveWrapper m_drivetrain;
-  private Turntable m_turntable;
   private Arm m_arm;
   private Intake m_intake;
   
   private SparkMaxTester m_sparkMaxTester;
-  private TalonSRXTester m_talonTester;
 
   private boolean areSubsystemsSetUp = false;
 
@@ -82,17 +77,12 @@ public class RobotContainer {
         // No bindings, everything done from the smart dashboard or from inside subsystems
         m_sparkMaxTester = new SparkMaxTester();
         return;
-      case TestTalon:
-        // No bindings, everything done from the smart dashboard or from inside subsystems
-        m_talonTester = new TalonSRXTester();
-        return;
       // NOTE: Game is the default
       default:
         // Only instantiate the subsystems if we need them
         this.m_arm = new Arm();
         this.m_intake = new Intake();
         this.m_drivetrain = new DifferentialDriveWrapper();
-        this.m_turntable = new Turntable();
 
         
         // Configure all the bindings and default commands
@@ -122,6 +112,9 @@ public class RobotContainer {
     m_drivetrain.setDefaultCommand(Commands.run(() -> {
       double speed = -m_driverController.getRightY();
       double turn = -m_driverController.getRightX();
+
+      speed *= Constants.RobotSettings.k_speedSensitivity;
+      turn *= Constants.RobotSettings.k_turnSensitivity;
       
       // Reverse the turning direction when going backwards, like a car
       // Only assume we are going backwards if we are outside the deadband
@@ -129,14 +122,6 @@ public class RobotContainer {
 
       m_drivetrain.drive(speed, turn);
     }, m_drivetrain));
-
-    // If the turntable is not running other commands, use left joystick input
-    m_turntable.setDefaultCommand(Commands.run(() -> {
-      // Get left-right trigger axis
-      double power = m_driverController.getRightTriggerAxis() - m_driverController.getLeftTriggerAxis();
-      power *= Constants.RobotSettings.k_turntableMaxPower;
-      m_turntable.setPower(power);
-    }, m_turntable));
   }
 
   /**
@@ -146,14 +131,16 @@ public class RobotContainer {
    */
   public CommandBase getAutonomousCommand(AutonomousSelection commandSelection, Alliance alliance) {
     switch (commandSelection) {
-      case AutoBalanceOnly:
-        return new AutoBalance(m_gyro, m_drivetrain);
+      case AutoBalanceOnlyForwards:
+        return new AutoBalance(m_gyro, m_drivetrain, false);
+      case AutoBalanceOnlyReverse:
+        return new AutoBalance(m_gyro, m_drivetrain, true);
       case ClosestPathAndAutoBalance:
-        return new SequentialCommandGroup(new FollowPath(m_drivetrain, m_gyro, "1Closest", alliance), new AutoBalance(m_gyro, m_drivetrain));
+        return new SequentialCommandGroup(new FollowPath(m_drivetrain, m_gyro, "1Closest", alliance), new AutoBalance(m_gyro, m_drivetrain, false));
       case MiddlePathAndAutoBalance:
-        return new SequentialCommandGroup(new FollowPath(m_drivetrain, m_gyro, "1Middle", alliance), new AutoBalance(m_gyro, m_drivetrain));
+        return new SequentialCommandGroup(new FollowPath(m_drivetrain, m_gyro, "1Middle", alliance), new AutoBalance(m_gyro, m_drivetrain, false));
       case FurthestPathAndAutoBalance:
-        return new SequentialCommandGroup(new FollowPath(m_drivetrain, m_gyro, "1Furthest", alliance), new AutoBalance(m_gyro, m_drivetrain));
+        return new SequentialCommandGroup(new FollowPath(m_drivetrain, m_gyro, "1Furthest", alliance), new AutoBalance(m_gyro, m_drivetrain, false));
       default:
         return new InstantCommand(() -> {
           System.out.println("This autonomous strategy was not configured.");

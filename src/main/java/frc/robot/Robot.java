@@ -54,7 +54,8 @@ public class Robot extends TimedRobot {
 
     // Allow the user to select the desired autonomous from smartdasboard
     m_autonomousChooser = new SendableChooser<AutonomousSelection>();
-    m_autonomousChooser.setDefaultOption("AutoBalance Only [Fallback]", AutonomousSelection.AutoBalanceOnly);
+    m_autonomousChooser.setDefaultOption("AutoBalance Only FORWARDS [Fallback]", AutonomousSelection.AutoBalanceOnlyForwards);
+    m_autonomousChooser.setDefaultOption("AutoBalance Only REVERSE [Fallback]", AutonomousSelection.AutoBalanceOnlyReverse);
     m_autonomousChooser.setDefaultOption("Closest Path + AutoBalance [Basic]", AutonomousSelection.ClosestPathAndAutoBalance);
     m_autonomousChooser.setDefaultOption("Middle Path + AutoBalance [Basic]", AutonomousSelection.MiddlePathAndAutoBalance);
     m_autonomousChooser.setDefaultOption("Furthest Path + AutoBalance [Basic]", AutonomousSelection.FurthestPathAndAutoBalance);
@@ -68,7 +69,6 @@ public class Robot extends TimedRobot {
     m_modeChooser = new SendableChooser<ModeSelection>();
     m_modeChooser.setDefaultOption("Game", ModeSelection.Game);
     m_modeChooser.addOption("Test SparkMax", ModeSelection.TestSparkMax);
-    m_modeChooser.addOption("Test Talons", ModeSelection.TestTalon);
     SmartDashboard.putData("Choosers/Mode", m_modeChooser);
   }
 

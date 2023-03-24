@@ -32,6 +32,11 @@ public class Arm extends SubsystemBase {
     // NOTE: Use the rev tuner to set PID values
     cableMotorPID = cableMotor.getPIDController();
     chainMotorPID = chainMotor.getPIDController();
+
+    SmartDashboard.putNumber("Cable motor P", cableMotorPID.getP());
+    SmartDashboard.putNumber("Cable motor I", cableMotorPID.getI());
+    SmartDashboard.putNumber("Cable motor D", cableMotorPID.getD());
+    SmartDashboard.putNumber("Cable motor FF", cableMotorPID.getFF());
   }
   
   @Override
