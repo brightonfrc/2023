@@ -120,16 +120,16 @@ public final class Constants {
     }
     
     public static class Drivetrain {
-      public static final double k_p = 0;
+      public static final double k_p = 4.3831;
       public static final double k_i = 0;
       public static final double k_d = 0;
 
       public static final double k_speedThresholdForTurnInPlace = 0.4;
       
       // Determine these using sysid: https://docs.wpilib.org/en/stable/docs/software/pathplanning/system-identification/configuring-project.html 
-      public static final double k_s = 0.67036;
-      public static final double k_v = 0.80663;
-      public static final double k_a = 0.084952;
+      public static final double k_s = 0.59581;
+      public static final double k_v = 3.1502;
+      public static final double k_a = 0.80703;
 
       public static final double k_distancePerEncoderPulse = Math.PI * Constants.Measurements.Drivetrain.k_wheelDiameter / Constants.Measurements.Drivetrain.k_encoderPulsesPerRotation; // (distance per pulse = (circumference = pi * r^2) / pulses per rotation)
     }
@@ -156,7 +156,7 @@ public final class Constants {
       public static final double k_wheelDiameter = Units.inchesToMeters(6); // m
       public static final int k_encoderPulsesPerRotation = 2048;
 
-      public static final double k_trackWidth = Units.inchesToMeters(21); // m
+      public static final double k_trackWidth = 0.66981; // m
     }
 
     public static class Turntable {
@@ -164,11 +164,5 @@ public final class Constants {
     }
 
     public static final Transform3d k_robotToCam = new Transform3d(new Translation3d(0.5, 0.0, 0.5), new Rotation3d(0,0,0));  // TODO - e.g. - Cam mounted facing forward, half a meter forward of center, half a meter up from center.
-  }
-
-  public static class Strategy {
-    public static final Pose2d k_startRed = new Pose2d(new Translation2d(0.0, 0.0), new Rotation2d());
-    public static final Pose2d k_startBlue = new Pose2d(new Translation2d(5.0, 0.0), new Rotation2d());
-    public static final PathConstraints k_pathPlannerConstraints = new PathConstraints(2.5, 2);
   }
 }

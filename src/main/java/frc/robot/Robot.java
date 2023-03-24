@@ -11,6 +11,7 @@ import org.photonvision.PhotonCamera;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -18,7 +19,6 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.cv.AprilTagNavigator;
 import frc.robot.dataStorageClasses.AutonomousSelection;
 import frc.robot.dataStorageClasses.ModeSelection;
-import frc.robot.dataStorageClasses.TeamColourSelection;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -37,7 +37,7 @@ public class Robot extends TimedRobot {
   NetworkTableInstance inst = NetworkTableInstance.getDefault();
   
   private SendableChooser<AutonomousSelection> m_autonomousChooser;
-  private SendableChooser<TeamColourSelection> m_teamColourChooser;
+  private SendableChooser<Alliance> m_allianceChooser;
   private SendableChooser<ModeSelection> m_modeChooser;
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -61,10 +61,10 @@ public class Robot extends TimedRobot {
     // m_autonomousChooser.addOption("Score and balance", AutonomousSelection.ScoreAndBalance);
     SmartDashboard.putData("Choosers/Auto choices", m_autonomousChooser);
     
-    m_teamColourChooser = new SendableChooser<TeamColourSelection>();
-    m_teamColourChooser.setDefaultOption("Red", TeamColourSelection.Red);
-    m_teamColourChooser.addOption("Blue", TeamColourSelection.Blue);
-    SmartDashboard.putData("Choosers/Team colour", m_teamColourChooser);
+    m_allianceChooser = new SendableChooser<TeamColourSelection>();
+    m_allianceChooser.setDefaultOption("Red", TeamColourSelection.Red);
+    m_allianceChooser.addOption("Blue", TeamColourSelection.Blue);
+    SmartDashboard.putData("Choosers/Team colour", m_allianceChooser);
 
     m_modeChooser = new SendableChooser<ModeSelection>();
     m_modeChooser.setDefaultOption("Game", ModeSelection.Game);
@@ -103,7 +103,7 @@ public class Robot extends TimedRobot {
     m_robotContainer.setupSubsystems(m_modeChooser.getSelected());
 
     // Find the auto command that was selected to be run
-    m_autonomousCommand = m_robotContainer.getAutonomousCommand(m_autonomousChooser.getSelected());
+    m_autonomousCommand = m_robotContainer.getAutonomousCommand(m_autonomousChooser.getSelected(), m_allianceChooser.getSelected());
 
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {

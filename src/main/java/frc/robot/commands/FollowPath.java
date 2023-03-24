@@ -4,6 +4,8 @@
 
 package frc.robot.commands;
 
+import com.pathplanner.lib.PathConstraints;
+import com.pathplanner.lib.PathPlanner;
 import com.pathplanner.lib.PathPlannerTrajectory;
 import com.pathplanner.lib.commands.PPRamseteCommand;
 
@@ -15,6 +17,8 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.wpilibj.ADIS16470_IMU.IMUAxis;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -34,6 +38,9 @@ public class FollowPath extends CommandBase { // TODO: Test
   public Gyro m_gyro;
   // Create odometry - manages position on pitch for autonomous
   public DifferentialDriveOdometry m_odometry;
+  public Field2d field;
+  public double maxVelocity = 2;
+  public double maxAcceleration = 1;
 
   /**
    * Creates a new command to follow a path from PathPlanner with the drivetrain.
@@ -41,20 +48,20 @@ public class FollowPath extends CommandBase { // TODO: Test
    * @param gyro The Gyroscope to use for odometry
    * @param traj The PathPlannerTrajectory to follow
    */
-  public FollowPath(DifferentialDriveWrapper drivetrain, Gyro gyro, PathPlannerTrajectory traj) {
+  public FollowPath(DifferentialDriveWrapper drivetrain, Gyro gyro, String pathPlannerTrajectoryName, Alliance alliance) {
     this.m_drivetrain = drivetrain;
     this.m_gyro = gyro;
-    
+    this.field = new Field2d();
+    PathPlannerTrajectory traj = PathPlanner.loadPath(pathPlannerTrajectoryName, new PathConstraints(maxVelocity, maxAcceleration));
+    // Do this before finding the initial pose to avoid bugs
+    traj = PathPlannerTrajectory.transformTrajectoryForAlliance(traj, alliance);
+    Pose2d initialPose = traj.getInitialPose();
+   
     // Use addRequirements() here to declare subsystem dependencies.
     this.sequentialCommandGroup = new SequentialCommandGroup(
       new InstantCommand(() -> {
-        this.resetOdometry(traj.getInitialPose());
-        // TODO: I removed the isFirstPath parameter, as creating a new 
-        // TODO: command will always reset the odometry anyway. Please 
-        // TODO: let me know if you would like the functionality to be 
-        // TODO: able to run multiple PathPlannerTrajectories in series, 
-        // TODO: and multiple commands do not work. 
-        // TODO: Please delete this after you have tested it.
+        this.m_odometry = new DifferentialDriveOdometry(getGyroHeading(), 0, 0);
+        this.resetOdometry(initialPose);
       }),
       new PPRamseteCommand(
             traj,
@@ -72,9 +79,8 @@ public class FollowPath extends CommandBase { // TODO: Test
                 Constants.MotionParameters.Drivetrain.k_d), // Right controller (usually the same values as left
                                                             // controller)
             this::outputVolts, // Voltage biconsumer
-            true, // Should the path be automatically mirrored depending on alliance color.
+            false // Should the path be automatically mirrored depending on alliance color.
                   // Optional, defaults to true
-            drivetrain // Requires this drive subsystem
         ));
 
     this.addRequirements(drivetrain);
@@ -128,6 +134,8 @@ public class FollowPath extends CommandBase { // TODO: Test
                       m_drivetrain.getLeftEncoderDistance(), m_drivetrain.getRightEncoderDistance());
 
     sequentialCommandGroup.execute();
+    field.setRobotPose(getPose());
+    SmartDashboard.putData("Field", field);
   }
   
   private Rotation2d getGyroHeading(){
