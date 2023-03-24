@@ -1,5 +1,10 @@
 package frc.robot.dataStorageClasses;
 
 public enum AutonomousSelection {
-    DriveOnly,
+    // Fallback: individual components
+    AutoBalanceOnly,
+    // Basic: path to charge station; autobalance
+    ClosestPathAndAutoBalance,
+    MiddlePathAndAutoBalance,
+    FurthestPathAndAutoBalance
 }
