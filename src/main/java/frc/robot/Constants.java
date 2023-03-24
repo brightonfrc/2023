@@ -11,7 +11,9 @@ import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.XboxController;
 import frc.robot.dataStorageClasses.ArmPositionCounts;
+import frc.robot.dataStorageClasses.TurntablePositionCounts;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
@@ -23,6 +25,7 @@ import frc.robot.dataStorageClasses.ArmPositionCounts;
  */
 public final class Constants {
   public static class RobotSettings {
+    public static final double k_turntableMaxPower = 0.4;
     public static final boolean k_drivetrainStartInverted = false;
   }
 
@@ -43,10 +46,13 @@ public final class Constants {
     public static final int k_encoderPortAR = 2;
     public static final int k_encoderPortBR = 3;
 
-    public static final int k_armChainMotor = 30;
-    public static final int k_armCableMotor = 31;
-  }
+    public static final int k_armChainMotor = 31;
+    public static final int k_armCableMotor = 30;
 
+    public static int k_intakeMotor = 20; // TODO
+    public static final int k_turntableMotor = 21;// TODO
+  }
+  
   public static class MotionParameters {
     public static class AutoBalance {
       /**
@@ -74,10 +80,22 @@ public final class Constants {
        */
       public static final double k_debounceTime = 0.2;
     }
+    
+    public static class Turntable {
+      public static final double k_p = 0.15;
+      public static final double k_i = 0;
+      public static final double k_d = 1.0;
+      public static final double k_f = 0;
+
+      public static final int k_timeoutMs = 30;
+    }
+    
     public static class Drivetrain {
       public static final double k_p = 0;
       public static final double k_i = 0;
       public static final double k_d = 0;
+
+      public static final double k_speedThresholdForTurnInPlace = 0.4;
       
       // Determine these using sysid: https://docs.wpilib.org/en/stable/docs/software/pathplanning/system-identification/configuring-project.html 
       public static final double k_s = 0.67036;
@@ -87,12 +105,20 @@ public final class Constants {
       public static final double k_distancePerEncoderPulse = Math.PI * Constants.Measurements.Drivetrain.k_wheelDiameter / Constants.Measurements.Drivetrain.k_encoderPulsesPerRotation; // (distance per pulse = (circumference = pi * r^2) / pulses per rotation)
     }
   }
+  public static class TurntablePositions {
+    // chain motor, then cable motor
+    public static final TurntablePositionCounts[] k_turntableMotorPositionCounts = {
+      new TurntablePositionCounts(0, "Center"),
+    };
+  }
     
   public static class ArmPositions {
     // chain motor, then cable motor
     public static final ArmPositionCounts[] k_armMotorPositionCounts = {
-      new ArmPositionCounts(0, 0, "Ground"),
-      new ArmPositionCounts(100, -20, "Mid")
+      new ArmPositionCounts(0, 0, "Stowed"),
+      new ArmPositionCounts(0, -180, "Ground"),
+      new ArmPositionCounts(-26, -250, "Mid"),
+      new ArmPositionCounts(-33, -180, "Top")
     };
   }
  
@@ -102,6 +128,10 @@ public final class Constants {
       public static final int k_encoderPulsesPerRotation = 2048;
 
       public static final double k_trackWidth = Units.inchesToMeters(21); // m
+    }
+
+    public static class Turntable {
+      public static final int k_encoderPulsesPerRotation = 4096;
     }
 
     public static final Transform3d k_robotToCam = new Transform3d(new Translation3d(0.5, 0.0, 0.5), new Rotation3d(0,0,0));  // TODO - e.g. - Cam mounted facing forward, half a meter forward of center, half a meter up from center.

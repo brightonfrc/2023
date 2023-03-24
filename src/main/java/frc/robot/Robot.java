@@ -4,6 +4,11 @@
 
 package frc.robot;
 
+import java.io.IOException;
+
+import org.photonvision.PhotonCamera;
+
+import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -40,6 +45,9 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotInit() {
+    // Camera preview on Shuffleboard
+    CameraServer.startAutomaticCapture();
+
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
@@ -48,17 +56,18 @@ public class Robot extends TimedRobot {
     m_autonomousChooser = new SendableChooser<AutonomousSelection>();
     m_autonomousChooser.setDefaultOption("Drive only", AutonomousSelection.DriveOnly);
     // m_autonomousChooser.addOption("Score and balance", AutonomousSelection.ScoreAndBalance);
-    SmartDashboard.putData("Auto choices", m_autonomousChooser);
+    SmartDashboard.putData("Choosers/Auto choices", m_autonomousChooser);
     
     m_teamColourChooser = new SendableChooser<TeamColourSelection>();
     m_teamColourChooser.setDefaultOption("Red", TeamColourSelection.Red);
     m_teamColourChooser.addOption("Blue", TeamColourSelection.Blue);
-    SmartDashboard.putData("Team colour", m_teamColourChooser);
+    SmartDashboard.putData("Choosers/Team colour", m_teamColourChooser);
 
     m_modeChooser = new SendableChooser<ModeSelection>();
     m_modeChooser.setDefaultOption("Game", ModeSelection.Game);
     m_modeChooser.addOption("Test SparkMax", ModeSelection.TestSparkMax);
-    SmartDashboard.putData("Choose mode", m_modeChooser);
+    m_modeChooser.addOption("Test Talons", ModeSelection.TestTalon);
+    SmartDashboard.putData("Choosers/Mode", m_modeChooser);
   }
 
   /**
@@ -98,11 +107,11 @@ public class Robot extends TimedRobot {
       m_autonomousCommand.schedule();
     }
 
-    // try {
-    //   m_aprilTagNavigator = new AprilTagNavigator(new PhotonCamera(inst, "camera"));
-    // } catch (IOException e) {
-    //   e.printStackTrace();
-    // }
+    try {
+      m_aprilTagNavigator = new AprilTagNavigator(new PhotonCamera(inst, "camera"));
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
   }
 
   /** This function is called periodically during autonomous. */
@@ -110,19 +119,19 @@ public class Robot extends TimedRobot {
   public void autonomousPeriodic() {
     // PhotonTrackedTarget aprilTag =  m_aprilTagNavigator.getAprilTag();
     // if(aprilTag != null) {
-    //   SmartDashboard.putNumber("AprilTag ID", aprilTag.getFiducialId());
-    //   SmartDashboard.putNumber("AprilTag Yaw (+> -<)", aprilTag.getYaw());
-    //   SmartDashboard.putNumber("AprilTag Pitch (+^ -v)", aprilTag.getPitch());
+    //   SmartDashboard.putNumber("AprilTag/ID", aprilTag.getFiducialId());
+    //   SmartDashboard.putNumber("AprilTag/Yaw (+> -<)", aprilTag.getYaw());
+    //   SmartDashboard.putNumber("AprilTag/Pitch (+^ -v)", aprilTag.getPitch());
 
     //   Optional<EstimatedRobotPose> pose = m_aprilTagNavigator.getRobotPose();
     //   if(!pose.isEmpty()) {
-    //     SmartDashboard.putString("Last Robot Pose", pose.get().toString());
+    //     SmartDashboard.putString("AprilTag/Last Robot Pose", pose.get().toString());
     //   }
-    //   SmartDashboard.putString("Robot Pose", pose.toString());
+    //   SmartDashboard.putString("AprilTag/Robot Pose", pose.toString());
     // } else {
-    //   SmartDashboard.putNumber("AprilTag ID", 0);
-    //   SmartDashboard.putNumber("AprilTag Yaw (+> -<)", 0);
-    //   SmartDashboard.putNumber("AprilTag Pitch (+^ -v)", 0);
+    //   SmartDashboard.putNumber("AprilTag/ID", 0);
+    //   SmartDashboard.putNumber("AprilTag/Yaw (+> -<)", 0);
+    //   SmartDashboard.putNumber("AprilTag/Pitch (+^ -v)", 0);
     // }
   }
 
@@ -139,8 +148,6 @@ public class Robot extends TimedRobot {
       m_autonomousCommand.cancel();
     }
     
-    // Configure all the bindings and default commands
-    m_robotContainer.gameTeleopBindings();
   }
 
   /** This function is called periodically during operator control. */
