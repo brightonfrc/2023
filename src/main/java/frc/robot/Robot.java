@@ -4,10 +4,6 @@
 
 package frc.robot;
 
-import java.io.IOException;
-
-import org.photonvision.PhotonCamera;
-
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.TimedRobot;
@@ -16,7 +12,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import frc.robot.cv.AprilTagNavigator;
 import frc.robot.dataStorageClasses.AutonomousSelection;
 import frc.robot.dataStorageClasses.ModeSelection;
 
@@ -30,8 +25,6 @@ public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
 
   private RobotContainer m_robotContainer;
-
-  private AprilTagNavigator m_aprilTagNavigator;
 
   // NetworkTables subscribers (read)/publishers (write)
   NetworkTableInstance inst = NetworkTableInstance.getDefault();
@@ -107,12 +100,6 @@ public class Robot extends TimedRobot {
     if (m_autonomousCommand != null) {
       m_autonomousCommand.schedule();
     }
-
-    try {
-      m_aprilTagNavigator = new AprilTagNavigator(new PhotonCamera(inst, "camera"));
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
   }
 
   /** This function is called periodically during autonomous. */
@@ -153,9 +140,7 @@ public class Robot extends TimedRobot {
 
   /** This function is called periodically during operator control. */
   @Override
-  public void teleopPeriodic() {
-    m_robotContainer.logGyro();
-  }
+  public void teleopPeriodic() {}
 
   @Override
   public void testInit() {

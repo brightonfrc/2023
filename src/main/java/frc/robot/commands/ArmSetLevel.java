@@ -10,9 +10,6 @@ import frc.robot.Constants;
 import frc.robot.dataStorageClasses.ArmPositionCounts;
 import frc.robot.subsystems.Arm;
 
-import com.revrobotics.CANSparkMax;
-
-
 public class ArmSetLevel extends CommandBase {
   private Arm m_arm;
   private int m_positionIndex;

@@ -5,9 +5,6 @@
 package frc.robot;
 
 
-import edu.wpi.first.math.geometry.Rotation3d;
-import edu.wpi.first.math.geometry.Transform3d;
-import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
 import frc.robot.dataStorageClasses.ArmPositionCounts;
 
@@ -47,8 +44,8 @@ public final class Constants {
     public static final int k_armChainMotor = 31;
     public static final int k_armCableMotor = 30;
 
-    public static int k_intakeMotor = 20; // TODO
-    public static final int k_turntableMotor = 21;// TODO
+    public static int k_intakeMotor = 20;
+    public static final int k_turntableMotor = 21;
   }
   
   public static class MotionParameters {
@@ -134,7 +131,7 @@ public final class Constants {
     public static final double cableMotorP = 0.00008;
     public static final double cableMotorI = 1e-6;
     public static final double cableMotorD = 0;
-    public static final double cableMotorFF = 0.000 ;
+    public static final double cableMotorFF = 0.0003;
     
   }
  
@@ -149,7 +146,5 @@ public final class Constants {
     public static class Turntable {
       public static final int k_encoderPulsesPerRotation = 4096;
     }
-
-    public static final Transform3d k_robotToCam = new Transform3d(new Translation3d(0.5, 0.0, 0.5), new Rotation3d(0,0,0));  // TODO - e.g. - Cam mounted facing forward, half a meter forward of center, half a meter up from center.
   }
 }
