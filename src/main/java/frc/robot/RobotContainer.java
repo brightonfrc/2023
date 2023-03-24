@@ -6,12 +6,16 @@ package frc.robot;
 
 import com.pathplanner.lib.PathConstraints;
 import com.pathplanner.lib.PathPlanner;
+import com.pathplanner.lib.PathPlannerTrajectory;
 
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.ADIS16470_IMU.IMUAxis;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -141,9 +145,18 @@ public class RobotContainer {
    */
   public CommandBase getAutonomousCommand(AutonomousSelection commandSelection) {
     switch (commandSelection) {
-      default:
-        // return new FollowPath(m_drivetrain, m_gyro, PathPlanner.loadPath("DriveForward", new PathConstraints(1, 0.25)));
+      case AutoBalanceOnly:
         return new AutoBalance(m_gyro, m_drivetrain);
+      case ClosestPathAndAutoBalance:
+        return new SequentialCommandGroup(new FollowPath(m_drivetrain, m_gyro, PathPlanner.loadPath("1Closest", Constants.Strategy.k_pathPlannerConstraints)), new AutoBalance(m_gyro, m_drivetrain));
+      case MiddlePathAndAutoBalance:
+        return new SequentialCommandGroup(new FollowPath(m_drivetrain, m_gyro, PathPlanner.loadPath("1Middle", Constants.Strategy.k_pathPlannerConstraints)), new AutoBalance(m_gyro, m_drivetrain));
+      case FurthestPathAndAutoBalance:
+        return new SequentialCommandGroup(new FollowPath(m_drivetrain, m_gyro, PathPlanner.loadPath("1Furthest", Constants.Strategy.k_pathPlannerConstraints)), new AutoBalance(m_gyro, m_drivetrain));
+      default:
+        return new InstantCommand(() -> {
+          System.out.println("This autonomous strategy was not configured.");
+        });
     }
   }
 

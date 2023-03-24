@@ -1,0 +1,2 @@
+Basic: Dock cube; 1; balance
+Average: Dock cube; 2; balance
