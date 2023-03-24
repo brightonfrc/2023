@@ -25,14 +25,14 @@ public class SparkMaxTester extends SubsystemBase {
   /** Creates a new SparkMaxTester. */
   public SparkMaxTester() {
     // Show the default motor id
+    SmartDashboard.putNumber("SparkMax Test/Value", 0);
     m_motors.setDefaultOption("30", new CANSparkMax(30, MotorType.kBrushless));
     m_motors.addOption("31", new CANSparkMax(31, MotorType.kBrushless));
     
     m_modes.setDefaultOption("Percent", MotorTesterModes.Percent);
     m_modes.addOption("SmartMotion", MotorTesterModes.SmartMotion);
 
-    SmartDashboard.putData("SparkMaxTester/motor", m_motors);
-    SmartDashboard.putData("SparkMaxTester/mode", m_modes);
+    SmartDashboard.putNumber("SparkMax Test/Motor ID", m_motors.getSelected().getDeviceId());
   }
 
   @Override
@@ -44,8 +44,8 @@ public class SparkMaxTester extends SubsystemBase {
 
     var pid = motor.getPIDController();
     double value = m_controller.getRightY();
-    SmartDashboard.putNumber("SparkMaxTester/value", value);
-    SmartDashboard.putNumber("SparkMaxTester/encoder_position", encoder.getPosition());
+    SmartDashboard.putNumber("SparkMaxTester/Value", value);
+    SmartDashboard.putNumber("SparkMaxTester/Encoder Position", encoder.getPosition());
     switch (m_modes.getSelected()) {
       case SmartMotion:
         pid.setReference(value, ControlType.kSmartMotion);

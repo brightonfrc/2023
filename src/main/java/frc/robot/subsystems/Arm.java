@@ -29,8 +29,8 @@ public class Arm extends SubsystemBase {
     cableMotor.getEncoder().setPosition(0);
 
     // NOTE: Use the rev tuner to set PID values
-    cableMotorPID = cableMotor.getPIDController();
-    chainMotorPID = chainMotor.getPIDController();
+    // cableMotorPID = cableMotor.getPIDController();
+    // chainMotorPID = chainMotor.getPIDController();
   }
   
   @Override

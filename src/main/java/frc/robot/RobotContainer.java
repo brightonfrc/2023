@@ -116,14 +116,11 @@ public class RobotContainer {
     m_drivetrain.setDefaultCommand(Commands.run(() -> {
       double speed = -m_driverController.getRightY();
       double turn = -m_driverController.getRightX();
-      SmartDashboard.putNumber("speed", speed);
       
       // Reverse the turning direction when going backwards, like a car
       // Only assume we are going backwards if we are outside the deadband
       // if (speed < RobotDriveBase.kDefaultDeadband) turn *= -1;
 
-      SmartDashboard.putNumber("Speed", speed);
-      SmartDashboard.putNumber("Turn", turn);
       m_drivetrain.drive(speed, turn);
     }, m_drivetrain));
 
