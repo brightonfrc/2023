@@ -59,12 +59,16 @@ public class DifferentialDriveWrapper extends SubsystemBase {
    * @param turn  how much the robot turns
    */
   public void drive(double speed, double turn) {
+    SmartDashboard.putNumber("Drive/Speed", speed);
+    SmartDashboard.putNumber("Drive/Turn", turn);
+
     // Reverse the turn if going backwards, so that the motion can be similar to a car
-    if (speed < -Constants.MotionParameters.Drivetrain.k_speedThresholdForTurnInPlace)
+    if (speed < -Constants.MotionParameters.Drivetrain.k_speedThresholdForTurnInPlace) {
       turn *= -1;
+    }
     m_drive.arcadeDrive(speed, turn, true);
-    SmartDashboard.putNumber("drive.RightPower", m_right.get());
-    SmartDashboard.putNumber("drive.LightPower", m_left.get());
+    SmartDashboard.putNumber("Drive/Left Power", m_left.get());
+    SmartDashboard.putNumber("Drive/Right Power", m_right.get());
   }
 
   /**
