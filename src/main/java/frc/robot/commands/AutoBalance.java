@@ -4,8 +4,11 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.ADIS16470_IMU.IMUAxis;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.Constants.MotionParameters;
 import frc.robot.subsystems.DifferentialDriveWrapper;
 import frc.robot.subsystems.Gyro;
 
@@ -14,7 +17,6 @@ import frc.robot.subsystems.Gyro;
  * A command for driving up the charge station and balancing on top of it. Thanks to https://www.chiefdelphi.com/t/psa-balance-in-auto/ .
  */
 public class AutoBalance extends CommandBase {
-  // private SimpleMotorFeedforward drivetrainFeedforward = new SimpleMotorFeedforward(Constants.MotionParameters.Drivetrain.k_s, Constants.MotionParameters.Drivetrain.k_v, Constants.MotionParameters.Drivetrain.k_a);
   /** 
    * The Gyro
    */
@@ -31,66 +33,18 @@ public class AutoBalance extends CommandBase {
    * > 2 = on charge station - stop
    * > 3/4 = stopped
    */
-  private int state;
+  private int state = 0;
   /**
    * Timer from start of state trigger to state entry
    */
-  private int debounceCount;
-  /**
-   * Robot speed when driving up slope of charge station
-   */
-  private double robotSpeedSlow;
-  /**
-   * Robot speed when driving towards charge station
-   */
-  private double robotSpeedFast;
-  /**
-   * Minimum Angle at which the robot is driving up the charge station (degrees)
-   */
-  private double onChargeStationDegree;
-  /**
-   * Maximum Angle at which the robot is level, on top of the charge station (degrees)
-   */
-  private double levelDegree;
-  /**
-   * Time delay from start of state trigger to state entry (seconds)
-   */
-  private double debounceTime;
+  private int debounceCount = 0;
+  
 
   public AutoBalance(Gyro gyro, DifferentialDriveWrapper drivetrain) {
     addRequirements(drivetrain);
 
     m_gyro = gyro;
     m_drivetrain = drivetrain;
-
-    state = 0;
-    debounceCount = 0;
-
-    /**********
-     * CONFIG *
-     **********/
-    // Speed the robot drived while scoring/approaching station, default = 0.4
-    robotSpeedFast = 0.4;
-
-    // Speed the robot drives while balancing itself on the charge station.
-    // Should be roughly half the fast speed, to make the robot more accurate,
-    // default = 0.2
-    robotSpeedSlow = 0.2;
-
-    // Angle where the robot knows it is on the charge station, default = 13.0
-    onChargeStationDegree = 13.0;
-
-    // Angle where the robot can assume it is level on the charging station
-    // Used for exiting the drive forward sequence as well as for auto balancing,
-    // default = 6.0
-    levelDegree = 6.0;
-
-    // Amount of time a sensor condition needs to be met before changing states in
-    // seconds
-    // Reduces the impact of sensor noice, but too high can make the auto run
-    // slower, default = 0.2
-    debounceTime = 0.2;
-    // TODO: Construct command
   }
 
 
@@ -105,7 +59,13 @@ public class AutoBalance extends CommandBase {
     // } else {
     //     return -Math.sqrt(pitch * pitch + roll * roll);
     // }
-    return m_gyro.getAngle(IMUAxis.kX).getDegrees();
+
+    double tilt = -m_gyro.getAngle(IMUAxis.kY).getDegrees();
+
+    SmartDashboard.putNumber("AutoBalance/State", state);
+    SmartDashboard.putNumber("AutoBalance/Tilt", tilt);
+
+    return tilt;
   }
 
   public int secondsToTicks(double time) {
@@ -119,41 +79,33 @@ public class AutoBalance extends CommandBase {
     switch (state) {
         // drive forwards to approach station, exit when tilt is detected
         case 0:
-            if (getTilt() > onChargeStationDegree) {
+            if (getTilt() > MotionParameters.AutoBalance.k_onChargeStationDegree) {
                 debounceCount++;
             }
-            if (debounceCount > secondsToTicks(debounceTime)) {
+            if (debounceCount > secondsToTicks(MotionParameters.AutoBalance.k_debounceTime)) {
                 state = 1;
                 debounceCount = 0;
-                return robotSpeedSlow;
+                return MotionParameters.AutoBalance.k_robotSpeedSlow;
             }
-            return robotSpeedFast;
+            return MotionParameters.AutoBalance.k_robotSpeedFast;
         // driving up charge station, drive slower, stopping when level
         case 1:
-            if (getTilt() < levelDegree) {
+            if (getTilt() < MotionParameters.AutoBalance.k_levelDegree) {
                 debounceCount++;
             }
-            if (debounceCount > secondsToTicks(debounceTime)) {
+            if (debounceCount > secondsToTicks(MotionParameters.AutoBalance.k_debounceTime)) {
                 state = 2;
                 debounceCount = 0;
                 return 0;
             }
-            return robotSpeedSlow;
+            return MotionParameters.AutoBalance.k_robotSpeedSlow;
         // on charge station, stop motors and wait for end of auto
         case 2:
-            if (Math.abs(getTilt()) <= levelDegree / 2) {
-                debounceCount++;
-            }
-            if (debounceCount > secondsToTicks(debounceTime)) {
-                state = 4;
-                debounceCount = 0;
-                return 0;
-            }
-            if (getTilt() >= levelDegree) {
-                return 0.1;
-            } else if (getTilt() <= -levelDegree) {
-                return -0.1;
-            }
+            // Has to be between 0 and 1
+            // Starting at the range of -levelDegree to levelDegree
+            double t = (getTilt() + MotionParameters.AutoBalance.k_levelDegree) / (2 * MotionParameters.AutoBalance.k_levelDegree);
+            // MathUtil.interpolate does clamping for us
+            return MathUtil.interpolate(-MotionParameters.AutoBalance.k_robotSpeedCorrection, MotionParameters.AutoBalance.k_robotSpeedCorrection, t);
         case 3:
             return 0;
     }
@@ -164,8 +116,9 @@ public class AutoBalance extends CommandBase {
   @Override
   public void execute() {
     double speed = autoBalanceRoutine();
-    // speed = drivetrainFeedforward.calculate(speed);
     // Update the wheel speeds - TODO: Check is correct
+    SmartDashboard.putNumber("AutoBalance/Speed", speed);
+
     m_drivetrain.set(speed, speed);
   }
 
@@ -177,12 +130,14 @@ public class AutoBalance extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
+    System.out.println("[AutoBalance] End - " + (interrupted ? "Interrupted" : "Not Interrupted"));
     m_drivetrain.set(0, 0);
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return state >= 3;
+    // return state >= 3;
+    return false;
   }
 }
