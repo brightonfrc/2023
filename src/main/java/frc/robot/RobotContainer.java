@@ -7,7 +7,6 @@ package frc.robot;
 import com.pathplanner.lib.PathConstraints;
 import com.pathplanner.lib.PathPlanner;
 
-import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.ADIS16470_IMU.IMUAxis;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -19,6 +18,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.Ports;
 import frc.robot.subsystems.Turntable;
 import frc.robot.commands.TurntableSetPosition;
+import frc.robot.commands.ArmManualLevel;
 import frc.robot.commands.ArmSetLevel;
 import frc.robot.commands.FollowPath;
 import frc.robot.commands.IntakeGrab;
@@ -86,6 +86,7 @@ public class RobotContainer {
         this.m_arm = new Arm();
         this.m_intake = new Intake();
         this.m_drivetrain = new DifferentialDriveWrapper();
+        this.m_turntable = new Turntable();
 
         
         // Configure all the bindings and default commands
@@ -97,16 +98,19 @@ public class RobotContainer {
   public void gameTeleopBindings(){
     XboxController j = m_driverController.getHID();
 
-    // Triggers for intake
+    // Bumpers for intake
     Trigger grabTrigger = m_driverController.leftBumper();
     Trigger releaseTrigger = m_driverController.rightBumper();
     Trigger armGroundTrigger = m_driverController.a();
     Trigger armMidTrigger = m_driverController.b();
+    // Trigger armManualTrigger = m_driverController.x();
     
     grabTrigger.onTrue(new IntakeGrab(m_intake));
     releaseTrigger.onTrue(new IntakeRelease(m_intake));
     armGroundTrigger.onTrue(new ArmSetLevel(m_arm, 1));
     armMidTrigger.onTrue(new ArmSetLevel(m_arm, 2));
+
+    m_arm.setDefaultCommand(new ArmManualLevel(m_arm));
     
     // If the drivetrain is not running other commands, run arcade drive with right joystick
     m_drivetrain.setDefaultCommand(Commands.run(() -> {

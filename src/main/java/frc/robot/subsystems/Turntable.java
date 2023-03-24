@@ -22,6 +22,8 @@ public class Turntable extends SubsystemBase {
 
     /* Factory Default all hardware to prevent unexpected behaviour */
     motor.configFactoryDefault();
+
+    motor.setInverted(true);
         
     /* Config the sensor used for Primary PID and sensor direction */
     motor.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 
