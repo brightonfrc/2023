@@ -63,6 +63,14 @@ public class Turntable extends SubsystemBase {
   }
 
   /**
+   * Set power of turntable from -1 to 1 (clockwise?/counterclockwise?)
+   * @param numCounts
+   */
+  public void setPower(double power) {
+    motor.set(ControlMode.PercentOutput, power);
+  }
+
+  /**
    * Get position of turntable in number of encoder counts (clockwise?/counterclockwise?)
    */
   public double getPosition() {

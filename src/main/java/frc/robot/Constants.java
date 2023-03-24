@@ -25,6 +25,7 @@ import frc.robot.dataStorageClasses.TurntablePositionCounts;
  */
 public final class Constants {
   public static class RobotSettings {
+    public static final double k_turntableMaxPower = 0.4;
     public static final boolean k_drivetrainStartInverted = false;
   }
 

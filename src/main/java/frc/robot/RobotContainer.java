@@ -108,7 +108,7 @@ public class RobotContainer {
     armGroundTrigger.onTrue(new ArmSetLevel(m_arm, 1));
     armMidTrigger.onTrue(new ArmSetLevel(m_arm, 2));
     
-    // If the drivetrain is not running other commands, run arcade drive
+    // If the drivetrain is not running other commands, run arcade drive with right joystick
     m_drivetrain.setDefaultCommand(Commands.run(() -> {
       double speed = -m_driverController.getRightY();
       double turn = -m_driverController.getRightX();
@@ -122,6 +122,13 @@ public class RobotContainer {
       SmartDashboard.putNumber("Turn", turn);
       m_drivetrain.drive(speed, turn);
     }, m_drivetrain));
+
+    // If the turntable is not running other commands, use left joystick input
+    m_turntable.setDefaultCommand(Commands.run(() -> {
+      double power = m_driverController.getLeftX();
+      power *= Constants.RobotSettings.k_turntableMaxPower;
+      m_turntable.setPower(power);
+    }, m_turntable));
   }
 
   /**
