@@ -10,6 +10,7 @@ import com.pathplanner.lib.PathPlannerTrajectory;
 
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.ADIS16470_IMU.IMUAxis;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -143,7 +144,7 @@ public class RobotContainer {
    *
    * @return the command to run in autonomous
    */
-  public CommandBase getAutonomousCommand(AutonomousSelection commandSelection) {
+  public CommandBase getAutonomousCommand(AutonomousSelection commandSelection, Alliance alliance) {
     switch (commandSelection) {
       case AutoBalanceOnlyForwards:
         return new AutoBalance(m_gyro, m_drivetrain, false);
