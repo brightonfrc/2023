@@ -16,24 +16,25 @@ import com.revrobotics.CANSparkMax;
 
 public class ArmSetLevel extends CommandBase {
   private Arm m_arm;
-  private double m_chainMotorDesiredPosition;
-  private double m_cableMotorDesiredPosition;
-  
-  private double positionTolerance = 0.1;
-  private double velocityTolerance = 0.1;
+  private int m_positionIndex;
 
   /** Creates a new ArmSetLevel. */
   public ArmSetLevel(Arm arm, int positionIndex) {
     addRequirements(arm);
 
     m_arm = arm;
+    m_positionIndex = positionIndex;
+  }
 
+  // Called when the command is initially scheduled.
+  @Override
+  public void initialize() {
     ArmPositionCounts[] allPositions = Constants.ArmPositions.k_armMotorPositionCounts;
     try {
       // Find the desired positions and set the arm position to that
-      ArmPositionCounts position = allPositions[positionIndex];
-      m_chainMotorDesiredPosition = position.chainMotorCounts;
-      m_cableMotorDesiredPosition = position.cableMotorCounts;
+      ArmPositionCounts position = allPositions[m_positionIndex];
+      m_arm.chainMotorDesiredPosition = position.chainMotorCounts;
+      m_arm.cableMotorDesiredPosition = position.cableMotorCounts;
       SmartDashboard.putString("Arm position", position.name);
     } catch (Exception e){
       // Report the exception, do not fail
@@ -41,26 +42,10 @@ public class ArmSetLevel extends CommandBase {
     }
   }
 
-  // Called when the command is initially scheduled.
-  @Override
-  public void initialize() {}
-
-  // Called every time the scheduler runs while the command is scheduled.
-  @Override
-  public void execute() {
-    // Keep on moving the motor to that position
-    m_arm.chainMotorPID.setReference(m_chainMotorDesiredPosition, CANSparkMax.ControlType.kSmartMotion);
-    m_arm.cableMotorPID.setReference(m_cableMotorDesiredPosition, CANSparkMax.ControlType.kSmartMotion);
-  }
-
-  // Called once the command ends or is interrupted.
-  @Override
-  public void end(boolean interrupted) {}
-
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    // Keep the position
-    return false;
+    // Exit ASAP
+    return true;
   }
 }

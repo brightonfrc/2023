@@ -12,37 +12,44 @@ import frc.robot.subsystems.Arm;
 
 public class ArmManualLevel extends CommandBase {
   Arm m_arm;
+  private double m_positionChangeRate = 20;
+  // Move the cable faster
+  private double m_cableMotorChangeRateMultiplier = 2;
+
+  private long m_lastUpdateTime;
 
   /** Creates a new ArmManualLevel. */
   public ArmManualLevel(Arm arm) {
     // Use addRequirements() here to declare subsystem dependencies.
     m_arm = arm;
     addRequirements(arm);
-  }
 
-  // Called when the command is initially scheduled.
-  @Override
-  public void initialize() {
-    SmartDashboard.putString("Arm Manual/Status", "Initialised");
+    m_lastUpdateTime = System.currentTimeMillis();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    SmartDashboard.putString("Arm Manual/Status", "Running");
+
+    long currentTime = System.currentTimeMillis();
+    double positionChange = m_positionChangeRate * (currentTime - m_lastUpdateTime) / 1000;
+
     XboxController controller = new XboxController(Constants.Ports.k_controllerPort);
-    double speed = controller.getLeftY(); // TODO for now
-    if(controller.getBackButton()) {
-      // "-" button
-      SmartDashboard.putNumber("Arm Manual/Speed", speed);
+    positionChange *= controller.getLeftY(); // TODO for now
+
+    m_lastUpdateTime = currentTime;
+
+    if(controller.getRightStickButton()) {
+      // Back right button
+      SmartDashboard.putNumber("Arm Manual/Speed", positionChange);
       SmartDashboard.putString("Arm Manual/Motor", "Cable");
-      m_arm.cableMotor.set(speed);
-      m_arm.chainMotor.set(0);
+      m_arm.cableMotorDesiredPosition -= positionChange * m_cableMotorChangeRateMultiplier;
+      SmartDashboard.putNumber("Arm Manual/Desired pos", m_arm.cableMotorDesiredPosition);
     } else {
-      SmartDashboard.putNumber("Arm Manual/Speed", speed);
+      SmartDashboard.putNumber("Arm Manual/Speed", positionChange);
       SmartDashboard.putString("Arm Manual/Motor", "Chain");
-      m_arm.chainMotor.set(speed);
-      m_arm.cableMotor.set(0);
+      m_arm.chainMotorDesiredPosition += positionChange;
+      SmartDashboard.putNumber("Arm Manual/Desired pos", m_arm.chainMotorDesiredPosition);
     }
   }
 
