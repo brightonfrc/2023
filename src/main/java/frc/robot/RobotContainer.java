@@ -149,11 +149,11 @@ public class RobotContainer {
       case AutoBalanceOnly:
         return new AutoBalance(m_gyro, m_drivetrain);
       case ClosestPathAndAutoBalance:
-        return new SequentialCommandGroup(new FollowPath(m_drivetrain, m_gyro, PathPlanner.loadPath("1Closest", Constants.Strategy.k_pathPlannerConstraints)), new AutoBalance(m_gyro, m_drivetrain));
+        return new SequentialCommandGroup(new FollowPath(m_drivetrain, m_gyro, "1Closest", alliance), new AutoBalance(m_gyro, m_drivetrain));
       case MiddlePathAndAutoBalance:
-        return new SequentialCommandGroup(new FollowPath(m_drivetrain, m_gyro, PathPlanner.loadPath("1Middle", Constants.Strategy.k_pathPlannerConstraints)), new AutoBalance(m_gyro, m_drivetrain));
+        return new SequentialCommandGroup(new FollowPath(m_drivetrain, m_gyro, "1Middle", alliance), new AutoBalance(m_gyro, m_drivetrain));
       case FurthestPathAndAutoBalance:
-        return new SequentialCommandGroup(new FollowPath(m_drivetrain, m_gyro, PathPlanner.loadPath("1Furthest", Constants.Strategy.k_pathPlannerConstraints)), new AutoBalance(m_gyro, m_drivetrain));
+        return new SequentialCommandGroup(new FollowPath(m_drivetrain, m_gyro, "1Furthest", alliance), new AutoBalance(m_gyro, m_drivetrain));
       default:
         return new InstantCommand(() -> {
           System.out.println("This autonomous strategy was not configured.");

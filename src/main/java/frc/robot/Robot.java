@@ -58,12 +58,11 @@ public class Robot extends TimedRobot {
     m_autonomousChooser.setDefaultOption("Closest Path + AutoBalance [Basic]", AutonomousSelection.ClosestPathAndAutoBalance);
     m_autonomousChooser.setDefaultOption("Middle Path + AutoBalance [Basic]", AutonomousSelection.MiddlePathAndAutoBalance);
     m_autonomousChooser.setDefaultOption("Furthest Path + AutoBalance [Basic]", AutonomousSelection.FurthestPathAndAutoBalance);
-    // m_autonomousChooser.addOption("Score and balance", AutonomousSelection.ScoreAndBalance);
     SmartDashboard.putData("Choosers/Auto choices", m_autonomousChooser);
     
-    m_allianceChooser = new SendableChooser<TeamColourSelection>();
-    m_allianceChooser.setDefaultOption("Red", TeamColourSelection.Red);
-    m_allianceChooser.addOption("Blue", TeamColourSelection.Blue);
+    m_allianceChooser = new SendableChooser<Alliance>();
+    m_allianceChooser.setDefaultOption("Red", Alliance.Red);
+    m_allianceChooser.addOption("Blue", Alliance.Blue);
     SmartDashboard.putData("Choosers/Team colour", m_allianceChooser);
 
     m_modeChooser = new SendableChooser<ModeSelection>();
