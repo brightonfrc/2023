@@ -32,7 +32,6 @@ import frc.robot.subsystems.Gyro;
  * This sets up the odometry and gyro, but the encoders are included in the drivetrain.
  */
 public class FollowPath extends CommandBase { // TODO: Test
-  
   SequentialCommandGroup sequentialCommandGroup;
   DifferentialDriveWrapper m_drivetrain;
 
@@ -118,11 +117,11 @@ public class FollowPath extends CommandBase { // TODO: Test
    * @param vRight Right voltage, V
    */
   public void outputVolts(double vLeft, double vRight) {
-    SmartDashboard.putNumber("autoDrive.vLeft", vLeft);
-    SmartDashboard.putNumber("autoDrive.vRight", vRight);
-    SmartDashboard.putNumber("autoDrive.posLeft", m_drivetrain.getLeftEncoderDistance());
-    SmartDashboard.putNumber("autoDrive.posRight", m_drivetrain.getRightEncoderDistance());
-    SmartDashboard.putString("autoDrive.wheelSpeeds", this.getWheelSpeeds().toString());
+    SmartDashboard.putNumber("FollowPath/Left Vel", vLeft);
+    SmartDashboard.putNumber("FollowPath/Right Vel", vRight);
+    SmartDashboard.putNumber("FollowPath/Left Pos", m_drivetrain.getLeftEncoderDistance());
+    SmartDashboard.putNumber("FollowPath/Right Pos", m_drivetrain.getRightEncoderDistance());
+    SmartDashboard.putString("FollowPath/Wheel Speeds", this.getWheelSpeeds().toString());
 
     m_drivetrain.outputVolts(vLeft, vRight);
   }

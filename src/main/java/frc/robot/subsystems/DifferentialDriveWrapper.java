@@ -1,5 +1,6 @@
 package frc.robot.subsystems;
 
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.wpilibj.Encoder;
@@ -34,13 +35,18 @@ public class DifferentialDriveWrapper extends SubsystemBase {
 
   /** Creates a new DifferentialDriveSubsystem. */
   public DifferentialDriveWrapper() {
+    // Stop the robot once there is no power
+    m_motorL1.setNeutralMode(NeutralMode.Brake);
+    m_motorL2.setNeutralMode(NeutralMode.Brake);
+    m_motorR1.setNeutralMode(NeutralMode.Brake);
+    m_motorR2.setNeutralMode(NeutralMode.Brake);
+
     // Only one side needs to be reversed, since the motors on the two sides are
     // facing opposite directions.
     // NOTE: Make sure to keep this the same as the sysid tool and encoder reverse direction flag
     m_left.setInverted(false);
     m_right.setInverted(true);
 
-    
     // Sets the distance per pulse for the encoders
     m_leftEncoder.setDistancePerPulse(Constants.MotionParameters.Drivetrain.k_distancePerEncoderPulse);
     m_rightEncoder.setDistancePerPulse(Constants.MotionParameters.Drivetrain.k_distancePerEncoderPulse);
@@ -53,9 +59,16 @@ public class DifferentialDriveWrapper extends SubsystemBase {
    * @param turn  how much the robot turns
    */
   public void drive(double speed, double turn) {
-    m_drive.curvatureDrive(speed, turn, true);
-    SmartDashboard.putNumber("drive.RightPower", m_right.get());
-    SmartDashboard.putNumber("drive.LightPower", m_left.get());
+    SmartDashboard.putNumber("Drive/Speed", speed);
+    SmartDashboard.putNumber("Drive/Turn", turn);
+
+    // Reverse the turn if going backwards, so that the motion can be similar to a car
+    if (speed < -Constants.MotionParameters.Drivetrain.k_speedThresholdForTurnInPlace) {
+      turn *= -1;
+    }
+    m_drive.arcadeDrive(speed, turn, true);
+    SmartDashboard.putNumber("Drive/Left Power", m_left.get());
+    SmartDashboard.putNumber("Drive/Right Power", m_right.get());
   }
 
   /**

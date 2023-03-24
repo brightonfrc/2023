@@ -16,7 +16,7 @@ import frc.robot.subsystems.Gyro;
 /**
  * A command for driving up the charge station and balancing on top of it. Thanks to https://www.chiefdelphi.com/t/psa-balance-in-auto/ .
  */
-public class AutoBalance extends CommandBase {
+public class AutoBalanceReversed extends CommandBase {
   /** 
    * The Gyro
    */
@@ -40,7 +40,7 @@ public class AutoBalance extends CommandBase {
   private int debounceCount = 0;
   
 
-  public AutoBalance(Gyro gyro, DifferentialDriveWrapper drivetrain) {
+  public AutoBalanceReversed(Gyro gyro, DifferentialDriveWrapper drivetrain) {
     addRequirements(drivetrain);
 
     m_gyro = gyro;
@@ -79,33 +79,33 @@ public class AutoBalance extends CommandBase {
     switch (state) {
         // drive forwards to approach station, exit when tilt is detected
         case 0:
-            if (getTilt() > MotionParameters.AutoBalance.k_onChargeStationDegree) {
+            if (getTilt() < -MotionParameters.AutoBalanceReversed.k_onChargeStationDegree) {
                 debounceCount++;
             }
-            if (debounceCount > secondsToTicks(MotionParameters.AutoBalance.k_debounceTime)) {
+            if (debounceCount > secondsToTicks(MotionParameters.AutoBalanceReversed.k_debounceTime)) {
                 state = 1;
                 debounceCount = 0;
-                return MotionParameters.AutoBalance.k_robotSpeedSlow;
+                return -MotionParameters.AutoBalanceReversed.k_robotSpeedSlow;
             }
-            return MotionParameters.AutoBalance.k_robotSpeedFast;
+            return -MotionParameters.AutoBalanceReversed.k_robotSpeedFast;
         // driving up charge station, drive slower, stopping when level
         case 1:
-            if (getTilt() < MotionParameters.AutoBalance.k_levelDegree) {
+            if (getTilt() > -MotionParameters.AutoBalanceReversed.k_levelDegree) {
                 debounceCount++;
             }
-            if (debounceCount > secondsToTicks(MotionParameters.AutoBalance.k_debounceTime)) {
+            if (debounceCount > secondsToTicks(MotionParameters.AutoBalanceReversed.k_debounceTime)) {
                 state = 2;
                 debounceCount = 0;
                 return 0;
             }
-            return MotionParameters.AutoBalance.k_robotSpeedSlow;
+            return -MotionParameters.AutoBalanceReversed.k_robotSpeedSlow;
         // on charge station, stop motors and wait for end of auto
         case 2:
             // Has to be between 0 and 1
             // Starting at the range of -levelDegree to levelDegree
             double t = (getTilt() + MotionParameters.AutoBalance.k_levelDegree) / (2 * MotionParameters.AutoBalance.k_levelDegree);
             // MathUtil.interpolate does clamping for us
-            return MathUtil.interpolate(-MotionParameters.AutoBalance.k_robotSpeedCorrection, MotionParameters.AutoBalance.k_robotSpeedCorrection, t);
+            return MathUtil.interpolate(-MotionParameters.AutoBalanceReversed.k_robotSpeedCorrection, MotionParameters.AutoBalanceReversed.k_robotSpeedCorrection, t);
         case 3:
             return 0;
     }
