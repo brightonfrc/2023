@@ -38,13 +38,16 @@ public class AutoBalance extends CommandBase {
    * Timer from start of state trigger to state entry
    */
   private int debounceCount = 0;
+
+  private boolean isReversed;
   
 
-  public AutoBalance(Gyro gyro, DifferentialDriveWrapper drivetrain) {
+  public AutoBalance(Gyro gyro, DifferentialDriveWrapper drivetrain, boolean isReversed) {
     addRequirements(drivetrain);
 
     m_gyro = gyro;
     m_drivetrain = drivetrain;
+    this.isReversed = isReversed;
   }
 
 
@@ -62,8 +65,13 @@ public class AutoBalance extends CommandBase {
 
     double tilt = -m_gyro.getAngle(IMUAxis.kY).getDegrees();
 
+    if(isReversed) {
+      tilt *= -1; // Negate tilt so acts like gyro was other way round
+    }
+
     SmartDashboard.putNumber("AutoBalance/State", state);
     SmartDashboard.putNumber("AutoBalance/Tilt", tilt);
+    SmartDashboard.putBoolean("AutoBalance/Reversed", isReversed);
 
     return tilt;
   }
@@ -118,6 +126,10 @@ public class AutoBalance extends CommandBase {
     double speed = autoBalanceRoutine();
     // Update the wheel speeds - TODO: Check is correct
     SmartDashboard.putNumber("AutoBalance/Speed", speed);
+
+    if(isReversed) {
+      speed *= -1; // Negate speed so moves backwards
+    }
 
     m_drivetrain.set(speed, speed);
   }

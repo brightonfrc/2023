@@ -145,14 +145,16 @@ public class RobotContainer {
    */
   public CommandBase getAutonomousCommand(AutonomousSelection commandSelection) {
     switch (commandSelection) {
-      case AutoBalanceOnly:
-        return new AutoBalance(m_gyro, m_drivetrain);
+      case AutoBalanceOnlyForwards:
+        return new AutoBalance(m_gyro, m_drivetrain, false);
+      case AutoBalanceOnlyReverse:
+        return new AutoBalance(m_gyro, m_drivetrain, true);
       case ClosestPathAndAutoBalance:
-        return new SequentialCommandGroup(new FollowPath(m_drivetrain, m_gyro, PathPlanner.loadPath("1Closest", Constants.Strategy.k_pathPlannerConstraints)), new AutoBalance(m_gyro, m_drivetrain));
+        return new SequentialCommandGroup(new FollowPath(m_drivetrain, m_gyro, PathPlanner.loadPath("1Closest", Constants.Strategy.k_pathPlannerConstraints)), new AutoBalance(m_gyro, m_drivetrain, false));
       case MiddlePathAndAutoBalance:
-        return new SequentialCommandGroup(new FollowPath(m_drivetrain, m_gyro, PathPlanner.loadPath("1Middle", Constants.Strategy.k_pathPlannerConstraints)), new AutoBalance(m_gyro, m_drivetrain));
+        return new SequentialCommandGroup(new FollowPath(m_drivetrain, m_gyro, PathPlanner.loadPath("1Middle", Constants.Strategy.k_pathPlannerConstraints)), new AutoBalance(m_gyro, m_drivetrain, false));
       case FurthestPathAndAutoBalance:
-        return new SequentialCommandGroup(new FollowPath(m_drivetrain, m_gyro, PathPlanner.loadPath("1Furthest", Constants.Strategy.k_pathPlannerConstraints)), new AutoBalance(m_gyro, m_drivetrain));
+        return new SequentialCommandGroup(new FollowPath(m_drivetrain, m_gyro, PathPlanner.loadPath("1Furthest", Constants.Strategy.k_pathPlannerConstraints)), new AutoBalance(m_gyro, m_drivetrain, false));
       default:
         return new InstantCommand(() -> {
           System.out.println("This autonomous strategy was not configured.");
