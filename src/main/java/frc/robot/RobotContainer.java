@@ -123,6 +123,7 @@ public class RobotContainer {
       double speed = -m_driverController.getRightY();
       double turn = -m_driverController.getRightX();
 
+      speed *= Constants.RobotSettings.k_speedSensitivity;
       turn *= Constants.RobotSettings.k_turnSensitivity;
       
       // Reverse the turning direction when going backwards, like a car
