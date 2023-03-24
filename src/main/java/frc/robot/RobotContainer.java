@@ -30,7 +30,7 @@ import frc.robot.subsystems.DifferentialDriveWrapper;
 import frc.robot.subsystems.Gyro;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.testSubsystems.SparkMaxTester;
-import frc.robot.subsystems.testSubsystems.TurntableTester;
+import frc.robot.subsystems.testSubsystems.TalonSRXTester;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -47,7 +47,7 @@ public class RobotContainer {
   private Intake m_intake;
   
   private SparkMaxTester m_sparkMaxTester;
-  private TurntableTester m_turntableTester;
+  private TalonSRXTester m_talonTester;
 
   private boolean areSubsystemsSetUp = false;
 
@@ -74,16 +74,12 @@ public class RobotContainer {
     switch (mode) {
       case TestSparkMax:
         // No bindings, everything done from the smart dashboard or from inside subsystems
-        // Just start the sparkmax test command
         m_sparkMaxTester = new SparkMaxTester();
         return;
-      case TestTurntable:
-        // No bindings, everything done from the smart dashboard
-        // Just start the turntable test command
-        m_turntable = new Turntable();
-        m_turntableTester = new TurntableTester(m_turntable);
+      case TestTalon:
+        // No bindings, everything done from the smart dashboard or from inside subsystems
+        m_talonTester = new TalonSRXTester();
         return;
-      
       // NOTE: Game is the default
       default:
         // Only instantiate the subsystems if we need them

@@ -1,6 +1,7 @@
 package frc.robot.dataStorageClasses;
 
-public enum SparkMaxTesterModes {
+public enum MotorTesterModes {
     Percent,
+    Position,
     SmartMotion
 }

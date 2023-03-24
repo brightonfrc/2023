@@ -85,6 +85,12 @@ public final class Constants {
       public static final double k_distancePerEncoderPulse = Math.PI * Constants.Measurements.Drivetrain.k_wheelDiameter / Constants.Measurements.Drivetrain.k_encoderPulsesPerRotation; // (distance per pulse = (circumference = pi * r^2) / pulses per rotation)
     }
   }
+  public static class TurntablePositions {
+    // chain motor, then cable motor
+    public static final TurntablePositionCounts[] k_turntableMotorPositionCounts = {
+      new TurntablePositionCounts(0, "Center"),
+    };
+  }
     
   public static class ArmPositions {
     // chain motor, then cable motor

@@ -24,7 +24,7 @@ public class Turntable extends SubsystemBase {
     motor.configFactoryDefault();
         
     /* Config the sensor used for Primary PID and sensor direction */
-    motor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 
+    motor.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder, 
                                         0,
                                         Constants.MotionParameters.Turntable.k_timeoutMs);
 
@@ -50,6 +50,8 @@ public class Turntable extends SubsystemBase {
     motor.config_kP(0, Constants.MotionParameters.Turntable.k_p, Constants.MotionParameters.Turntable.k_timeoutMs);
     motor.config_kI(0, Constants.MotionParameters.Turntable.k_i, Constants.MotionParameters.Turntable.k_timeoutMs);
     motor.config_kD(0, Constants.MotionParameters.Turntable.k_d, Constants.MotionParameters.Turntable.k_timeoutMs);
+
+    motor.setSelectedSensorPosition(0);
   }
 
   /**

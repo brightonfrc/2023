@@ -16,11 +16,11 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants;
-import frc.robot.dataStorageClasses.SparkMaxTesterModes;
+import frc.robot.dataStorageClasses.MotorTesterModes;
 
 public class SparkMaxTester extends SubsystemBase {
   private SendableChooser<CANSparkMax> m_motors = new SendableChooser<>();
-  private SendableChooser<SparkMaxTesterModes> m_modes = new SendableChooser<>();
+  private SendableChooser<MotorTesterModes> m_modes = new SendableChooser<>();
   private XboxController m_controller = new XboxController(Constants.Ports.k_controllerPort);
   /** Creates a new SparkMaxTester. */
   public SparkMaxTester() {
@@ -28,8 +28,8 @@ public class SparkMaxTester extends SubsystemBase {
     m_motors.setDefaultOption("30", new CANSparkMax(30, MotorType.kBrushless));
     m_motors.addOption("31", new CANSparkMax(31, MotorType.kBrushless));
     
-    m_modes.setDefaultOption("Percent", SparkMaxTesterModes.Percent);
-    m_modes.addOption("SmartMotion", SparkMaxTesterModes.SmartMotion);
+    m_modes.setDefaultOption("Percent", MotorTesterModes.Percent);
+    m_modes.addOption("SmartMotion", MotorTesterModes.SmartMotion);
 
     SmartDashboard.putData("SparkMaxTester/motor", m_motors);
     SmartDashboard.putData("SparkMaxTester/mode", m_modes);
