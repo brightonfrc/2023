@@ -34,7 +34,7 @@ public class IntakeRelease extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_intake.m_motor.set(ControlMode.PercentOutput, -0.3);
+    m_intake.m_motor.set(ControlMode.PercentOutput, -1);
 
     // Output start time
     SmartDashboard.putNumber("Intake/StartTime", startTime);

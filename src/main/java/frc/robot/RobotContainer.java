@@ -13,15 +13,21 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.Ports;
+import frc.robot.commands.ArmManualLevel;
+import frc.robot.commands.ArmSetLevel;
 import frc.robot.commands.AutoBalance;
 import frc.robot.commands.AutoBalanceV2;
 import frc.robot.commands.DriveForwardsTime;
 import frc.robot.commands.FollowPath;
+import frc.robot.commands.IntakeGrab;
+import frc.robot.commands.IntakeRelease;
 import frc.robot.commands.TestDrivetrainPID;
 import frc.robot.dataStorageClasses.AutonomousSelection;
 import frc.robot.dataStorageClasses.ModeSelection;
+import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.DifferentialDriveWrapper;
 import frc.robot.subsystems.Gyro;
+import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.testSubsystems.SparkMaxTester;
 import frc.robot.subsystems.testSubsystems.ArmTester;
 
@@ -35,7 +41,8 @@ public class RobotContainer {
   private final Gyro m_gyro = new Gyro();
   // The robot's subsystems and commands are defined here...
   private DifferentialDriveWrapper m_drivetrain;
-  // private Arm m_arm;
+  private Intake m_intake;
+  private Arm m_arm;
 
   private boolean areSubsystemsSetUp = false;
 
@@ -76,7 +83,8 @@ public class RobotContainer {
       default:
         // Only instantiate the subsystems if we need them
         this.m_drivetrain = new DifferentialDriveWrapper();
-        // this.m_arm = new Arm();
+        this.m_intake = new Intake();
+        this.m_arm = new Arm();
         
         // Configure all the bindings and default commands
         gameTeleopBindings();
@@ -88,13 +96,19 @@ public class RobotContainer {
     XboxController controller = m_driverController.getHID();
 
     // Bumpers for intake
-    // Trigger grabTrigger = m_driverController.leftBumper();
-    // Trigger releaseTrigger = m_driverController.rightBumper();
+    Trigger grabTrigger = m_driverController.leftBumper();
+    Trigger releaseTrigger = m_driverController.rightBumper();
+    Trigger armGroundTrigger = m_driverController.a();
+    Trigger armMidTrigger = m_driverController.b();
+    Trigger armHighTrigger = m_driverController.y();
     
-    // grabTrigger.onTrue(new IntakeGrab(m_intake));
-    // releaseTrigger.onTrue(new IntakeRelease(m_intake));
+    grabTrigger.onTrue(new IntakeGrab(m_intake));
+    releaseTrigger.onTrue(new IntakeRelease(m_intake));
+    armGroundTrigger.onTrue(new ArmSetLevel(m_arm, 0));
+    armMidTrigger.onTrue(new ArmSetLevel(m_arm, 1));
+    armHighTrigger.onTrue(new ArmSetLevel(m_arm, 2));
     
-    // m_arm.setDefaultCommand(new ArmManualLevel(m_arm));
+    m_arm.setDefaultCommand(new ArmManualLevel(m_arm));
 
     // If the drivetrain is not running other commands, run arcade drive with right joystick
     m_drivetrain.setDefaultCommand(Commands.run(() -> {
@@ -132,8 +146,8 @@ public class RobotContainer {
         return autobalanceCommand;
       case PushThenAutoBalance:
         return new SequentialCommandGroup(new DriveForwardsTime(m_drivetrain, 500, 0.3), new DriveForwardsTime(m_drivetrain, 500, -0.3), autobalanceCommand);
-      case PushThenExitCommunity:
-        return new SequentialCommandGroup(new DriveForwardsTime(m_drivetrain, 500, 0.3), new DriveForwardsTime(m_drivetrain, 500, -0.3), new FollowPath(m_drivetrain, m_gyro, "Forward", alliance));
+      case PushOnly:
+        return new SequentialCommandGroup(new DriveForwardsTime(m_drivetrain, 500, 0.3), new DriveForwardsTime(m_drivetrain, 500, -0.3));
       case ClosestPathAndAutoBalance:
         return new SequentialCommandGroup(new FollowPath(m_drivetrain, m_gyro, "1Closest", alliance), autobalanceCommand);
       case MiddlePathAndAutoBalance:
