@@ -63,6 +63,7 @@ public class Robot extends TimedRobot {
     m_modeChooser.setDefaultOption("Game", ModeSelection.Game);
     m_modeChooser.addOption("Test SparkMax", ModeSelection.TestSparkMax);
     m_modeChooser.addOption("Test drive speed PID", ModeSelection.TestSpeedPIDDrive);
+    m_modeChooser.addOption("Test Arm", ModeSelection.TestArm);
     SmartDashboard.putData("Choosers/Mode", m_modeChooser);
   }
 

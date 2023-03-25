@@ -9,12 +9,10 @@ package frc.robot.dataStorageClasses;
  */
 public class ArmPositionCounts {
   public double chainMotorCounts;
-  public double cableMotorCounts;
   public String name;
   
-  public ArmPositionCounts (double chainMotorCounts, double cableMotorCounts, String name) {
+  public ArmPositionCounts (double chainMotorCounts, String name) {
     this.chainMotorCounts = chainMotorCounts;
-    this.cableMotorCounts = cableMotorCounts;
     this.name = name;
   }
 }
