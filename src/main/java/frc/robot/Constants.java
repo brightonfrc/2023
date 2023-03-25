@@ -125,7 +125,8 @@ public final class Constants {
     // chain motor, then cable motor
     public static final ArmPositionCounts[] k_armMotorPositionCounts = {
       new ArmPositionCounts(0, "Ground"),
-      new ArmPositionCounts(-26, "Mid")
+      new ArmPositionCounts(-20, "Mid"),
+      new ArmPositionCounts(-30, "High")
     };
     
     public static final double cableMotorP = 0.00008;
