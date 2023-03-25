@@ -125,8 +125,7 @@ public class RobotContainer {
    */
   public CommandBase getAutonomousCommand(AutonomousSelection commandSelection, Alliance alliance) {
     
-    var autobalanceCommand = new AutoBalanceV2(m_gyro, m_drivetrain);
-    // var autobalanceCommand = new AutoBalance(m_gyro, m_drivetrain, false);
+    var autobalanceCommand = new AutoBalanceV2(m_gyro, m_drivetrain, false);
 
     switch (commandSelection) {
       case AutoBalanceOnly:

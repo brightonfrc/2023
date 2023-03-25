@@ -29,14 +29,16 @@ public class AutoBalanceV2 extends CommandBase {
   private final double k_correctionSpeed = 0.2;
   
   private boolean isOnChargingStation;
+  private boolean isReversed;
 
   /** Creates a new AutoBalanceV2. */
-  public AutoBalanceV2(Gyro gyro, DifferentialDriveWrapper drivetrain) {
+  public AutoBalanceV2(Gyro gyro, DifferentialDriveWrapper drivetrain, boolean isReversed) {
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(drivetrain);
     
     this.gyro = gyro;
     this.drivetrain = drivetrain;
+    this.isReversed = isReversed;
   }
 
   // Called when the command is initially scheduled.
@@ -78,6 +80,10 @@ public class AutoBalanceV2 extends CommandBase {
     double gyroAngle = gyroAngleFilter.calculate(-gyro.getAngle(IMUAxis.kY).getDegrees());
     double gyroSpeed = gyroSpeedFilter.calculate(-gyro.getSpeed(IMUAxis.kY).getDegrees());
     
+    // -1 if reverse, 1 otherwise
+    // NOTE: the angle-based stuff finds the sign from the angle, so this is only applied when driving
+    double reverseMultiplier = this.isReversed ? -1 : 1;
+    
     SmartDashboard.putNumber("angle", gyroAngle);
     SmartDashboard.putNumber("angular speed", gyroSpeed);
     
@@ -91,7 +97,7 @@ public class AutoBalanceV2 extends CommandBase {
     
     // Drive forwards
     if(!isOnChargingStation) 
-      return k_firstApproachSpeed;
+      return reverseMultiplier * k_firstApproachSpeed;
 
     // If the angle is 0, we are at the top
     if (angleSign == 0) {
