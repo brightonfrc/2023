@@ -32,7 +32,6 @@ public class Arm extends SubsystemBase {
     // NOTE: Ideally, use the rev tuner to set PID values
     cableMotorPID = cableMotor.getPIDController();
     chainMotorPID = chainMotor.getPIDController();
-
     // However, this motor controller doesn't save the values properly
     cableMotorPID.setP(Constants.Arm.cableMotorP);
     cableMotorPID.setI(Constants.Arm.cableMotorI);
@@ -51,6 +50,11 @@ public class Arm extends SubsystemBase {
 
     SmartDashboard.putNumber("Arm/Chain Pos", chainMotor.getEncoder().getPosition());
     SmartDashboard.putNumber("Arm/Cable Pos", cableMotor.getEncoder().getPosition());
+
+    SmartDashboard.putNumber("Cable motor/P", cableMotorPID.getP());
+    SmartDashboard.putNumber("Cable motor/I", cableMotorPID.getI());
+    SmartDashboard.putNumber("Cable motor/D", cableMotorPID.getD());
+    SmartDashboard.putNumber("Cable motor/FF", cableMotorPID.getFF());
   }
 
   public void resetEncoders() {
