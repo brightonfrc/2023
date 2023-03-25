@@ -12,7 +12,6 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.Ports;
-import frc.robot.commands.AutoBalanceV2;
 import frc.robot.commands.ArmManualLevel;
 import frc.robot.commands.AutoBalance;
 import frc.robot.commands.FollowPath;
@@ -113,9 +112,7 @@ public class RobotContainer {
    */
   public CommandBase getAutonomousCommand(AutonomousSelection commandSelection, Alliance alliance) {
     
-    if(commandSelection == AutonomousSelection.OldAutobalanceOnly) return new AutoBalance(m_gyro, m_drivetrain, false);
-    
-    var autobalanceCommand = new AutoBalanceV2(m_gyro, m_drivetrain);
+    var autobalanceCommand = new AutoBalance(m_gyro, m_drivetrain, false);
 
     switch (commandSelection) {
       case AutoBalanceOnly:
