@@ -131,8 +131,10 @@ public class RobotContainer {
     switch (commandSelection) {
       case AutoBalanceOnly:
         return autobalanceCommand;
-      case ForwardsThenBackThenAutoBalance:
+      case PushThenAutoBalance:
         return new SequentialCommandGroup(new DriveForwardsTime(m_drivetrain, 500, 0.3), new DriveForwardsTime(m_drivetrain, 500, -0.3), autobalanceCommand);
+      case PushThenExitCommunity:
+        return new SequentialCommandGroup(new DriveForwardsTime(m_drivetrain, 500, 0.3), new DriveForwardsTime(m_drivetrain, 500, -0.3), new FollowPath(m_drivetrain, m_gyro, "Forward", alliance));
       case ClosestPathAndAutoBalance:
         return new SequentialCommandGroup(new FollowPath(m_drivetrain, m_gyro, "1Closest", alliance), autobalanceCommand);
       case MiddlePathAndAutoBalance:
