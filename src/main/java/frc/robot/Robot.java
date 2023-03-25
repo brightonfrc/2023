@@ -5,6 +5,7 @@
 package frc.robot;
 
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -29,7 +30,6 @@ public class Robot extends TimedRobot {
   NetworkTableInstance inst = NetworkTableInstance.getDefault();
   
   private SendableChooser<AutonomousSelection> m_autonomousChooser;
-  private SendableChooser<Alliance> m_allianceChooser;
   private SendableChooser<ModeSelection> m_modeChooser;
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -55,11 +55,6 @@ public class Robot extends TimedRobot {
     m_autonomousChooser.addOption("Closest Exit Community + AutoBalance [Average]", AutonomousSelection.ClosestExitCommunityAndAutoBalance);
     m_autonomousChooser.addOption("Furthest Exit Community + AutoBalance [Average]", AutonomousSelection.FurthestExitCommunityAndAutoBalance);
     SmartDashboard.putData("Choosers/Auto choices", m_autonomousChooser);
-  
-    m_allianceChooser = new SendableChooser<Alliance>();
-    m_allianceChooser.setDefaultOption("Red", Alliance.Red);
-    m_allianceChooser.addOption("Blue", Alliance.Blue);
-    SmartDashboard.putData("Choosers/Team colour", m_allianceChooser);
 
     m_modeChooser = new SendableChooser<ModeSelection>();
     m_modeChooser.setDefaultOption("Game", ModeSelection.Game);
@@ -96,9 +91,11 @@ public class Robot extends TimedRobot {
   public void autonomousInit() {
     // Set up the subsystems before using them
     m_robotContainer.setupSubsystems(m_modeChooser.getSelected());
+    
+    Alliance currentAlliance = DriverStation.getAlliance();
 
     // Find the auto command that was selected to be run
-    m_autonomousCommand = m_robotContainer.getAutonomousCommand(m_autonomousChooser.getSelected(), m_allianceChooser.getSelected());
+    m_autonomousCommand = m_robotContainer.getAutonomousCommand(m_autonomousChooser.getSelected(), currentAlliance);
 
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {

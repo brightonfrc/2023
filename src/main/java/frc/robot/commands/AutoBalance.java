@@ -54,15 +54,6 @@ public class AutoBalance extends CommandBase {
   // returns the magnititude of the robot's tilt calculated by Pythagoras of pitch
   // and roll, used to compensate for diagonally mounted rio
   public double getTilt() {
-    // TODO: Check
-    // double pitch = m_gyro.getAngle(IMUAxis.kX).getDegrees();
-    // double roll = m_gyro.getAngle(IMUAxis.kY).getDegrees();
-    // if ((pitch + roll) >= 0) {
-    //     return Math.sqrt(pitch * pitch + roll * roll);
-    // } else {
-    //     return -Math.sqrt(pitch * pitch + roll * roll);
-    // }
-
     double tilt = -m_gyro.getAngle(IMUAxis.kY).getDegrees();
 
     if(isReversed) {
@@ -132,7 +123,6 @@ public class AutoBalance extends CommandBase {
   @Override
   public void execute() {
     double speed = autoBalanceRoutine();
-    // Update the wheel speeds - TODO: Check is correct
     SmartDashboard.putNumber("AutoBalance/Speed", speed);
 
     if(isReversed) {
