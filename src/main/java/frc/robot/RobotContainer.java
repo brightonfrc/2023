@@ -11,8 +11,9 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.Ports;
@@ -20,13 +21,11 @@ import frc.robot.commands.ArmManualLevel;
 import frc.robot.commands.ArmSetLevel;
 import frc.robot.commands.AutoBalanceV2;
 import frc.robot.commands.DriveForwardsTime;
-import frc.robot.commands.FollowPath;
 import frc.robot.commands.IntakeGrab;
 import frc.robot.commands.IntakeRelease;
 import frc.robot.commands.TestCommands.TestDrivetrainPID;
 import frc.robot.dataStorageClasses.AutoCubeScoringStrategy;
 import frc.robot.dataStorageClasses.AutoMotionScoringStrategy;
-import frc.robot.dataStorageClasses.AutonomousSelection;
 import frc.robot.dataStorageClasses.ModeSelection;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.DifferentialDriveWrapper;
@@ -85,7 +84,7 @@ public class RobotContainer {
         // Only instantiate the subsystems if we need them
         this.m_drivetrain = new DifferentialDriveWrapper();
         this.m_intake = new Intake();
-        this.m_arm = new Arm();
+        this.m_arm = new Arm(1);
         this.m_intakeLED = new LED(Constants.Ports.k_LEDPort);
         
         // Configure all the bindings and default commands
@@ -147,7 +146,16 @@ public class RobotContainer {
 
     if (cubeStrat == AutoCubeScoringStrategy.None) {}
     else if (cubeStrat == AutoCubeScoringStrategy.ShootMid) {
-      // TODO: do stuff to shoot mid
+      // start the intake
+      commands.add(new IntakeGrab(m_intake, this.m_intakeLED));
+      // Wait a bit for it to take hold of the cube
+      commands.add(new WaitCommand(0.1));
+      // Start moving the arm to the high preset
+      commands.add(new ArmSetLevel(m_arm, 2));
+      // Wait for the arm to reach it
+      commands.add(new WaitUntilCommand(m_arm::isArmSettled));
+      // Shoot it
+      commands.add(new IntakeRelease(m_intake));
     } else {
       // push
       commands.add(new DriveForwardsTime(m_drivetrain, 500, 0.3));

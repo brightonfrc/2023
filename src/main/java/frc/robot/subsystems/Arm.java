@@ -5,6 +5,7 @@
 package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkMaxPIDController;
 import com.revrobotics.CANSparkMax.ControlType;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
@@ -16,17 +17,22 @@ import frc.robot.Constants;
 public class Arm extends SubsystemBase {
   public CANSparkMax chainMotor;
   public SparkMaxPIDController chainMotorPID;
+  public RelativeEncoder chainMotorEncoder;
   public double chainMotorDesiredPosition;
   
+  double acceptableError;
+  
   /** Creates a new Arm. */
-  public Arm() {
+  public Arm(double acceptableError) {
     chainMotor = new CANSparkMax(Constants.Ports.k_armChainMotor, MotorType.kBrushless);
-
-    // chainMotor.getEncoder().setPosition(0);
-    // cableMotor.getEncoder().setPosition(0);
 
     // NOTE: Ideally, use the rev tuner to set PID values
     chainMotorPID = chainMotor.getPIDController();
+    chainMotorEncoder = chainMotor.getEncoder();
+
+    // chainMotor.getEncoder().setPosition(0);
+    // cableMotor.getEncoder().setPosition(0);
+    this.acceptableError = acceptableError;
   }
   
   @Override
@@ -36,10 +42,15 @@ public class Arm extends SubsystemBase {
 
     SmartDashboard.putNumber("Arm/Chain Desired Pos", chainMotorDesiredPosition);
 
-    SmartDashboard.putNumber("Arm/Chain Pos", chainMotor.getEncoder().getPosition());
+    SmartDashboard.putNumber("Arm/Chain Pos", chainMotorEncoder.getPosition());
   }
 
   public void resetEncoders() {
-    chainMotor.getEncoder().setPosition(0);
+    chainMotorEncoder.setPosition(0);
+  }
+  
+  public boolean isArmSettled() {
+    double error = chainMotorEncoder.getPosition() - chainMotorDesiredPosition;
+    return Math.abs(error) < acceptableError;
   }
 }

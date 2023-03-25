@@ -25,7 +25,7 @@ public class IntakeGrab extends CommandBase {
     this.m_intake = intake;
     this.m_led = led;
     
-    addRequirements(intake);
+    addRequirements(intake, led);
   }
 
   // Called when the command is initially scheduled.
