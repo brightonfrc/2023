@@ -21,7 +21,7 @@ public final class Constants {
     public static final double k_turntableMaxPower = 0.4;
     public static final boolean k_drivetrainStartInverted = false;
     public static final double k_normalTurnSensitivity = 0.5;
-    public static final double k_slowedTurnSensitivity = 0.3;
+    public static final double k_slowedTurnSensitivity = 0.5;
     public static final double k_normalSpeedSensitivity = 1.0;
     public static final double k_slowedSpeedSensitivity = 0.5;
   }
