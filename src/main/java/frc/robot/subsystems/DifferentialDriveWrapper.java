@@ -23,7 +23,7 @@ public class DifferentialDriveWrapper extends SubsystemBase {
   public MotorControllerGroup m_right = new MotorControllerGroup(m_motorR1, m_motorR2);
   public DifferentialDrive m_drive = new DifferentialDrive(m_left, m_right);
 
-  public PIDController forwardVelocityPID = new PIDController(0, 0, 0);
+  public PIDController forwardVelocityPID = new PIDController(2, 0, 0);
 
   private final Encoder m_leftEncoder = new Encoder(
     Constants.Ports.k_encoderPortAL,
@@ -104,8 +104,13 @@ public class DifferentialDriveWrapper extends SubsystemBase {
   public void setPowerByPID(double desiredSpeed) {
     // Make it consistent based on voltage
     forwardVelocityPID.setSetpoint(desiredSpeed);
-    double actualVolts = forwardVelocityPID.calculate(getLeftEncoderDistance());
-    outputVolts(actualVolts, actualVolts);
+    double correctionVolts = forwardVelocityPID.calculate(getLeftEncoderRate());
+    
+    SmartDashboard.putNumber("testDrive/correctionV", correctionVolts);
+    SmartDashboard.putNumber("testDrive/desired", desiredSpeed);
+    SmartDashboard.putNumber("testDrive/actualSpeed", getLeftEncoderRate());
+
+    outputVolts(correctionVolts, correctionVolts);
   }
 
   /* Encoders */

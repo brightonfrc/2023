@@ -13,17 +13,14 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.Ports;
-import frc.robot.commands.ArmManualLevel;
 import frc.robot.commands.AutoBalance;
+import frc.robot.commands.AutoBalanceV2;
 import frc.robot.commands.FollowPath;
-import frc.robot.commands.IntakeGrab;
-import frc.robot.commands.IntakeRelease;
+import frc.robot.commands.TestDrivetrainPID;
 import frc.robot.dataStorageClasses.AutonomousSelection;
 import frc.robot.dataStorageClasses.ModeSelection;
-import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.DifferentialDriveWrapper;
 import frc.robot.subsystems.Gyro;
-import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.testSubsystems.SparkMaxTester;
 
 /**
@@ -64,6 +61,10 @@ public class RobotContainer {
       case TestSparkMax:
         // No bindings, everything done from the smart dashboard or from inside subsystems
         new SparkMaxTester();
+        return;
+      case TestSpeedPIDDrive:
+        this.m_drivetrain = new DifferentialDriveWrapper();
+        this.m_drivetrain.setDefaultCommand(new TestDrivetrainPID(m_drivetrain));
         return;
       // NOTE: Game is the default
       default:
@@ -118,7 +119,8 @@ public class RobotContainer {
    */
   public CommandBase getAutonomousCommand(AutonomousSelection commandSelection, Alliance alliance) {
     
-    var autobalanceCommand = new AutoBalance(m_gyro, m_drivetrain, false);
+    var autobalanceCommand = new AutoBalanceV2(m_gyro, m_drivetrain);
+    // var autobalanceCommand = new AutoBalance(m_gyro, m_drivetrain, false);
 
     switch (commandSelection) {
       case AutoBalanceOnly:

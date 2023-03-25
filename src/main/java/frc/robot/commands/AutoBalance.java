@@ -138,8 +138,10 @@ public class AutoBalance extends CommandBase {
     if(isReversed) {
       speed *= -1; // Negate speed so moves backwards
     }
-
-    m_drivetrain.set(speed, speed);
+    
+    // Try to account for voltage difference due to battery charge
+    double desiredVoltage = speed * 12.5;
+    m_drivetrain.outputVolts(desiredVoltage, desiredVoltage);
   }
 
   // Called when the command is initially scheduled.
