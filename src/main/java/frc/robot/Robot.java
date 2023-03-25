@@ -12,7 +12,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import frc.robot.dataStorageClasses.AutonomousSelection;
+import frc.robot.dataStorageClasses.AutoCubeScoringStrategy;
+import frc.robot.dataStorageClasses.AutoMotionScoringStrategy;
 import frc.robot.dataStorageClasses.ModeSelection;
 
 /**
@@ -29,7 +30,8 @@ public class Robot extends TimedRobot {
   // NetworkTables subscribers (read)/publishers (write)
   NetworkTableInstance inst = NetworkTableInstance.getDefault();
   
-  private SendableChooser<AutonomousSelection> m_autonomousChooser;
+  private SendableChooser<AutoCubeScoringStrategy> m_autoCubeStratChooser;
+  private SendableChooser<AutoMotionScoringStrategy> m_autoMotionStratChooser;
   private SendableChooser<ModeSelection> m_modeChooser;
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -45,16 +47,24 @@ public class Robot extends TimedRobot {
     m_robotContainer = new RobotContainer();
 
     // Allow the user to select the desired autonomous from smartdasboard
-    m_autonomousChooser = new SendableChooser<AutonomousSelection>();
-    m_autonomousChooser.setDefaultOption("Push + AutoBalance [Fallback]", AutonomousSelection.PushThenAutoBalance);
-    m_autonomousChooser.addOption("Push Only [Fallback]", AutonomousSelection.PushOnly);
-    m_autonomousChooser.addOption("AutoBalance Only [Fallback]", AutonomousSelection.AutoBalanceOnly);
-    m_autonomousChooser.addOption("Closest Path + AutoBalance [Basic]", AutonomousSelection.ClosestPathAndAutoBalance);
-    m_autonomousChooser.addOption("Middle Path + AutoBalance [Basic]", AutonomousSelection.MiddlePathAndAutoBalance);
-    m_autonomousChooser.addOption("Furthest Path + AutoBalance [Basic]", AutonomousSelection.FurthestPathAndAutoBalance);
-    m_autonomousChooser.addOption("Closest Exit Community + AutoBalance [Average]", AutonomousSelection.ClosestExitCommunityAndAutoBalance);
-    m_autonomousChooser.addOption("Furthest Exit Community + AutoBalance [Average]", AutonomousSelection.FurthestExitCommunityAndAutoBalance);
-    SmartDashboard.putData("Choosers/Auto choices", m_autonomousChooser);
+    // m_autonomousChooser = new SendableChooser<AutonomousSelection>();
+    // m_autonomousChooser.setDefaultOption("Push + AutoBalance [Fallback]", AutonomousSelection.PushThenAutoBalance);
+    // m_autonomousChooser.addOption("Push Only [Fallback]", AutonomousSelection.PushOnly);
+    // m_autonomousChooser.addOption("AutoBalance Only [Fallback]", AutonomousSelection.AutoBalanceOnly);
+    // m_autonomousChooser.addOption("Closest Path + AutoBalance [Basic]", AutonomousSelection.ClosestPathAndAutoBalance);
+    // m_autonomousChooser.addOption("Middle Path + AutoBalance [Basic]", AutonomousSelection.MiddlePathAndAutoBalance);
+    // m_autonomousChooser.addOption("Furthest Path + AutoBalance [Basic]", AutonomousSelection.FurthestPathAndAutoBalance);
+    // m_autonomousChooser.addOption("Closest Exit Community + AutoBalance [Average]", AutonomousSelection.ClosestExitCommunityAndAutoBalance);
+    // m_autonomousChooser.addOption("Furthest Exit Community + AutoBalance [Average]", AutonomousSelection.FurthestExitCommunityAndAutoBalance);
+    // SmartDashboard.putData("Choosers/Auto choices", m_autonomousChooser);
+    m_autoCubeStratChooser = new SendableChooser<AutoCubeScoringStrategy>();
+    m_autoCubeStratChooser.setDefaultOption("Push cube", AutoCubeScoringStrategy.Push);
+    m_autoCubeStratChooser.addOption("None", AutoCubeScoringStrategy.None);
+    m_autoCubeStratChooser.addOption("ShootMid", AutoCubeScoringStrategy.ShootMid);
+
+    m_autoMotionStratChooser = new SendableChooser<AutoMotionScoringStrategy>();
+    m_autoMotionStratChooser.setDefaultOption("Balance in front", AutoMotionScoringStrategy.AutoBalance);
+    m_autoMotionStratChooser.setDefaultOption("None", AutoMotionScoringStrategy.None);
 
     m_modeChooser = new SendableChooser<ModeSelection>();
     m_modeChooser.setDefaultOption("Game", ModeSelection.Game);
@@ -95,7 +105,7 @@ public class Robot extends TimedRobot {
     Alliance currentAlliance = DriverStation.getAlliance();
 
     // Find the auto command that was selected to be run
-    m_autonomousCommand = m_robotContainer.getAutonomousCommand(m_autonomousChooser.getSelected(), currentAlliance);
+    m_autonomousCommand = m_robotContainer.getAutonomousCommand(m_autoCubeStratChooser.getSelected(), m_autoMotionStratChooser.getSelected(), currentAlliance);
 
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {

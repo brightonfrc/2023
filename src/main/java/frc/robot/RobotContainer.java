@@ -4,8 +4,11 @@
 
 package frc.robot;
 
+import java.util.ArrayList;
+
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -21,6 +24,8 @@ import frc.robot.commands.FollowPath;
 import frc.robot.commands.IntakeGrab;
 import frc.robot.commands.IntakeRelease;
 import frc.robot.commands.TestCommands.TestDrivetrainPID;
+import frc.robot.dataStorageClasses.AutoCubeScoringStrategy;
+import frc.robot.dataStorageClasses.AutoMotionScoringStrategy;
 import frc.robot.dataStorageClasses.AutonomousSelection;
 import frc.robot.dataStorageClasses.ModeSelection;
 import frc.robot.subsystems.Arm;
@@ -134,31 +139,31 @@ public class RobotContainer {
    *
    * @return the command to run in autonomous
    */
-  public CommandBase getAutonomousCommand(AutonomousSelection commandSelection, Alliance alliance) {
+  public CommandBase getAutonomousCommand(AutoCubeScoringStrategy cubeStrat, AutoMotionScoringStrategy motionStrat, Alliance alliance) {
     
-    var autobalanceCommand = new AutoBalanceV2(m_gyro, m_drivetrain, false);
+    ArrayList<Command> commands = new ArrayList<Command>();
+    
+    // Notice the defaults, default is to push and balance
 
-    switch (commandSelection) {
-      case AutoBalanceOnly:
-        return autobalanceCommand;
-      case PushThenAutoBalance:
-        return new SequentialCommandGroup(new DriveForwardsTime(m_drivetrain, 500, 0.3), new DriveForwardsTime(m_drivetrain, 500, -0.3), autobalanceCommand);
-      case PushOnly:
-        return new SequentialCommandGroup(new DriveForwardsTime(m_drivetrain, 500, 0.3), new DriveForwardsTime(m_drivetrain, 500, -0.3));
-      case ClosestPathAndAutoBalance:
-        return new SequentialCommandGroup(new FollowPath(m_drivetrain, m_gyro, "1Closest", alliance), autobalanceCommand);
-      case MiddlePathAndAutoBalance:
-        return new SequentialCommandGroup(new FollowPath(m_drivetrain, m_gyro, "1Middle", alliance), autobalanceCommand);
-      case FurthestPathAndAutoBalance:
-        return new SequentialCommandGroup(new FollowPath(m_drivetrain, m_gyro, "1Furthest", alliance), autobalanceCommand);
-      case ClosestExitCommunityAndAutoBalance:
-        return new SequentialCommandGroup(new FollowPath(m_drivetrain, m_gyro, "2Closest", alliance), autobalanceCommand);
-      case FurthestExitCommunityAndAutoBalance:
-        return new SequentialCommandGroup(new FollowPath(m_drivetrain, m_gyro, "2Furthest", alliance), autobalanceCommand);
-      default:
-        return new InstantCommand(() -> {
-          System.out.println("This autonomous strategy was not configured.");
-        });
+    if (cubeStrat == AutoCubeScoringStrategy.None) {}
+    else if (cubeStrat == AutoCubeScoringStrategy.ShootMid) {
+      // TODO: do stuff to shoot mid
+    } else {
+      // push
+      commands.add(new DriveForwardsTime(m_drivetrain, 500, 0.3));
+      commands.add(new DriveForwardsTime(m_drivetrain, 500, -0.3));
     }
+
+    if (motionStrat == AutoMotionScoringStrategy.None) {}
+    else {
+      // autobalance
+      commands.add(new AutoBalanceV2(m_gyro, m_drivetrain, false));
+    }
+    
+    // Do not do anything if it is empty
+    if (commands.isEmpty()) return null;
+    // Otherwise, trigger them one by one
+    // This passes the array of commands to the command group
+    return new SequentialCommandGroup(commands.toArray(Command[]::new));
   }
 }
