@@ -4,8 +4,6 @@
 
 package frc.robot.commands;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
-
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Intake;
@@ -34,8 +32,7 @@ public class IntakeRelease extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    SmartDashboard.putBoolean("Intake/isMoving", true);
-    m_intake.m_motor.set(ControlMode.PercentOutput, -1);
+    m_intake.set(-1);
 
     // Output start time
     SmartDashboard.putNumber("Intake/StartTime", startTime);
@@ -44,9 +41,7 @@ public class IntakeRelease extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    SmartDashboard.putBoolean("Intake/isMoving", false);
-
-    m_intake.m_motor.set(ControlMode.PercentOutput, 0);
+    m_intake.set(0);
   }
 
   // Returns true when the command should end.

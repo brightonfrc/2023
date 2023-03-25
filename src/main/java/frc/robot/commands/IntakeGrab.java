@@ -4,8 +4,6 @@
 
 package frc.robot.commands;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
-
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Intake;
@@ -37,17 +35,16 @@ public class IntakeGrab extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_intake.m_motor.set(ControlMode.PercentOutput, 0.5);
-    SmartDashboard.putBoolean("Intake/isMoving", true);
+    m_intake.set(0.5);
 
     // Output motor current
     SmartDashboard.putBoolean("Intake/HasPeaked", hasPeaked);
     SmartDashboard.putNumber("Intake/StartTime", startTime);
     SmartDashboard.putNumber("Intake/PeakTime", peakTime);
-    SmartDashboard.putNumber("Intake/InputCurrent", m_intake.m_motor.getSupplyCurrent());
-    SmartDashboard.putNumber("Intake/OutputCurrent", m_intake.m_motor.getStatorCurrent());
+    SmartDashboard.putNumber("Intake/InputCurrent", m_intake.getSupplyCurrent());
+    SmartDashboard.putNumber("Intake/OutputCurrent", m_intake.getStatorCurrent());
 
-    if (!this.hasPeaked && m_intake.m_motor.getStatorCurrent() > 20 && (System.currentTimeMillis() - startTime) >= 1000) {
+    if (!this.hasPeaked && m_intake.getStatorCurrent() > 20 && (System.currentTimeMillis() - startTime) >= 1000) {
       // Peak now
       hasPeaked = true;
       peakTime = System.currentTimeMillis();
@@ -58,8 +55,7 @@ public class IntakeGrab extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    SmartDashboard.putBoolean("Intake/isMoving", false);
-    m_intake.m_motor.set(ControlMode.PercentOutput, 0);
+    m_intake.set(0);
   }
 
   // Returns true when the command should end.
