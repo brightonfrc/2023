@@ -7,20 +7,23 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.LED;
 
 public class IntakeGrab extends CommandBase {
 
   private Intake m_intake;
+  private LED m_led;
   private long startTime;
   private boolean hasPeaked = false;
   private long peakTime;
 
 
   /** Creates a new IntakeGrab. */
-  public IntakeGrab(Intake intake) {
+  public IntakeGrab(Intake intake, LED led) {
     // Use addRequirements() here to declare subsystem dependencies.
     
     this.m_intake = intake;
+    this.m_led = led;
     
     addRequirements(intake);
   }
@@ -30,6 +33,7 @@ public class IntakeGrab extends CommandBase {
   public void initialize() {
     this.startTime = System.currentTimeMillis();
     this.hasPeaked = false;
+    m_led.set(true);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -56,6 +60,7 @@ public class IntakeGrab extends CommandBase {
   @Override
   public void end(boolean interrupted) {
     m_intake.set(0);
+    m_led.set(false);
   }
 
   // Returns true when the command should end.

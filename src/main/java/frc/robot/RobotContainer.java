@@ -27,6 +27,7 @@ import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.DifferentialDriveWrapper;
 import frc.robot.subsystems.Gyro;
 import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.LED;
 import frc.robot.subsystems.testSubsystems.SparkMaxTester;
 
 /**
@@ -41,6 +42,7 @@ public class RobotContainer {
   private DifferentialDriveWrapper m_drivetrain;
   private Intake m_intake;
   private Arm m_arm;
+  private LED m_intakeLED;
 
   private boolean areSubsystemsSetUp = false;
 
@@ -79,6 +81,7 @@ public class RobotContainer {
         this.m_drivetrain = new DifferentialDriveWrapper();
         this.m_intake = new Intake();
         this.m_arm = new Arm();
+        this.m_intakeLED = new LED(Constants.Ports.k_LEDPort);
         
         // Configure all the bindings and default commands
         gameTeleopBindings();
@@ -96,7 +99,7 @@ public class RobotContainer {
     Trigger armMidTrigger = m_driverController.b();
     Trigger armHighTrigger = m_driverController.y();
     
-    grabTrigger.onTrue(new IntakeGrab(m_intake));
+    grabTrigger.onTrue(new IntakeGrab(m_intake, this.m_intakeLED));
     releaseTrigger.onTrue(new IntakeRelease(m_intake));
     armGroundTrigger.onTrue(new ArmSetLevel(m_arm, 0));
     armMidTrigger.onTrue(new ArmSetLevel(m_arm, 1));
