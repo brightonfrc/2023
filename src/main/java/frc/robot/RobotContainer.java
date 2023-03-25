@@ -36,8 +36,6 @@ public class RobotContainer {
   private final Gyro m_gyro = new Gyro();
   // The robot's subsystems and commands are defined here...
   private DifferentialDriveWrapper m_drivetrain;
-  private Arm m_arm;
-  private Intake m_intake;
 
   private boolean areSubsystemsSetUp = false;
 
@@ -69,8 +67,6 @@ public class RobotContainer {
       // NOTE: Game is the default
       default:
         // Only instantiate the subsystems if we need them
-        this.m_arm = new Arm();
-        this.m_intake = new Intake();
         this.m_drivetrain = new DifferentialDriveWrapper();
 
         
@@ -84,13 +80,11 @@ public class RobotContainer {
     XboxController controller = m_driverController.getHID();
 
     // Bumpers for intake
-    Trigger grabTrigger = m_driverController.leftBumper();
-    Trigger releaseTrigger = m_driverController.rightBumper();
+    // Trigger grabTrigger = m_driverController.leftBumper();
+    // Trigger releaseTrigger = m_driverController.rightBumper();
     
-    grabTrigger.onTrue(new IntakeGrab(m_intake));
-    releaseTrigger.onTrue(new IntakeRelease(m_intake));
-
-    m_arm.setDefaultCommand(new ArmManualLevel(m_arm));
+    // grabTrigger.onTrue(new IntakeGrab(m_intake));
+    // releaseTrigger.onTrue(new IntakeRelease(m_intake));
     
     // If the drivetrain is not running other commands, run arcade drive with right joystick
     m_drivetrain.setDefaultCommand(Commands.run(() -> {
