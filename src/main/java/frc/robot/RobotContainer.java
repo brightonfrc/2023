@@ -15,13 +15,12 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.Ports;
 import frc.robot.commands.ArmManualLevel;
 import frc.robot.commands.ArmSetLevel;
-import frc.robot.commands.AutoBalance;
 import frc.robot.commands.AutoBalanceV2;
 import frc.robot.commands.DriveForwardsTime;
 import frc.robot.commands.FollowPath;
 import frc.robot.commands.IntakeGrab;
 import frc.robot.commands.IntakeRelease;
-import frc.robot.commands.TestDrivetrainPID;
+import frc.robot.commands.TestCommands.TestDrivetrainPID;
 import frc.robot.dataStorageClasses.AutonomousSelection;
 import frc.robot.dataStorageClasses.ModeSelection;
 import frc.robot.subsystems.Arm;
@@ -29,7 +28,6 @@ import frc.robot.subsystems.DifferentialDriveWrapper;
 import frc.robot.subsystems.Gyro;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.testSubsystems.SparkMaxTester;
-import frc.robot.subsystems.testSubsystems.ArmTester;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -74,10 +72,6 @@ public class RobotContainer {
       case TestSpeedPIDDrive:
         this.m_drivetrain = new DifferentialDriveWrapper();
         this.m_drivetrain.setDefaultCommand(new TestDrivetrainPID(m_drivetrain));
-        return;
-      case TestArm:
-        // No bindings, everything done from the smart dashboard or from inside subsystems
-        new ArmTester();
         return;
       // NOTE: Game is the default
       default:
