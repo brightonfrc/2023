@@ -30,7 +30,6 @@ public class ArmSetLevel extends CommandBase {
       // Find the desired positions and set the arm position to that
       ArmPositionCounts position = allPositions[m_positionIndex];
       m_arm.chainMotorDesiredPosition = position.chainMotorCounts;
-      m_arm.cableMotorDesiredPosition = position.cableMotorCounts;
       SmartDashboard.putString("Arm position", position.name);
     } catch (Exception e){
       // Report the exception, do not fail

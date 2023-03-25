@@ -39,15 +39,8 @@ public class ArmManualLevel extends CommandBase {
 
     m_lastUpdateTime = currentTime;
 
-    if(controller.getRightStickButton()) {
-      // Back right button
-      positionChange *= m_cableMotorChangeRateMultiplier;
-      SmartDashboard.putString("Arm Manual/Motor", "Cable");
-      m_arm.cableMotorDesiredPosition -= positionChange;
-    } else {
-      SmartDashboard.putString("Arm Manual/Motor", "Chain");
-      m_arm.chainMotorDesiredPosition += positionChange;
-    }
+    SmartDashboard.putString("Arm Manual/Motor", "Chain");
+    m_arm.chainMotorDesiredPosition += positionChange;
     SmartDashboard.putNumber("Arm Manual/Speed", positionChange);
     
     // If minus and left back buttons are pressed, reset the encoders
