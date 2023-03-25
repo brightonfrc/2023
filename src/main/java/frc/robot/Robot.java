@@ -47,7 +47,7 @@ public class Robot extends TimedRobot {
     // Allow the user to select the desired autonomous from smartdasboard
     m_autonomousChooser = new SendableChooser<AutonomousSelection>();
     m_autonomousChooser.setDefaultOption("Push + AutoBalance [Fallback]", AutonomousSelection.PushThenAutoBalance);
-    m_autonomousChooser.addOption("Push Only [Fallback]", AutonomousSelection.PushOnly);
+    // m_autonomousChooser.addOption("Push Only [Fallback]", AutonomousSelection.PushOnly);
     m_autonomousChooser.addOption("AutoBalance Only [Fallback]", AutonomousSelection.AutoBalanceOnly);
     m_autonomousChooser.addOption("Closest Path + AutoBalance [Basic]", AutonomousSelection.ClosestPathAndAutoBalance);
     m_autonomousChooser.addOption("Middle Path + AutoBalance [Basic]", AutonomousSelection.MiddlePathAndAutoBalance);
