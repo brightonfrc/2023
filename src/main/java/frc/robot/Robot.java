@@ -4,7 +4,6 @@
 
 package frc.robot;
 
-import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -39,7 +38,7 @@ public class Robot extends TimedRobot {
   @Override
   public void robotInit() {
     // Camera preview on Shuffleboard
-    CameraServer.startAutomaticCapture();
+    // CameraServer.startAutomaticCapture();
 
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
@@ -104,24 +103,7 @@ public class Robot extends TimedRobot {
 
   /** This function is called periodically during autonomous. */
   @Override
-  public void autonomousPeriodic() {
-    // PhotonTrackedTarget aprilTag =  m_aprilTagNavigator.getAprilTag();
-    // if(aprilTag != null) {
-    //   SmartDashboard.putNumber("AprilTag/ID", aprilTag.getFiducialId());
-    //   SmartDashboard.putNumber("AprilTag/Yaw (+> -<)", aprilTag.getYaw());
-    //   SmartDashboard.putNumber("AprilTag/Pitch (+^ -v)", aprilTag.getPitch());
-
-    //   Optional<EstimatedRobotPose> pose = m_aprilTagNavigator.getRobotPose();
-    //   if(!pose.isEmpty()) {
-    //     SmartDashboard.putString("AprilTag/Last Robot Pose", pose.get().toString());
-    //   }
-    //   SmartDashboard.putString("AprilTag/Robot Pose", pose.toString());
-    // } else {
-    //   SmartDashboard.putNumber("AprilTag/ID", 0);
-    //   SmartDashboard.putNumber("AprilTag/Yaw (+> -<)", 0);
-    //   SmartDashboard.putNumber("AprilTag/Pitch (+^ -v)", 0);
-    // }
-  }
+  public void autonomousPeriodic() {}
 
   @Override
   public void teleopInit() {
