@@ -129,6 +129,10 @@ public class RobotContainer {
         return new SequentialCommandGroup(new FollowPath(m_drivetrain, m_gyro, "1Middle", alliance), autobalanceCommand);
       case FurthestPathAndAutoBalance:
         return new SequentialCommandGroup(new FollowPath(m_drivetrain, m_gyro, "1Furthest", alliance), autobalanceCommand);
+      case ClosestExitCommunityAndAutoBalance:
+        return new SequentialCommandGroup(new FollowPath(m_drivetrain, m_gyro, "2Closest", alliance), autobalanceCommand);
+      case FurthestExitCommunityAndAutoBalance:
+        return new SequentialCommandGroup(new FollowPath(m_drivetrain, m_gyro, "2Furthest", alliance), autobalanceCommand);
       default:
         return new InstantCommand(() -> {
           System.out.println("This autonomous strategy was not configured.");

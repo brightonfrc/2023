@@ -6,5 +6,8 @@ public enum AutonomousSelection {
     // Basic: path to charge station; autobalance
     ClosestPathAndAutoBalance,
     MiddlePathAndAutoBalance,
-    FurthestPathAndAutoBalance
+    FurthestPathAndAutoBalance, 
+    // Average: exit community; autobalance
+    ClosestExitCommunityAndAutoBalance, 
+    FurthestExitCommunityAndAutoBalance
 }

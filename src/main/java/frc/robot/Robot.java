@@ -50,6 +50,8 @@ public class Robot extends TimedRobot {
     m_autonomousChooser.addOption("Closest Path + AutoBalance [Basic]", AutonomousSelection.ClosestPathAndAutoBalance);
     m_autonomousChooser.addOption("Middle Path + AutoBalance [Basic]", AutonomousSelection.MiddlePathAndAutoBalance);
     m_autonomousChooser.addOption("Furthest Path + AutoBalance [Basic]", AutonomousSelection.FurthestPathAndAutoBalance);
+    m_autonomousChooser.addOption("Closest Exit Community + AutoBalance [Average]", AutonomousSelection.ClosestExitCommunityAndAutoBalance);
+    m_autonomousChooser.addOption("Furthest Exit Community + AutoBalance [Average]", AutonomousSelection.FurthestExitCommunityAndAutoBalance);
     SmartDashboard.putData("Choosers/Auto choices", m_autonomousChooser);
     
     m_allianceChooser = new SendableChooser<Alliance>();
