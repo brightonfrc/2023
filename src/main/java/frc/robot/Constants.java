@@ -20,7 +20,7 @@ public final class Constants {
   public static class RobotSettings {
     public static final double k_turntableMaxPower = 0.4;
     public static final boolean k_drivetrainStartInverted = false;
-    public static final double k_normalTurnSensitivity = 0.5;
+    public static final double k_normalTurnSensitivity = 0.75;
     public static final double k_slowedTurnSensitivity = 0.5;
     public static final double k_normalSpeedSensitivity = 1.0;
     public static final double k_slowedSpeedSensitivity = 0.5;
@@ -59,7 +59,7 @@ public final class Constants {
       /**
        * The speed used to correct the small error when very close to the setpoint
        */
-      public static final double k_robotSpeedCorrection = 0.;
+      public static final double k_robotSpeedCorrection = 0.2;
       /**
        * Robot speed when driving towards charge station
        */
