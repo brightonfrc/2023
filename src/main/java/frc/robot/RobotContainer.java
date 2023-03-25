@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -80,6 +81,8 @@ public class RobotContainer {
   
   /** Sets up bindings to be used in a game */
   public void gameTeleopBindings(){
+    XboxController controller = m_driverController.getHID();
+
     // Bumpers for intake
     Trigger grabTrigger = m_driverController.leftBumper();
     Trigger releaseTrigger = m_driverController.rightBumper();
@@ -94,8 +97,14 @@ public class RobotContainer {
       double speed = -m_driverController.getRightY();
       double turn = -m_driverController.getRightX();
 
-      speed *= Constants.RobotSettings.k_speedSensitivity;
-      turn *= Constants.RobotSettings.k_turnSensitivity;
+      if(controller.getRightStickButton()) {
+        // Slow down
+        speed *= Constants.RobotSettings.k_slowedSpeedSensitivity;
+        turn *= Constants.RobotSettings.k_slowedTurnSensitivity;
+      } else {
+        speed *= Constants.RobotSettings.k_normalSpeedSensitivity;
+        turn *= Constants.RobotSettings.k_normalTurnSensitivity;
+      }
       
       // Reverse the turning direction when going backwards, like a car
       // Only assume we are going backwards if we are outside the deadband
