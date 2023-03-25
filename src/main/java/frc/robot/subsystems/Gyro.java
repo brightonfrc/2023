@@ -26,4 +26,12 @@ public class Gyro {
       // Get the angle
       return new Rotation2d(Math.toRadians(gyro.getAngle()));
   }
+
+  public Rotation2d getSpeed(IMUAxis axis) {
+      // Set the axis
+      // Note that the gyro does not change the axis if the new axis is the same as the old one, there is no overhead to this
+      gyro.setYawAxis(axis);
+      // Get the angle
+      return new Rotation2d(Math.toRadians(gyro.getRate()));
+  }
 }

@@ -10,9 +10,6 @@ import frc.robot.Constants;
 import frc.robot.dataStorageClasses.ArmPositionCounts;
 import frc.robot.subsystems.Arm;
 
-import com.revrobotics.CANSparkMax;
-
-
 public class ArmSetLevel extends CommandBase {
   private Arm m_arm;
   private int m_positionIndex;
@@ -28,7 +25,7 @@ public class ArmSetLevel extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    ArmPositionCounts[] allPositions = Constants.ArmPositions.k_armMotorPositionCounts;
+    ArmPositionCounts[] allPositions = Constants.Arm.k_armMotorPositionCounts;
     try {
       // Find the desired positions and set the arm position to that
       ArmPositionCounts position = allPositions[m_positionIndex];

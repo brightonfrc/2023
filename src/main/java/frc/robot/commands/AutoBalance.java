@@ -4,10 +4,10 @@
 
 package frc.robot.commands;
 
-import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.ADIS16470_IMU.IMUAxis;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.Constants;
 import frc.robot.Constants.MotionParameters;
 import frc.robot.subsystems.DifferentialDriveWrapper;
 import frc.robot.subsystems.Gyro;
@@ -109,11 +109,19 @@ public class AutoBalance extends CommandBase {
             return MotionParameters.AutoBalance.k_robotSpeedSlow;
         // on charge station, stop motors and wait for end of auto
         case 2:
-            // Has to be between 0 and 1
-            // Starting at the range of -levelDegree to levelDegree
-            double t = (getTilt() + MotionParameters.AutoBalance.k_levelDegree) / (2 * MotionParameters.AutoBalance.k_levelDegree);
-            // MathUtil.interpolate does clamping for us
-            return MathUtil.interpolate(-MotionParameters.AutoBalance.k_robotSpeedCorrection, MotionParameters.AutoBalance.k_robotSpeedCorrection, t);
+        if (Math.abs(getTilt()) <= Constants.MotionParameters.AutoBalance.k_levelDegree / 2) {
+                debounceCount++;
+            }
+            if (debounceCount > secondsToTicks(Constants.MotionParameters.AutoBalance.k_debounceTime)) {
+                state = 4;
+                debounceCount = 0;
+                return 0;
+            }
+            if (getTilt() >=  Constants.MotionParameters.AutoBalance.k_levelDegree) {
+                return Constants.MotionParameters.AutoBalance.k_robotSpeedCorrection;
+            } else if (getTilt() <= -Constants.MotionParameters.AutoBalance.k_levelDegree) {
+                return -Constants.MotionParameters.AutoBalance.k_robotSpeedCorrection;
+            }
         case 3:
             return 0;
     }

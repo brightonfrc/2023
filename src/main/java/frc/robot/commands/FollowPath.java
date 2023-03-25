@@ -31,7 +31,7 @@ import frc.robot.subsystems.Gyro;
  * A command to follow a PathPlanner trajectory.
  * This sets up the odometry and gyro, but the encoders are included in the drivetrain.
  */
-public class FollowPath extends CommandBase { // TODO: Test
+public class FollowPath extends CommandBase {
   SequentialCommandGroup sequentialCommandGroup;
   DifferentialDriveWrapper m_drivetrain;
 
@@ -139,7 +139,7 @@ public class FollowPath extends CommandBase { // TODO: Test
   }
   
   private Rotation2d getGyroHeading(){
-    return m_gyro.getAngle(IMUAxis.kZ); // TODO: Check axis
+    return m_gyro.getAngle(IMUAxis.kZ);
   }
 
   /* Events */

@@ -4,16 +4,8 @@
 
 package frc.robot;
 
-import com.pathplanner.lib.PathConstraints;
 
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Rotation3d;
-import edu.wpi.first.math.geometry.Transform3d;
-import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.XboxController;
 import frc.robot.dataStorageClasses.ArmPositionCounts;
 
 /**
@@ -52,8 +44,8 @@ public final class Constants {
     public static final int k_armChainMotor = 31;
     public static final int k_armCableMotor = 30;
 
-    public static int k_intakeMotor = 20; // TODO
-    public static final int k_turntableMotor = 21;// TODO
+    public static int k_intakeMotor = 20;
+    public static final int k_turntableMotor = 21;
   }
   
   public static class MotionParameters {
@@ -127,7 +119,7 @@ public final class Constants {
     }
   }
     
-  public static class ArmPositions {
+  public static class Arm {
     // chain motor, then cable motor
     public static final ArmPositionCounts[] k_armMotorPositionCounts = {
       new ArmPositionCounts(0, 0, "Stowed"),
@@ -135,6 +127,12 @@ public final class Constants {
       new ArmPositionCounts(-26, -250, "Mid"),
       new ArmPositionCounts(-33, -180, "Top")
     };
+    
+    public static final double cableMotorP = 0.00008;
+    public static final double cableMotorI = 1e-6;
+    public static final double cableMotorD = 0;
+    public static final double cableMotorFF = 0.0003;
+    
   }
  
   public static class Measurements {
@@ -148,7 +146,5 @@ public final class Constants {
     public static class Turntable {
       public static final int k_encoderPulsesPerRotation = 4096;
     }
-
-    public static final Transform3d k_robotToCam = new Transform3d(new Translation3d(0.5, 0.0, 0.5), new Rotation3d(0,0,0));  // TODO - e.g. - Cam mounted facing forward, half a meter forward of center, half a meter up from center.
   }
 }

@@ -4,26 +4,16 @@
 
 package frc.robot;
 
-import com.pathplanner.lib.PathConstraints;
-import com.pathplanner.lib.PathPlanner;
-import com.pathplanner.lib.PathPlannerTrajectory;
-
-import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.ADIS16470_IMU.IMUAxis;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.Ports;
-import frc.robot.commands.AutoBalance;
+import frc.robot.commands.AutoBalanceV2;
 import frc.robot.commands.ArmManualLevel;
-import frc.robot.commands.ArmSetLevel;
 import frc.robot.commands.FollowPath;
 import frc.robot.commands.IntakeGrab;
 import frc.robot.commands.IntakeRelease;
@@ -47,8 +37,6 @@ public class RobotContainer {
   private DifferentialDriveWrapper m_drivetrain;
   private Arm m_arm;
   private Intake m_intake;
-  
-  private SparkMaxTester m_sparkMaxTester;
 
   private boolean areSubsystemsSetUp = false;
 
@@ -75,7 +63,7 @@ public class RobotContainer {
     switch (mode) {
       case TestSparkMax:
         // No bindings, everything done from the smart dashboard or from inside subsystems
-        m_sparkMaxTester = new SparkMaxTester();
+        new SparkMaxTester();
         return;
       // NOTE: Game is the default
       default:
@@ -92,19 +80,12 @@ public class RobotContainer {
   
   /** Sets up bindings to be used in a game */
   public void gameTeleopBindings(){
-    XboxController j = m_driverController.getHID();
-
     // Bumpers for intake
     Trigger grabTrigger = m_driverController.leftBumper();
     Trigger releaseTrigger = m_driverController.rightBumper();
-    Trigger armGroundTrigger = m_driverController.a();
-    Trigger armMidTrigger = m_driverController.b();
-    // Trigger armManualTrigger = m_driverController.x();
     
     grabTrigger.onTrue(new IntakeGrab(m_intake));
     releaseTrigger.onTrue(new IntakeRelease(m_intake));
-    armGroundTrigger.onTrue(new ArmSetLevel(m_arm, 1));
-    armMidTrigger.onTrue(new ArmSetLevel(m_arm, 2));
 
     m_arm.setDefaultCommand(new ArmManualLevel(m_arm));
     
@@ -130,28 +111,22 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public CommandBase getAutonomousCommand(AutonomousSelection commandSelection, Alliance alliance) {
+    
+    var autobalanceCommand = new AutoBalanceV2(m_gyro, m_drivetrain);
+
     switch (commandSelection) {
-      case AutoBalanceOnlyForwards:
-        return new AutoBalance(m_gyro, m_drivetrain, false);
-      case AutoBalanceOnlyReverse:
-        return new AutoBalance(m_gyro, m_drivetrain, true);
+      case AutoBalanceOnly:
+        return autobalanceCommand;
       case ClosestPathAndAutoBalance:
-        return new SequentialCommandGroup(new FollowPath(m_drivetrain, m_gyro, "1Closest", alliance), new AutoBalance(m_gyro, m_drivetrain, false));
+        return new SequentialCommandGroup(new FollowPath(m_drivetrain, m_gyro, "1Closest", alliance), autobalanceCommand);
       case MiddlePathAndAutoBalance:
-        return new SequentialCommandGroup(new FollowPath(m_drivetrain, m_gyro, "1Middle", alliance), new AutoBalance(m_gyro, m_drivetrain, false));
+        return new SequentialCommandGroup(new FollowPath(m_drivetrain, m_gyro, "1Middle", alliance), autobalanceCommand);
       case FurthestPathAndAutoBalance:
-        return new SequentialCommandGroup(new FollowPath(m_drivetrain, m_gyro, "1Furthest", alliance), new AutoBalance(m_gyro, m_drivetrain, false));
+        return new SequentialCommandGroup(new FollowPath(m_drivetrain, m_gyro, "1Furthest", alliance), autobalanceCommand);
       default:
         return new InstantCommand(() -> {
           System.out.println("This autonomous strategy was not configured.");
         });
     }
-  }
-
-  public void logGyro() {
-    // TODO: atm always returns same axis
-    SmartDashboard.putNumber("Gyro/X", m_gyro.getAngle(IMUAxis.kX).getDegrees());
-    // SmartDashboard.putNumber("Gyro/Y", m_gyro.getAngle(IMUAxis.kY).getDegrees());
-    // SmartDashboard.putNumber("Gyro/Z", m_gyro.getAngle(IMUAxis.kZ).getDegrees());
   }
 }
