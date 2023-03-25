@@ -12,20 +12,26 @@ public class DriveForwardsTime extends CommandBase {
   long duration;
   double speed;
   long startTime;
-  /** Creates a new DriveForwards. */
+  /** Creates a new DriveForwards. 
+   * Drive forwards in a straight line for a specified time.
+   * @param drivetrain the differential drivetrain to use
+   * @param duration the time to drive for, s
+   * @param speed the percentage power to give both motors, -1 to 1
+  */
   public DriveForwardsTime(DifferentialDriveWrapper drivetrain, long duration, double speed) {
     // Use addRequirements() here to declare subsystem dependencies.
     m_drivetrain = drivetrain;
     this.duration = duration;
     this.speed = speed;
-    startTime = System.currentTimeMillis();
-
+    
     addRequirements(drivetrain);
   }
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {}
+  public void initialize() {
+    startTime = System.currentTimeMillis();
+  }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override

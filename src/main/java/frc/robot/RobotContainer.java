@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.Ports;
 import frc.robot.commands.AutoBalance;
 import frc.robot.commands.AutoBalanceV2;
+import frc.robot.commands.DriveForwardsTime;
 import frc.robot.commands.FollowPath;
 import frc.robot.commands.TestDrivetrainPID;
 import frc.robot.dataStorageClasses.AutonomousSelection;
@@ -130,6 +131,8 @@ public class RobotContainer {
     switch (commandSelection) {
       case AutoBalanceOnly:
         return autobalanceCommand;
+      case ForwardsThenBackThenAutoBalance:
+        return new SequentialCommandGroup(new DriveForwardsTime(m_drivetrain, 500, 0.3), new DriveForwardsTime(m_drivetrain, 500, -0.3), autobalanceCommand);
       case ClosestPathAndAutoBalance:
         return new SequentialCommandGroup(new FollowPath(m_drivetrain, m_gyro, "1Closest", alliance), autobalanceCommand);
       case MiddlePathAndAutoBalance:
