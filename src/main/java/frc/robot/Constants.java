@@ -129,11 +129,6 @@ public final class Constants {
       new ArmPositionCounts(-30, "High")
     };
     
-    public static final double cableMotorP = 0.00008;
-    public static final double cableMotorI = 1e-6;
-    public static final double cableMotorD = 0;
-    public static final double cableMotorFF = 0.0003;
-    
   }
  
   public static class Measurements {
