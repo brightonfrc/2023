@@ -4,7 +4,7 @@ public enum AutonomousSelection {
     // Fallback: individual components
     AutoBalanceOnly,
     PushThenAutoBalance,
-    PushThenExitCommunity,
+    PushOnly,
     // Basic: path to charge station; autobalance
     ClosestPathAndAutoBalance,
     MiddlePathAndAutoBalance,
