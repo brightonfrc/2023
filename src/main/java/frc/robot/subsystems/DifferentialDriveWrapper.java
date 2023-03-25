@@ -2,6 +2,8 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
+
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
@@ -20,6 +22,8 @@ public class DifferentialDriveWrapper extends SubsystemBase {
   public MotorControllerGroup m_left = new MotorControllerGroup(m_motorL1, m_motorL2);
   public MotorControllerGroup m_right = new MotorControllerGroup(m_motorR1, m_motorR2);
   public DifferentialDrive m_drive = new DifferentialDrive(m_left, m_right);
+
+  public PIDController forwardVelocityPID = new PIDController(0, 0, 0);
 
   private final Encoder m_leftEncoder = new Encoder(
     Constants.Ports.k_encoderPortAL,
@@ -91,6 +95,17 @@ public class DifferentialDriveWrapper extends SubsystemBase {
     m_left.set(left);
     m_right.set(right);
     m_drive.feed();
+  }
+
+  /**
+   * Drive forwards at a certain power w/ PID
+   * @param desiredSpeed speed in m/s
+   */
+  public void setPowerByPID(double desiredSpeed) {
+    // Make it consistent based on voltage
+    forwardVelocityPID.setSetpoint(desiredSpeed);
+    double actualVolts = forwardVelocityPID.calculate(getLeftEncoderDistance());
+    outputVolts(actualVolts, actualVolts);
   }
 
   /* Encoders */

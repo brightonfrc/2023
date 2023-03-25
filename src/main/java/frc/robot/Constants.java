@@ -59,7 +59,7 @@ public final class Constants {
       /**
        * The speed used to correct the small error when very close to the setpoint
        */
-      public static final double k_robotSpeedCorrection = 0.15;
+      public static final double k_robotSpeedCorrection = 0.;
       /**
        * Robot speed when driving towards charge station
        */

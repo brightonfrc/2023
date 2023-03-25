@@ -53,7 +53,7 @@ public class Robot extends TimedRobot {
     m_autonomousChooser.addOption("Closest Exit Community + AutoBalance [Average]", AutonomousSelection.ClosestExitCommunityAndAutoBalance);
     m_autonomousChooser.addOption("Furthest Exit Community + AutoBalance [Average]", AutonomousSelection.FurthestExitCommunityAndAutoBalance);
     SmartDashboard.putData("Choosers/Auto choices", m_autonomousChooser);
-    
+  
     m_allianceChooser = new SendableChooser<Alliance>();
     m_allianceChooser.setDefaultOption("Red", Alliance.Red);
     m_allianceChooser.addOption("Blue", Alliance.Blue);
@@ -62,6 +62,7 @@ public class Robot extends TimedRobot {
     m_modeChooser = new SendableChooser<ModeSelection>();
     m_modeChooser.setDefaultOption("Game", ModeSelection.Game);
     m_modeChooser.addOption("Test SparkMax", ModeSelection.TestSparkMax);
+    m_modeChooser.addOption("Test drive speed PID", ModeSelection.TestSpeedPIDDrive);
     SmartDashboard.putData("Choosers/Mode", m_modeChooser);
   }
 
