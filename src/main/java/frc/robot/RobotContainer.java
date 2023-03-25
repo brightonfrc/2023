@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.Ports;
 import frc.robot.commands.AutoBalanceV2;
 import frc.robot.commands.ArmManualLevel;
+import frc.robot.commands.AutoBalance;
 import frc.robot.commands.FollowPath;
 import frc.robot.commands.IntakeGrab;
 import frc.robot.commands.IntakeRelease;
@@ -111,6 +112,8 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public CommandBase getAutonomousCommand(AutonomousSelection commandSelection, Alliance alliance) {
+    
+    if(commandSelection == AutonomousSelection.OldAutobalanceOnly) return new AutoBalance(m_gyro, m_drivetrain, false);
     
     var autobalanceCommand = new AutoBalanceV2(m_gyro, m_drivetrain);
 
