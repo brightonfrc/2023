@@ -34,6 +34,7 @@ public class IntakeRelease extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    SmartDashboard.putBoolean("Intake/isMoving", true);
     m_intake.m_motor.set(ControlMode.PercentOutput, -1);
 
     // Output start time
@@ -43,6 +44,8 @@ public class IntakeRelease extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
+    SmartDashboard.putBoolean("Intake/isMoving", false);
+
     m_intake.m_motor.set(ControlMode.PercentOutput, 0);
   }
 

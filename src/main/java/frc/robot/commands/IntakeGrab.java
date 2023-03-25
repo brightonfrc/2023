@@ -37,7 +37,8 @@ public class IntakeGrab extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_intake.m_motor.set(ControlMode.PercentOutput, 0.3);
+    m_intake.m_motor.set(ControlMode.PercentOutput, 0.5);
+    SmartDashboard.putBoolean("Intake/isMoving", true);
 
     // Output motor current
     SmartDashboard.putBoolean("Intake/HasPeaked", hasPeaked);
@@ -57,6 +58,7 @@ public class IntakeGrab extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
+    SmartDashboard.putBoolean("Intake/isMoving", false);
     m_intake.m_motor.set(ControlMode.PercentOutput, 0);
   }
 
