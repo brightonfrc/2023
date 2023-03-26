@@ -6,8 +6,11 @@ package frc.robot.commands;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 
+import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.Constants;
 import frc.robot.subsystems.Intake;
 
 public class IntakeGrab extends CommandBase {
@@ -16,12 +19,14 @@ public class IntakeGrab extends CommandBase {
   private long startTime;
   private boolean hasPeaked = false;
   private long peakTime;
-
+  private XboxController controller;
 
   /** Creates a new IntakeGrab. */
   public IntakeGrab(Intake intake) {
     // Use addRequirements() here to declare subsystem dependencies.
     
+
+    this.controller = new XboxController(Constants.Ports.k_controllerPort);
     this.m_intake = intake;
     
     addRequirements(intake);
@@ -32,6 +37,9 @@ public class IntakeGrab extends CommandBase {
   public void initialize() {
     this.startTime = System.currentTimeMillis();
     this.hasPeaked = false;
+    
+    // Start rumble
+    controller.setRumble(RumbleType.kBothRumble, 0.5);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -60,6 +68,8 @@ public class IntakeGrab extends CommandBase {
   public void end(boolean interrupted) {
     SmartDashboard.putBoolean("Intake/isMoving", false);
     m_intake.m_motor.set(ControlMode.PercentOutput, 0);
+    // End rumble
+    controller.setRumble(RumbleType.kBothRumble, 0);
   }
 
   // Returns true when the command should end.
