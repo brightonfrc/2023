@@ -4,8 +4,6 @@
 
 package frc.robot.commands;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
-
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -49,7 +47,7 @@ public class IntakeGrab extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_intake.set(0.5);
+    m_intake.set(0.75);
 
     // Output motor current
     SmartDashboard.putBoolean("Intake/HasPeaked", hasPeaked);
