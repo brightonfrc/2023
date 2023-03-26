@@ -24,6 +24,7 @@ import frc.robot.commands.DriveForwardsTime;
 import frc.robot.commands.FollowPath;
 import frc.robot.commands.IntakeGrab;
 import frc.robot.commands.IntakeRelease;
+import frc.robot.commands.TurnOnSpot;
 import frc.robot.commands.TestCommands.TestDrivetrainPID;
 import frc.robot.dataStorageClasses.AutoCubeScoringStrategy;
 import frc.robot.dataStorageClasses.AutoMotionScoringStrategy;
@@ -166,6 +167,9 @@ public class RobotContainer {
     }
 
     if (motionStrat == AutoMotionScoringStrategy.None) {}
+    else if (motionStrat == AutoMotionScoringStrategy.HundredEightyDegTurn) {
+      commands.add(new TurnOnSpot(m_drivetrain, m_gyro, 180));
+    }
     else if (motionStrat == AutoMotionScoringStrategy.ClosestBalance){
       commands.add(new FollowPath(m_drivetrain, m_gyro, "2Closest", alliance));
       commands.add(new AutoBalanceV2(m_gyro, m_drivetrain, false));

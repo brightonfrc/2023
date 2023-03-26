@@ -66,6 +66,8 @@ public class Robot extends TimedRobot {
     m_autoMotionStratChooser = new SendableChooser<AutoMotionScoringStrategy>();
     m_autoMotionStratChooser.setDefaultOption("Balance in front", AutoMotionScoringStrategy.AutoBalance);
     m_autoMotionStratChooser.addOption("Leave and balance Closest", AutoMotionScoringStrategy.ClosestBalance);
+    m_autoMotionStratChooser.addOption("180deg turn", AutoMotionScoringStrategy.HundredEightyDegTurn
+    );
     m_autoMotionStratChooser.addOption("None", AutoMotionScoringStrategy.None);
     SmartDashboard.putData("Choosers/Motion strat", m_autoMotionStratChooser);
 
