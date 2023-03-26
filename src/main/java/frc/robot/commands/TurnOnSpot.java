@@ -6,6 +6,7 @@ package frc.robot.commands;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.ADIS16470_IMU.IMUAxis;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.PIDCommand;
 import edu.wpi.first.wpilibj2.command.PIDSubsystem;
@@ -47,7 +48,7 @@ public class TurnOnSpot extends CommandBase {
       new PIDController(Constants.MotionParameters.TurnOnSpot.k_p, Constants.MotionParameters.TurnOnSpot.k_i, Constants.MotionParameters.TurnOnSpot.k_d),
       this::getAngle,
       targetAngle,
-      output -> m_drivetrain.m_drive.arcadeDrive(0, output),
+      this::setPowers,
       m_drivetrain
     );
     // As angle
@@ -56,6 +57,19 @@ public class TurnOnSpot extends CommandBase {
     // Set the controller tolerance - the delta tolerance ensures the robot is stationary at the
     // setpoint before it is considered as having reached the reference
     pid.getController().setTolerance(Constants.MotionParameters.TurnOnSpot.k_turnToleranceDeg, Constants.MotionParameters.TurnOnSpot.k_turnRateToleranceDegPerS);
+  }
+
+  public void setPowers(double output) {
+    SmartDashboard.putNumber("TurnOnSpot/output", output);
+    m_drivetrain.m_drive.arcadeDrive(0, output);
+  }
+
+  @Override
+  public void execute() {
+    pid.execute();
+    SmartDashboard.putNumber("TurnOnSpot/GyroAngle", getAngle());
+    SmartDashboard.putNumber("TurnOnSpot/target", targetAngle);
+    SmartDashboard.putNumber("TurnOnSpot/startAngle", startAngle);
   }
 
   public double getAngle() {
