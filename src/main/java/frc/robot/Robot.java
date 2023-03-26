@@ -32,7 +32,7 @@ public class Robot extends TimedRobot {
   
   private SendableChooser<AutoCubeScoringStrategy> m_autoCubeStratChooser;
   private SendableChooser<AutoMotionScoringStrategy> m_autoMotionStratChooser;
-  private SendableChooser<ModeSelection> m_modeChooser;
+  private SendableChooser<ModeSelection> m_teleopModeChooser;
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
@@ -61,17 +61,19 @@ public class Robot extends TimedRobot {
     m_autoCubeStratChooser.setDefaultOption("Push cube", AutoCubeScoringStrategy.Push);
     m_autoCubeStratChooser.addOption("None", AutoCubeScoringStrategy.None);
     m_autoCubeStratChooser.addOption("ShootMid", AutoCubeScoringStrategy.ShootMid);
+    SmartDashboard.putData("Choosers/Cube strat", m_autoCubeStratChooser);
 
     m_autoMotionStratChooser = new SendableChooser<AutoMotionScoringStrategy>();
     m_autoMotionStratChooser.setDefaultOption("Balance in front", AutoMotionScoringStrategy.AutoBalance);
-    m_autoMotionStratChooser.addOption("Leave and balance Closest", AutoMotionScoringStrategy.None);
+    m_autoMotionStratChooser.addOption("Leave and balance Closest", AutoMotionScoringStrategy.ClosestBalance);
     m_autoMotionStratChooser.addOption("None", AutoMotionScoringStrategy.None);
+    SmartDashboard.putData("Choosers/Motion strat", m_autoMotionStratChooser);
 
-    m_modeChooser = new SendableChooser<ModeSelection>();
-    m_modeChooser.setDefaultOption("Game", ModeSelection.Game);
-    m_modeChooser.addOption("Test SparkMax", ModeSelection.TestSparkMax);
-    m_modeChooser.addOption("Test drive speed PID", ModeSelection.TestSpeedPIDDrive);
-    SmartDashboard.putData("Choosers/Mode", m_modeChooser);
+    m_teleopModeChooser = new SendableChooser<ModeSelection>();
+    m_teleopModeChooser.setDefaultOption("Game", ModeSelection.Game);
+    m_teleopModeChooser.addOption("Test SparkMax", ModeSelection.TestSparkMax);
+    m_teleopModeChooser.addOption("Test drive speed PID", ModeSelection.TestSpeedPIDDrive);
+    SmartDashboard.putData("Choosers/Mode", m_teleopModeChooser);
   }
 
   /**
@@ -101,7 +103,7 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
     // Set up the subsystems before using them
-    m_robotContainer.setupSubsystems(m_modeChooser.getSelected());
+    m_robotContainer.setupSubsystems(m_teleopModeChooser.getSelected());
     
     Alliance currentAlliance = DriverStation.getAlliance();
 
@@ -121,7 +123,7 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopInit() {
     // Set up the subsystems before using them
-    m_robotContainer.setupSubsystems(m_modeChooser.getSelected());
+    m_robotContainer.setupSubsystems(m_teleopModeChooser.getSelected());
 
     // This makes sure that the autonomous stops running when
     // teleop starts running. If you want the autonomous to

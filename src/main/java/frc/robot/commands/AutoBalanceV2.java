@@ -25,7 +25,7 @@ public class AutoBalanceV2 extends CommandBase {
   private final double k_gyroAngleThreshold = 10;
   
   private final double k_firstApproachSpeed = 0.25;
-  private final double k_stationaryPlaneClimbSpeed = 0.35;
+  private final double k_stationaryPlaneClimbSpeed = 0.33;
   private final double k_correctionSpeed = 0.2;
   
   private boolean isOnChargingStation;
