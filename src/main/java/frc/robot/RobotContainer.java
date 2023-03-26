@@ -21,6 +21,7 @@ import frc.robot.commands.ArmManualLevel;
 import frc.robot.commands.ArmSetLevel;
 import frc.robot.commands.AutoBalanceV2;
 import frc.robot.commands.DriveForwardsTime;
+import frc.robot.commands.FollowPath;
 import frc.robot.commands.IntakeGrab;
 import frc.robot.commands.IntakeRelease;
 import frc.robot.commands.TestCommands.TestDrivetrainPID;
@@ -159,11 +160,14 @@ public class RobotContainer {
     } else {
       // push
       commands.add(new DriveForwardsTime(m_drivetrain, 500, 0.3));
-      commands.add(new DriveForwardsTime(m_drivetrain, 500, -0.3));
+      commands.add(new DriveForwardsTime(m_drivetrain, 600, -0.3));
     }
 
     if (motionStrat == AutoMotionScoringStrategy.None) {}
-    else {
+    else if (motionStrat == AutoMotionScoringStrategy.ClosestBalance){
+      commands.add(new FollowPath(m_drivetrain, m_gyro, "2Closest", alliance));
+      commands.add(new AutoBalanceV2(m_gyro, m_drivetrain, false));
+    } else {
       // autobalance
       commands.add(new AutoBalanceV2(m_gyro, m_drivetrain, false));
     }

@@ -64,7 +64,8 @@ public class Robot extends TimedRobot {
 
     m_autoMotionStratChooser = new SendableChooser<AutoMotionScoringStrategy>();
     m_autoMotionStratChooser.setDefaultOption("Balance in front", AutoMotionScoringStrategy.AutoBalance);
-    m_autoMotionStratChooser.setDefaultOption("None", AutoMotionScoringStrategy.None);
+    m_autoMotionStratChooser.addOption("Leave and balance Closest", AutoMotionScoringStrategy.None);
+    m_autoMotionStratChooser.addOption("None", AutoMotionScoringStrategy.None);
 
     m_modeChooser = new SendableChooser<ModeSelection>();
     m_modeChooser.setDefaultOption("Game", ModeSelection.Game);
