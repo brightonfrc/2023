@@ -30,8 +30,9 @@ public class Arm extends SubsystemBase {
     chainMotorPID = chainMotor.getPIDController();
     chainMotorEncoder = chainMotor.getEncoder();
 
+    // Reset the encoder at the beginning
     // chainMotor.getEncoder().setPosition(0);
-    // cableMotor.getEncoder().setPosition(0);
+
     this.acceptableError = acceptableError;
   }
   
