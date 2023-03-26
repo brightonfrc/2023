@@ -53,6 +53,15 @@ public final class Constants {
   }
   
   public static class MotionParameters {
+    public static class TurnOnSpot {
+      // TODO: Fix
+      public static final double k_p = 1.0;
+      public static final double k_i = 0.5;
+      public static final double k_d = 0;
+      // TODO
+      public static double k_turnToleranceDeg = 5;
+      public static double k_turnRateToleranceDegPerS = 10;
+    }
     public static class AutoBalance {
       /**
        * Robot speed when driving up slope of charge station
