@@ -100,15 +100,17 @@ public class RobotContainer {
     // Bumpers for intake
     Trigger grabTrigger = m_driverController.leftBumper();
     Trigger releaseTrigger = m_driverController.rightBumper();
-    Trigger armGroundTrigger = m_driverController.a();
+    Trigger armGroundTrigger = m_driverController.x();
+    Trigger armIntakeTrigger = m_driverController.a();
     Trigger armMidTrigger = m_driverController.b();
     Trigger armHighTrigger = m_driverController.y();
     
     grabTrigger.onTrue(new IntakeGrab(m_intake, this.m_intakeLED));
     releaseTrigger.onTrue(new IntakeRelease(m_intake));
     armGroundTrigger.onTrue(new ArmSetLevel(m_arm, 0));
-    armMidTrigger.onTrue(new ArmSetLevel(m_arm, 1));
-    armHighTrigger.onTrue(new ArmSetLevel(m_arm, 2));
+    armIntakeTrigger.onTrue(new ArmSetLevel(m_arm, 1));
+    armMidTrigger.onTrue(new ArmSetLevel(m_arm, 2));
+    armHighTrigger.onTrue(new ArmSetLevel(m_arm, 3));
     
     m_arm.setDefaultCommand(new ArmManualLevel(m_arm));
 
