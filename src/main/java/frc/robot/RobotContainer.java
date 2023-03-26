@@ -4,32 +4,36 @@
 
 package frc.robot;
 
+import java.util.ArrayList;
+
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.Ports;
 import frc.robot.commands.ArmManualLevel;
 import frc.robot.commands.ArmSetLevel;
-import frc.robot.commands.AutoBalance;
 import frc.robot.commands.AutoBalanceV2;
 import frc.robot.commands.DriveForwardsTime;
 import frc.robot.commands.FollowPath;
 import frc.robot.commands.IntakeGrab;
 import frc.robot.commands.IntakeRelease;
-import frc.robot.commands.TestDrivetrainPID;
-import frc.robot.dataStorageClasses.AutonomousSelection;
+import frc.robot.commands.TestCommands.TestDrivetrainPID;
+import frc.robot.dataStorageClasses.AutoCubeScoringStrategy;
+import frc.robot.dataStorageClasses.AutoMotionScoringStrategy;
 import frc.robot.dataStorageClasses.ModeSelection;
 import frc.robot.subsystems.Arm;
 import frc.robot.subsystems.DifferentialDriveWrapper;
 import frc.robot.subsystems.Gyro;
 import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.LED;
 import frc.robot.subsystems.testSubsystems.SparkMaxTester;
-import frc.robot.subsystems.testSubsystems.ArmTester;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -43,6 +47,7 @@ public class RobotContainer {
   private DifferentialDriveWrapper m_drivetrain;
   private Intake m_intake;
   private Arm m_arm;
+  private LED m_intakeLED;
 
   private boolean areSubsystemsSetUp = false;
 
@@ -75,16 +80,13 @@ public class RobotContainer {
         this.m_drivetrain = new DifferentialDriveWrapper();
         this.m_drivetrain.setDefaultCommand(new TestDrivetrainPID(m_drivetrain));
         return;
-      case TestArm:
-        // No bindings, everything done from the smart dashboard or from inside subsystems
-        new ArmTester();
-        return;
       // NOTE: Game is the default
       default:
         // Only instantiate the subsystems if we need them
         this.m_drivetrain = new DifferentialDriveWrapper();
         this.m_intake = new Intake();
-        this.m_arm = new Arm();
+        this.m_arm = new Arm(1);
+        this.m_intakeLED = new LED(Constants.Ports.k_LEDPort);
         
         // Configure all the bindings and default commands
         gameTeleopBindings();
@@ -102,7 +104,7 @@ public class RobotContainer {
     Trigger armMidTrigger = m_driverController.b();
     Trigger armHighTrigger = m_driverController.y();
     
-    grabTrigger.onTrue(new IntakeGrab(m_intake));
+    grabTrigger.onTrue(new IntakeGrab(m_intake, this.m_intakeLED));
     releaseTrigger.onTrue(new IntakeRelease(m_intake));
     armGroundTrigger.onTrue(new ArmSetLevel(m_arm, 0));
     armMidTrigger.onTrue(new ArmSetLevel(m_arm, 1));
@@ -137,31 +139,43 @@ public class RobotContainer {
    *
    * @return the command to run in autonomous
    */
-  public CommandBase getAutonomousCommand(AutonomousSelection commandSelection, Alliance alliance) {
+  public CommandBase getAutonomousCommand(AutoCubeScoringStrategy cubeStrat, AutoMotionScoringStrategy motionStrat, Alliance alliance) {
     
-    var autobalanceCommand = new AutoBalanceV2(m_gyro, m_drivetrain, false);
+    ArrayList<Command> commands = new ArrayList<Command>();
+    
+    // Notice the defaults, default is to push and balance
 
-    switch (commandSelection) {
-      case AutoBalanceOnly:
-        return autobalanceCommand;
-      case PushThenAutoBalance:
-        return new SequentialCommandGroup(new DriveForwardsTime(m_drivetrain, 500, 0.3), new DriveForwardsTime(m_drivetrain, 500, -0.3), autobalanceCommand);
-      case PushOnly:
-        return new SequentialCommandGroup(new DriveForwardsTime(m_drivetrain, 500, 0.3), new DriveForwardsTime(m_drivetrain, 500, -0.3));
-      case ClosestPathAndAutoBalance:
-        return new SequentialCommandGroup(new FollowPath(m_drivetrain, m_gyro, "1Closest", alliance), autobalanceCommand);
-      case MiddlePathAndAutoBalance:
-        return new SequentialCommandGroup(new FollowPath(m_drivetrain, m_gyro, "1Middle", alliance), autobalanceCommand);
-      case FurthestPathAndAutoBalance:
-        return new SequentialCommandGroup(new FollowPath(m_drivetrain, m_gyro, "1Furthest", alliance), autobalanceCommand);
-      case ClosestExitCommunityAndAutoBalance:
-        return new SequentialCommandGroup(new FollowPath(m_drivetrain, m_gyro, "2Closest", alliance), autobalanceCommand);
-      case FurthestExitCommunityAndAutoBalance:
-        return new SequentialCommandGroup(new FollowPath(m_drivetrain, m_gyro, "2Furthest", alliance), autobalanceCommand);
-      default:
-        return new InstantCommand(() -> {
-          System.out.println("This autonomous strategy was not configured.");
-        });
+    if (cubeStrat == AutoCubeScoringStrategy.None) {}
+    else if (cubeStrat == AutoCubeScoringStrategy.ShootMid) {
+      // start the intake
+      commands.add(new IntakeGrab(m_intake, this.m_intakeLED));
+      // Wait a bit for it to take hold of the cube
+      commands.add(new WaitCommand(0.1));
+      // Start moving the arm to the high preset
+      commands.add(new ArmSetLevel(m_arm, 2));
+      // Wait for the arm to reach it
+      commands.add(new WaitUntilCommand(m_arm::isArmSettled));
+      // Shoot it
+      commands.add(new IntakeRelease(m_intake));
+    } else {
+      // push
+      commands.add(new DriveForwardsTime(m_drivetrain, 500, 0.3));
+      commands.add(new DriveForwardsTime(m_drivetrain, 600, -0.3));
     }
+
+    if (motionStrat == AutoMotionScoringStrategy.None) {}
+    else if (motionStrat == AutoMotionScoringStrategy.ClosestBalance){
+      commands.add(new FollowPath(m_drivetrain, m_gyro, "2Closest", alliance));
+      commands.add(new AutoBalanceV2(m_gyro, m_drivetrain, false));
+    } else {
+      // autobalance
+      commands.add(new AutoBalanceV2(m_gyro, m_drivetrain, false));
+    }
+    
+    // Do not do anything if it is empty
+    if (commands.isEmpty()) return null;
+    // Otherwise, trigger them one by one
+    // This passes the array of commands to the command group
+    return new SequentialCommandGroup(commands.toArray(Command[]::new));
   }
 }

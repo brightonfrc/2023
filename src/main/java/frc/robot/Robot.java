@@ -5,13 +5,15 @@
 package frc.robot;
 
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import frc.robot.dataStorageClasses.AutonomousSelection;
+import frc.robot.dataStorageClasses.AutoCubeScoringStrategy;
+import frc.robot.dataStorageClasses.AutoMotionScoringStrategy;
 import frc.robot.dataStorageClasses.ModeSelection;
 
 /**
@@ -28,9 +30,9 @@ public class Robot extends TimedRobot {
   // NetworkTables subscribers (read)/publishers (write)
   NetworkTableInstance inst = NetworkTableInstance.getDefault();
   
-  private SendableChooser<AutonomousSelection> m_autonomousChooser;
-  private SendableChooser<Alliance> m_allianceChooser;
-  private SendableChooser<ModeSelection> m_modeChooser;
+  private SendableChooser<AutoCubeScoringStrategy> m_autoCubeStratChooser;
+  private SendableChooser<AutoMotionScoringStrategy> m_autoMotionStratChooser;
+  private SendableChooser<ModeSelection> m_teleopModeChooser;
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
@@ -45,28 +47,33 @@ public class Robot extends TimedRobot {
     m_robotContainer = new RobotContainer();
 
     // Allow the user to select the desired autonomous from smartdasboard
-    m_autonomousChooser = new SendableChooser<AutonomousSelection>();
-    m_autonomousChooser.setDefaultOption("Push + AutoBalance [Fallback]", AutonomousSelection.PushThenAutoBalance);
-    m_autonomousChooser.addOption("Push Only [Fallback]", AutonomousSelection.PushOnly);
-    m_autonomousChooser.addOption("AutoBalance Only [Fallback]", AutonomousSelection.AutoBalanceOnly);
-    m_autonomousChooser.addOption("Closest Path + AutoBalance [Basic]", AutonomousSelection.ClosestPathAndAutoBalance);
-    m_autonomousChooser.addOption("Middle Path + AutoBalance [Basic]", AutonomousSelection.MiddlePathAndAutoBalance);
-    m_autonomousChooser.addOption("Furthest Path + AutoBalance [Basic]", AutonomousSelection.FurthestPathAndAutoBalance);
-    m_autonomousChooser.addOption("Closest Exit Community + AutoBalance [Average]", AutonomousSelection.ClosestExitCommunityAndAutoBalance);
-    m_autonomousChooser.addOption("Furthest Exit Community + AutoBalance [Average]", AutonomousSelection.FurthestExitCommunityAndAutoBalance);
-    SmartDashboard.putData("Choosers/Auto choices", m_autonomousChooser);
-  
-    m_allianceChooser = new SendableChooser<Alliance>();
-    m_allianceChooser.setDefaultOption("Red", Alliance.Red);
-    m_allianceChooser.addOption("Blue", Alliance.Blue);
-    SmartDashboard.putData("Choosers/Team colour", m_allianceChooser);
+    // m_autonomousChooser = new SendableChooser<AutonomousSelection>();
+    // m_autonomousChooser.setDefaultOption("Push + AutoBalance [Fallback]", AutonomousSelection.PushThenAutoBalance);
+    // m_autonomousChooser.addOption("Push Only [Fallback]", AutonomousSelection.PushOnly);
+    // m_autonomousChooser.addOption("AutoBalance Only [Fallback]", AutonomousSelection.AutoBalanceOnly);
+    // m_autonomousChooser.addOption("Closest Path + AutoBalance [Basic]", AutonomousSelection.ClosestPathAndAutoBalance);
+    // m_autonomousChooser.addOption("Middle Path + AutoBalance [Basic]", AutonomousSelection.MiddlePathAndAutoBalance);
+    // m_autonomousChooser.addOption("Furthest Path + AutoBalance [Basic]", AutonomousSelection.FurthestPathAndAutoBalance);
+    // m_autonomousChooser.addOption("Closest Exit Community + AutoBalance [Average]", AutonomousSelection.ClosestExitCommunityAndAutoBalance);
+    // m_autonomousChooser.addOption("Furthest Exit Community + AutoBalance [Average]", AutonomousSelection.FurthestExitCommunityAndAutoBalance);
+    // SmartDashboard.putData("Choosers/Auto choices", m_autonomousChooser);
+    m_autoCubeStratChooser = new SendableChooser<AutoCubeScoringStrategy>();
+    m_autoCubeStratChooser.setDefaultOption("Push cube", AutoCubeScoringStrategy.Push);
+    m_autoCubeStratChooser.addOption("None", AutoCubeScoringStrategy.None);
+    m_autoCubeStratChooser.addOption("ShootMid", AutoCubeScoringStrategy.ShootMid);
+    SmartDashboard.putData("Choosers/Cube strat", m_autoCubeStratChooser);
 
-    m_modeChooser = new SendableChooser<ModeSelection>();
-    m_modeChooser.setDefaultOption("Game", ModeSelection.Game);
-    m_modeChooser.addOption("Test SparkMax", ModeSelection.TestSparkMax);
-    m_modeChooser.addOption("Test drive speed PID", ModeSelection.TestSpeedPIDDrive);
-    m_modeChooser.addOption("Test Arm", ModeSelection.TestArm);
-    SmartDashboard.putData("Choosers/Mode", m_modeChooser);
+    m_autoMotionStratChooser = new SendableChooser<AutoMotionScoringStrategy>();
+    m_autoMotionStratChooser.setDefaultOption("Balance in front", AutoMotionScoringStrategy.AutoBalance);
+    m_autoMotionStratChooser.addOption("Leave and balance Closest", AutoMotionScoringStrategy.ClosestBalance);
+    m_autoMotionStratChooser.addOption("None", AutoMotionScoringStrategy.None);
+    SmartDashboard.putData("Choosers/Motion strat", m_autoMotionStratChooser);
+
+    m_teleopModeChooser = new SendableChooser<ModeSelection>();
+    m_teleopModeChooser.setDefaultOption("Game", ModeSelection.Game);
+    m_teleopModeChooser.addOption("Test SparkMax", ModeSelection.TestSparkMax);
+    m_teleopModeChooser.addOption("Test drive speed PID", ModeSelection.TestSpeedPIDDrive);
+    SmartDashboard.putData("Choosers/Mode", m_teleopModeChooser);
   }
 
   /**
@@ -96,10 +103,12 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
     // Set up the subsystems before using them
-    m_robotContainer.setupSubsystems(m_modeChooser.getSelected());
+    m_robotContainer.setupSubsystems(m_teleopModeChooser.getSelected());
+    
+    Alliance currentAlliance = DriverStation.getAlliance();
 
     // Find the auto command that was selected to be run
-    m_autonomousCommand = m_robotContainer.getAutonomousCommand(m_autonomousChooser.getSelected(), m_allianceChooser.getSelected());
+    m_autonomousCommand = m_robotContainer.getAutonomousCommand(m_autoCubeStratChooser.getSelected(), m_autoMotionStratChooser.getSelected(), currentAlliance);
 
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {
@@ -114,7 +123,7 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopInit() {
     // Set up the subsystems before using them
-    m_robotContainer.setupSubsystems(m_modeChooser.getSelected());
+    m_robotContainer.setupSubsystems(m_teleopModeChooser.getSelected());
 
     // This makes sure that the autonomous stops running when
     // teleop starts running. If you want the autonomous to

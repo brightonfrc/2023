@@ -13,8 +13,6 @@ import frc.robot.subsystems.Arm;
 public class ArmManualLevel extends CommandBase {
   Arm m_arm;
   private double m_positionChangeRate = 20;
-  // Move the cable faster
-  private double m_cableMotorChangeRateMultiplier = 2;
 
   private long m_lastUpdateTime;
 

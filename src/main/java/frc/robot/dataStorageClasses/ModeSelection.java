@@ -4,5 +4,4 @@ public enum ModeSelection {
     Game,
     TestSparkMax,
     TestSpeedPIDDrive,
-    TestArm
 }
